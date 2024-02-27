@@ -1,0 +1,17 @@
+@import "../../index.css";
+
+/* .reconciliation_header {
+  display: flex;
+} */
+.allbutton {
+    display: flex;
+    justify-content: space-between;
+}
+
+.download_button {
+    width: fit-content;
+}
+
+.upload_button {
+    width: fit-content;
+}

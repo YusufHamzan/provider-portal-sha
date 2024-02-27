@@ -1,0 +1,28 @@
+.main__paginator {
+    display: flex !important;
+    justify-content: flex-end !important;
+}
+
+.slice_change {
+    width: fit-content !important;
+    border: none !important;
+    outline: none !important;
+    color: black !important;
+    background-color: white !important;
+}
+
+.slice_change:hover {
+    background-color: white !important;
+    color: black;
+}
+
+.slice_change:focus {
+    background-color: white !important;
+    color: black;
+    box-shadow: none;
+}
+
+.slice_change[disabled] {
+    background-color: white !important;
+    color: black !important;
+}

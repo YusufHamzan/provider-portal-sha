@@ -1,0 +1,15 @@
+export const recognizeSection = {
+    membereligibility: 0,
+    dashboard: 1,
+    preauthadddoc: 2,
+    cmsforpreauth: 3,
+    cmsforclaim: 4,
+    submitclaim: 5,
+    submitpreauth: 6,
+    paymenthistory: 7,
+    providerstatement: 8,
+    preauthsearch: 9,
+    paymentreconciliation: 10,
+    rejectedclaims: 11,
+    totalpayableamount: 12,
+};

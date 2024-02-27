@@ -1,0 +1,166 @@
+/* @import "../../index.css";
+
+.steps {
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 50% !important;
+    background-color: grey !important;
+    margin: 1% !important;
+    border: none !important;
+}
+
+.step_actve {
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 50% !important;
+    background-color: #5cb85c !important;
+    margin: 1% !important;
+    border: none !important;
+}
+.step__flex {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+}
+
+.form__el {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+}
+
+.dd {
+    overflow-y: auto;
+}
+
+.show {
+    opacity: 1;
+    background-color: green;
+}
+
+.hide {
+    opacity: 0;
+}
+
+[data-isloading="true"] {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.spinner-border {
+    width: 20px !important;
+    height: 20px !important ;
+}
+
+.remove__btn {
+    border-radius: 50%;
+    width: 10px;
+    height: 26px;
+    position: relative;
+    top: 3.25rem;
+    right: -10px;
+}
+
+.btn-custom {
+    background-color: none;
+    outline: none;
+    border: none;
+    position: relative;
+}
+
+.modal-dialog {
+    border: none;
+    border-radius: 5px;
+    width: fit-content;
+    margin-top: 25vh;
+}
+
+
+.snippetButton {
+    width: fit-content;
+    border-radius: 50%;
+    margin: auto;
+}
+
+.timeGroup {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+} */
+
+
+@import "../../index.css";
+
+.form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 3%;
+}
+
+.form > label {
+    flex-basis: 45ch;
+}
+
+[data-isloading="true"] {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.steps {
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 50% !important;
+    background-color: grey !important;
+    margin: 1% !important;
+    border: none !important;
+}
+
+.step_actve {
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 50% !important;
+    background-color: #5cb85c !important;
+    margin: 1% !important;
+    border: none !important;
+}
+.step__flex {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+}
+
+.spinner-border {
+    width: 20px !important;
+    height: 20px !important ;
+}
+
+.form__submit {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    column-gap: 3%;
+}
+
+.timeGroup {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.icon-conatiner {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 20px 20px 15px 0 #ababab4d;
+    cursor: pointer;
+}
+.icon-conatiner > svg {
+    width: 16px;
+    height: auto;
+}
+.icon-conatiner > svg:last-child {
+    position: absolute;
+}

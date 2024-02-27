@@ -1,0 +1,75 @@
+@import "./../../index.css";
+
+.right_section {
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right_section[data-color="claim"] {
+    background-color: rgba(85, 110, 230, 1);
+}
+
+.right_section[data-color="patient"] {
+    background-color: rgba(52, 195, 143, 1);
+}
+
+.right_section[data-color="sanction"] {
+    background-color: rgba(244, 106, 106, 1);
+}
+
+.right_section[data-color="documentation"] {
+    background-color: rgba(241, 180, 76, 1);
+}
+.totalclaim__avatar {
+    transform: scale(1.5);
+}
+
+.card-title > p {
+    font-size: 15px;
+    margin: 0 0 7px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.date__row {
+    align-items: baseline !important;
+}
+
+.button__Search {
+    background: #ffca2c !important;
+    color: white;
+}
+
+.button__Search:hover {
+    background-color: #ffca2c;
+    color: white;
+}
+
+.card__size {
+    min-height: 6.5rem;
+}
+
+.border-1 {
+    border-color: #210076 !important;
+}
+
+.dialogue {
+    display: flex;
+    flex-direction: column;
+}
+
+.dialogue > p {
+    align-items: center;
+}
+
+.dialogue > ul {
+    list-style: none;
+}
+

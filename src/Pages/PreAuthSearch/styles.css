@@ -1,0 +1,14 @@
+@import "../../index.css";
+
+.activity_button {
+    position: relative;
+    top: 30px;
+    width: max-content;
+    background-color: #f46a6a;
+    color: white;
+    border: #f46a6a;
+}
+
+.modal:focus {
+    border: none;
+}

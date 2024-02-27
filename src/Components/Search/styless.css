@@ -1,0 +1,19 @@
+.input_box {
+    border: none;
+    height: 38px;
+    padding-left: 40px;
+    padding-right: 20px;
+    background-color: #f3f3f9;
+    box-shadow: none;
+    border-radius: 30px;
+    outline: none;
+    font-family: "Poppins";
+}
+
+.search_icon {
+    position: relative;
+    left: 27px;
+    top: 2px;
+    z-index: 999;
+    color: #75798e;
+}
