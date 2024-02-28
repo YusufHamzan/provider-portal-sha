@@ -50,8 +50,8 @@ function App() {
     }
 
     useEffect(() => {
-        if (keycloak.authenticated) <Navigate to="/dashboard" />
-    }, [])
+        if (keycloak.authenticated) <Navigate to="/dashboard" />;
+    }, []);
     if (!initialized) {
         return <Spinner />;
     }
@@ -75,9 +75,9 @@ function App() {
                         </Suspense>
                     }
                 /> */}
-
                 <Route
-                    path="/dashboard"
+                    path="/"
+                    // path="/dashboard"
                     element={
                         <ProtectedRoute>
                             <Layout>
@@ -258,7 +258,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
             </Routes>
         </div>
     );
