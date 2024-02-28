@@ -76,8 +76,8 @@ function App() {
                     }
                 /> */}
                 <Route
-                    path="/"
                     // path="/dashboard"
+                    path="/"
                     element={
                         <ProtectedRoute>
                             <Layout>
