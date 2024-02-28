@@ -46,7 +46,7 @@
         "eject": "react-scripts eject",
         "format": "prettier --config .prettierrc src/**/*.{js,css,jsx} --write",
         "start": "vite --open --port 3005",
-        "build": "rm -rf build && vite build",
+        "build": "vite build",
         "serve": "vite preview --open"
     },
     "eslintConfig": {
