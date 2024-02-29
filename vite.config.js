@@ -7,9 +7,9 @@ export default defineConfig(() => {
     define: {
       "import.meta.env": {},
     },
-    build: {
-      outDir: "build",
-    },
+    // build: {
+    //   outDir: "build",
+    // },
     plugins: [react(), svgr({ svgrOptions: { icon: true } })],
   };
 });
