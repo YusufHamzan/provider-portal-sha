@@ -14,7 +14,7 @@ const Instance = axios.create({
 });
 
 const uploadPreauthFilesInstance = axios.create({
-    baseURL: preauthCommandUrl,
+    baseURL: claimCommandUrl,
     headers: {
         "eO2-Secret-Code": import.meta.env.VITE_EO2_SECRET_CODE,
         "Content-Type": "multipart/form-data", // Updated header for this function

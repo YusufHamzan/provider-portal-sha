@@ -13,11 +13,11 @@ import { fieldValidatePreAuth } from "./validation";
 import moment from "moment";
 import _ from "../../deepdash";
 import ReactSelect from "react-select";
-import { getBenefits, getPreAuthDetailsFromMemberNo, getServicetypes } from "../../API/masterData";
+import { getBenefits, getDiagnosis, getPreAuthDetailsFromMemberNo, getServicetypes } from "../../API/masterData";
 
 const SubmitPreAuth = () => {
     const [formData, setFormData] = useImmer({});
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(1);
     const [memberNo, setMemberNo] = useState();
     const [benefits, setBenefits] = React.useState([]);
     const [serviceTypes, setServiceTypes] = React.useState([]);

@@ -26,7 +26,7 @@ const MenuBar = () => {
     const getListItems = () => {
         const arr = [
             { item: "Member Eligibility", img: Member },
-            { item: "Dashboard", img: Dashboard, link: "/" },
+            { item: "Dashboard", img: Dashboard },
             // { item: "Submit Cashless", img: Cashless },
             { item: "Preauth Add Doc", img: AddDoc },
             { item: "CMS for Preauth", img: Cms },
@@ -47,7 +47,7 @@ const MenuBar = () => {
         ].map((data, i) => {
             return (
                 <li key={`_${i}`} className="list" onClick={() => setActive(i)}>
-                    <Link to={data?.link ? data.link : `/${removeSpaces(data.item)}`}>
+                    <Link to={`/${removeSpaces(data.item)}`}>
                         <img src={data.img} alt="" className="link_img" style={{ height: "1.5rem", width: "1.5rem" }} />
                         <span className={`${i === active ? "active_item" : "inactive_item"}`} data-isopen={`${isOpen}`}>
                             {data.item}
