@@ -6,7 +6,7 @@ import { useImmer } from "use-immer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faCamera } from "@fortawesome/free-solid-svg-icons";
 import { getResultFromData } from "../../utils/utils";
-import { getClaimDropDownvalues, saveClaim } from "../../API/submitClaim";
+import { getClaimDropDownvalues, saveClaim, uploadReimburseFiles } from "../../API/submitClaim";
 import moment from "moment";
 
 import _ from "../../deepdash";

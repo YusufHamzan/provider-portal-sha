@@ -3,6 +3,7 @@ import { ServiceInstance, SubmitServiceInstance } from "../axiosConfig";
 import { decideENV } from "../decideENV";
 
 export const MasterdDataUrl = "https://api.eoxegen.com/master-data-service/v1";
+const memberUrl = "https://api.eoxegen.com/member-query-service/v1/members?page=0&size=10&summary=true&active=true&"
 
 const Instance = axios.create({
     baseURL: MasterdDataUrl,
@@ -15,7 +16,8 @@ const Instance = axios.create({
 
 export const getPreAuthDetailsFromMemberNo = async (membershipNo) => {
     const Instance = axios.create({
-        baseURL: decideENV() === "DEV" ? import.meta.env.VITE_BaseURL_MEMBER : import.meta.env.VITE_BaseURL_PROD,
+        baseURL: memberUrl,
+        // baseURL: decideENV() === "DEV" ? import.meta.env.VITE_BaseURL_MEMBER : import.meta.env.VITE_BaseURL_PROD,
         headers: {
             "eO2-Secret-Code": import.meta.env.VITE_EO2_SECRET_CODE,
             "Content-Type": "application/json",
