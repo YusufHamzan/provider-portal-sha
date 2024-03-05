@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ServiceInstance, SubmitServiceInstance } from "../axiosConfig";
 
-export const claimCommandUrl = "https://api.eoxegen.com/claim-command-service/v1/reimburse";
+export const claimCommandUrl = "https://api.eoxegen.com/claim-command-service/v1/integration/reimburse";
 
 const Instance = axios.create({
     baseURL: claimCommandUrl,

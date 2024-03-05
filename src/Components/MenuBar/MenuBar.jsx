@@ -46,9 +46,9 @@ const MenuBar = () => {
             // },
         ].map((data, i) => {
             return (
-                <li key={`_${i}`} className="list" onClick={() => setActive(i)}>
+                <li key={`_${i}`} className={`${i === active ? "active_item" : "inactive_item"} list`} onClick={() => setActive(i)}>
                     <Link to={`/${removeSpaces(data.item)}`}>
-                        <img src={data.img} alt="" className="link_img" style={{ height: "1.5rem", width: "1.5rem" }} />
+                        <img src={data.img} alt="" className="link_img" style={{ height: "1rem", width: "1rem" }} />
                         <span className={`${i === active ? "active_item" : "inactive_item"}`} data-isopen={`${isOpen}`}>
                             {data.item}
                         </span>
@@ -62,7 +62,7 @@ const MenuBar = () => {
 
     return (
         <div className="menu">
-            <div className="sub_menu" style={{ backgroundColor: "#210076" }} data-willcollapse={`${!isOpen}`}>
+            <div className="sub_menu" style={{ backgroundColor: "#303C95" }} data-willcollapse={`${!isOpen}`}>
                 <div>
                     <Link to="/membereligibility">
                         <span className="logo_section">

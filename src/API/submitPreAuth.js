@@ -2,7 +2,7 @@ import axios from "axios";
 import { ServiceInstance, SubmitServiceInstance } from "../axiosConfig";
 import { decideENV } from "../decideENV";
 
-export const claimCommandUrl = "https://api.eoxegen.com/claim-command-service/v1/preauths";
+export const claimCommandUrl = "https://api.eoxegen.com/claim-command-service/v1/integration/preauths";
 
 const Instance = axios.create({
     baseURL: claimCommandUrl,
