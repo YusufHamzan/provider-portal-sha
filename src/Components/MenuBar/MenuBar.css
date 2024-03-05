@@ -33,12 +33,17 @@ a {
     align-items: center;
 }
 .list > a > span {
-    color: #a6b0cf;
+    color: white;
+    /* color: #a6b0cf; */
 }
 
 .active_item {
-    color: white !important;
-    margin: 20px;
+    /* margin: 20px; */
+    /* color: white !important; */
+    color: #303C95 !important;
+    background-color: #e5e5fd;
+    padding-left: 10px;
+    border-radius: 50px 0 0 50px;
 }
 .list > img {
     height: 20px;
@@ -62,6 +67,7 @@ a {
     padding-left: 15px;
     font-size: 12px;
     height: 93vh;
+    color: white !important;
     overflow-y: auto;
     overflow-x: hidden;
     -ms-overflow-style: none; /* for Internet Explorer, Edge */
