@@ -7,7 +7,13 @@ import BootstrapTable from "react-bootstrap-table-next";
 import moment from "moment";
 import _ from "lodash";
 import cogoToast from "cogo-toast";
-import { CmsForClaimDetails, CmsForTotalClaimTypeDetails, CmsForTotalSubClaimTypeDetails, CmsForTotalRCCaseDetails } from "../../API/cmsForClaim";
+import {
+    CmsForClaimDetails,
+    CmsForTotalClaimTypeDetails,
+    CmsForTotalSubClaimTypeDetails,
+    CmsForTotalRCCaseDetails,
+    getClaimList,
+} from "../../API/cmsForClaim";
 // import Paginator from "../../Components/Paginator/Paginator";
 import BackGround from "../../assets/backgroungWorking.gif";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,7 +33,18 @@ const CmsForClaim = () => {
     const [fromDate, setFromDate] = useState();
     const [toDate, setToDate] = useState();
     const [tableData, setTableData] = useState();
-    const [tableHeaders, setTableHeaders] = useState([]);
+    const [tableHeaders, setTableHeaders] = useState([
+        {
+            dataField: "memberShipNo",
+            text: "Membership No.",
+            sort: false,
+        },
+        { dataField: "name", text: "Name", sort: false },
+        { dataField: "policyNumber", text: "Policy", sort: false },
+        { dataField: "admissionDate", text: "Admission Date", sort: false },
+        { dataField: "dischargeDate", text: "Discharge Date", sort: false },
+        { dataField: "reimbursementStatus", text: "Status", sort: false },
+    ]);
     const [tab, setTab] = useState("total");
     const [active, setActive] = useImmer({
         total: 1,
@@ -261,9 +278,9 @@ const CmsForClaim = () => {
         switch (context) {
             case "count": {
                 return {
-                    providerID: sub || '',
+                    providerID: sub || "",
                     tokenID: localStorage.getItem("token"),
-                    userID: sub || '',
+                    userID: sub || "",
                     dateFrom: fromDate === undefined || fromDate === "" ? null : moment(fromDate).format("DD/MM/YYYY"),
                     dateUpto: toDate === undefined || toDate === "" ? null : moment(toDate).format("DD/MM/YYYY"),
                     memberName: MemberName || null,
@@ -272,9 +289,9 @@ const CmsForClaim = () => {
             }
             case "total": {
                 return {
-                    providerID: sub || '',
+                    providerID: sub || "",
                     tokenID: localStorage.getItem("token"),
-                    userID: sub || '',
+                    userID: sub || "",
                     dateFrom: fromDate === undefined || fromDate === "" ? null : moment(fromDate).format("DD/MM/YYYY"),
                     dateUpto: toDate === undefined || toDate === "" ? null : moment(toDate).format("DD/MM/YYYY"),
                     pageSize: paginatorOptions[tab].pageSize,
@@ -285,9 +302,9 @@ const CmsForClaim = () => {
             }
             case "claimType": {
                 return {
-                    providerID: sub || '',
+                    providerID: sub || "",
                     tokenID: localStorage.getItem("token"),
-                    userID: sub || '',
+                    userID: sub || "",
                     dateFrom: fromDate === undefined || fromDate === "" ? null : moment(fromDate).format("DD/MM/YYYY"),
                     dateUpto: toDate === undefined || toDate === "" ? null : moment(toDate).format("DD/MM/YYYY"),
                     pageSize: paginatorOptions[tab].pageSize,
@@ -318,32 +335,62 @@ const CmsForClaim = () => {
         }
     };
 
-    const prepareTableData = (tab) => {
-        //Prepare rows and columns
-        const tabData = apiMasterData?.[tab];
-        /**preparation of table */
-        if (tabData) {
-            tabData.forEach((item) => {
-                delete item.providerID;
-                delete item.insurer;
-            });
-            setTableHeaders(
-                Object.keys(tabData[0])
-                    ?.filter((data) => !(data in { insurarName: true, claimID: true, policyNo: true }))
-                    .map((data) => {
-                        return {
-                            dataField: _.camelCase(data),
-                            text: getCapitallisedFromCamelCase(data),
-                            sort: false,
-                        };
-                    })
-            );
-            setTableData(tabData);
-        } else {
-            setTableData([]);
-            setTableHeaders([]);
-        }
+    const prepareTableData = async (tab) => {
+        const result = await getClaimList();
+        const { content } = result?.data?.data || {};
+
+        const counts = content.reduce(
+            (acc, el) => {
+                if (el?.treatmentDepartment === "OPD") {
+                    acc.OPD += 1;
+                }
+                if (el?.treatmentDepartment === "IPD") {
+                    acc.IPD += 1;
+                }
+                return acc;
+            },
+            { OPD: 0, IPD: 0 }
+        );
+
+        const temp = content.filter((ele) => ele.invoices?.some((item) => item?.provideId === "1214471214180458496"));
+        setTableData(temp);
+
+        setCountData({
+            ...countData,
+            total: temp.length,
+            IP: counts.IPD,
+            OP: counts.OPD,
+            Dental: 0,
+            Optical: 0,
+        });
     };
+
+    // const prepareTableData = (tab) => {
+    //     //Prepare rows and columns
+    //     const tabData = apiMasterData?.[tab];
+    //     /**preparation of table */
+    //     if (tabData) {
+    //         tabData.forEach((item) => {
+    //             delete item.providerID;
+    //             delete item.insurer;
+    //         });
+    //         setTableHeaders(
+    //             Object.keys(tabData[0])
+    //                 ?.filter((data) => !(data in { insurarName: true, claimID: true, policyNo: true }))
+    //                 .map((data) => {
+    //                     return {
+    //                         dataField: _.camelCase(data),
+    //                         text: getCapitallisedFromCamelCase(data),
+    //                         sort: false,
+    //                     };
+    //                 })
+    //         );
+    //         setTableData(tabData);
+    //     } else {
+    //         setTableData([]);
+    //         setTableHeaders([]);
+    //     }
+    // };
 
     const filterTableData = async (tab) => {
         switch (tab) {
@@ -668,9 +715,15 @@ const CmsForClaim = () => {
                                         </Col>
                                     </Row>
                                 </Form>
-                                {tableHeaders?.length > 0 ? (
-                                    <div style={{ width: '100%', overflowX: 'auto' }}>
-                                    <BootstrapTable bootstrap4={true} keyField="Sr. No" data={tableData} columns={tableHeaders} bordered={false} />
+                                {tableData?.length > 0 ? (
+                                    <div style={{ width: "100%", overflowX: "auto" }}>
+                                        <BootstrapTable
+                                            bootstrap4={true}
+                                            keyField="Sr. No"
+                                            data={tableData}
+                                            columns={tableHeaders}
+                                            bordered={false}
+                                        />
                                     </div>
                                 ) : tableData?.length === 0 ? (
                                     <h1 style={{ padding: "10%", textAlign: "center" }}>No Data Found</h1>

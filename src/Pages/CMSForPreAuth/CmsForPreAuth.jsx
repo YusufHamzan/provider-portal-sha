@@ -21,6 +21,7 @@ import AsyncSelect from "react-select/async";
 import CustomVirtualList from "../SubmitClaim/VirtualList";
 import axios from "axios";
 import { decideENV } from "../../decideENV";
+import { getPreAuthList } from "../../API/cmsForPreauth";
 
 const CmsForPreAuth = () => {
     const [userDetails] = useState(JSON.parse(localStorage.getItem("memberDetails")));
@@ -30,7 +31,15 @@ const CmsForPreAuth = () => {
     const [fromDate, setFromDate] = useState();
     const [toDate, setToDate] = useState();
     const [tableData, setTableData] = useState();
-    const [tableHeaders, setTableHeaders] = useState([]);
+    const [tableHeaders, setTableHeaders] = useState([
+        { dataField: "memberShipNo", text: "Membership No.", sort: false },
+        { dataField: "name", text: "Name", sort: false },
+        { dataField: "preAuthType", text: "Type", sort: false },
+        { dataField: "policyNumber", text: "Policy No.", sort: false },
+        { dataField: "admissionDate", text: "Admission Date", sort: false },
+        { dataField: "dischargeDate", text: "Discharge Date", sort: false },
+        { dataField: "preAuthStatus", text: "Status", sort: false },
+    ]);
     // const [trigger, setTrigger] = useState();
     const [apiMasterData, setAPIMasterData] = useState();
     const [active, setActive] = useImmer({
@@ -332,30 +341,68 @@ const CmsForPreAuth = () => {
     /**\
      * @function to prepare table headers and data
      */
-    const prepareTableData = (tab) => {
-        const tabData = apiMasterData?.[tab];
-        if (tabData) {
-            tabData.forEach((item) => {
-                delete item.providerID;
-                delete item.insurer;
-            });
-            setTableHeaders(
-                Object.keys(tabData[0])
-                    ?.filter((data) => !(data in { insurarName: true, claimID: true, policyNo: true }))
-                    .map((data) => {
-                        return {
-                            dataField: _.camelCase(data),
-                            text: getCapitallisedFromCamelCase(data),
-                            sort: false,
-                        };
-                    })
-            );
-            setTableData(tabData);
-        } else {
-            setTableData([]);
-            setTableHeaders([]);
-        }
+    const prepareTableData = async (tab) => {
+        const result = await getPreAuthList();
+        const { content } = result?.data?.data || {};
+
+        const counts = content.reduce(
+            (acc, el) => {
+                if (el?.preAuthStatus === "APPROVED") {
+                    acc.approved += 1;
+                }
+                if (el?.preAuthStatus === "REJECTED") {
+                    acc.rejected += 1;
+                }
+                if (el?.preAuthStatus === "CANCELLED") {
+                    acc.cancelled += 1;
+                }
+                if (el?.documents?.length) {
+                    acc.document += 1;
+                }
+                return acc;
+            },
+            { approved: 0, rejected: 0, document: 0, cancelled: 0 }
+        );
+
+        const temp = content.filter((ele) => ele.providers?.some((provider) => provider?.providerId === "1214471214180458496"));
+        setTableData(temp);
+
+        setCountData({
+            ...countData,
+            total: temp.length,
+            approved: counts.approved,
+            rejected: counts.rejected,
+            cancelled: counts.cancelled,
+            document: counts.document,
+            registered: 0,
+            enhancement: 0,
+        });
     };
+
+    // const prepareTableData = (tab) => {
+    //     const tabData = apiMasterData?.[tab];
+    //     if (tabData) {
+    //         tabData.forEach((item) => {
+    //             delete item.providerID;
+    //             delete item.insurer;
+    //         });
+    //         setTableHeaders(
+    //             Object.keys(tabData[0])
+    //                 ?.filter((data) => !(data in { insurarName: true, claimID: true, policyNo: true }))
+    //                 .map((data) => {
+    //                     return {
+    //                         dataField: _.camelCase(data),
+    //                         text: getCapitallisedFromCamelCase(data),
+    //                         sort: false,
+    //                     };
+    //                 })
+    //         );
+    //         setTableData(tabData);
+    //     } else {
+    //         setTableData([]);
+    //         setTableHeaders([]);
+    //     }
+    // };
 
     const filterTableData = () => {
         if (fromDate === undefined && toDate === undefined && proposerName.length === 0 && MemberName === null && proposerName === null) {
@@ -462,13 +509,14 @@ const CmsForPreAuth = () => {
      * Side Effects
      */
     useEffect(() => {
-        if (!_.isEmpty(apiMasterData)) {
-            prepareTableData(tab);
-        }
+        // if (!_.isEmpty(apiMasterData)) {
+        prepareTableData(tab);
+        // }
         // setFromDate(undefined);
         // setToDate(undefined);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tab, apiMasterData]);
+    }, []);
+    // }, [tab, apiMasterData]);
 
     useEffect(() => {
         if (!dataFetched.current) {
@@ -510,6 +558,7 @@ const CmsForPreAuth = () => {
                             >
                                 <Card.Body>
                                     <p>Total</p>
+                                    {/* <h5>{tableData?.length ? tableData.length : 0}</h5> */}
                                     <h5>{countData.total?.toString() || <Spinner animation="border" />}</h5>
                                     <div className="right_section" data-color="claim">
                                         <img src={TotalClaims} alt="" className="totalclaim__avatar" style={{ height: "1.5rem", width: "1.5rem" }} />
@@ -527,6 +576,7 @@ const CmsForPreAuth = () => {
                             >
                                 <Card.Body>
                                     <p>Registered</p>
+                                    {/* <h5>{countData.registered?.toString() ? countData?.registered : 0}</h5> */}
                                     <h5>{countData.registered?.toString() || <Spinner animation="border" />}</h5>
                                     <div className="right_section" data-color="documentation">
                                         <FontAwesomeIcon
@@ -714,9 +764,16 @@ const CmsForPreAuth = () => {
                 {paginatorOptions?.totalPages ? <Paginator totalPages={paginatorOptions.totalPages} changePage={changePage} /> : null} */}
 
                                 {/* New section of table and paginator */}
-                                {tableHeaders?.length > 0 ? (
-                                    <div style={{ width: '100%', overflowX: 'auto' }}>
-                                    <BootstrapTable bootstrap4={true} keyField="Sr. No" data={tableData} columns={tableHeaders} bordered={false} />
+                                {tableData?.length > 0 ? (
+                                    <div style={{ width: "100%", overflowX: "auto" }}>
+                                        <BootstrapTable
+                                            bootstrap4={true}
+                                            keyField="ID"
+                                            // keyField="Sr. No"
+                                            data={tableData}
+                                            columns={tableHeaders}
+                                            bordered={false}
+                                        />
                                     </div>
                                 ) : tableData?.length === 0 ? (
                                     <h1 style={{ padding: "10%", textAlign: "center" }}>No Data Found</h1>
