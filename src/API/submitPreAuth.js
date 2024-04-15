@@ -2,7 +2,8 @@ import axios from "axios";
 import { ServiceInstance, SubmitServiceInstance } from "../axiosConfig";
 import { decideENV } from "../decideENV";
 
-export const claimCommandUrl = "https://api.eoxegen.com/claim-command-service/v1/integration/preauths";
+const providerId = localStorage.getItem('providerId')
+export const claimCommandUrl = `https://api.eoxegen.com/claim-command-service/v1/provider/preauths/${providerId}`;
 
 const Instance = axios.create({
     baseURL: claimCommandUrl,

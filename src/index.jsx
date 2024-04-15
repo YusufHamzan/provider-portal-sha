@@ -8,10 +8,14 @@ import { AuthProvider } from "./hooks/useAuth";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import { keycloak } from "./keycloak";
+import { jwtDecode } from "jwt-decode";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const tokenLogger = (tokens) => {
     localStorage.setItem("token", tokens.token);
+    const decoded = jwtDecode(tokens.token);
+    localStorage.setItem("providerId", decoded.providerId);
+
 };
 const eventLogger = (event, error) => {
     console.log("onKeycloakEvent", event, error);
@@ -25,7 +29,6 @@ root.render(
                 {/* </AuthProvider> */}
             </BrowserRouter>
         </React.StrictMode>
-        //{" "}
     </ReactKeycloakProvider>
 );
 

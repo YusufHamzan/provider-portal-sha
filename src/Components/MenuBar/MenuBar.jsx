@@ -18,6 +18,13 @@ import Logo from "../../assets/logo-light.c22430c2.svg";
 import { removeSpaces } from "../../utils/utils";
 import { recognizeSection } from "./helper";
 import { openContext } from "../../Pages/Layout/MenuBarContext";
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import PriceChangeIcon from '@mui/icons-material/PriceChange';
+import HistoryIcon from '@mui/icons-material/History';
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import PaidIcon from '@mui/icons-material/Paid';
 
 const MenuBar = () => {
     const [active, setActive] = useState(recognizeSection[window.location.pathname.slice(1)]);
@@ -25,21 +32,21 @@ const MenuBar = () => {
 
     const getListItems = () => {
         const arr = [
-            { item: "Member Eligibility", img: Member },
-            { item: "Dashboard", img: Dashboard },
+            { item: "Dashboard", img: DashboardIcon },
+            { item: "Member Eligibility", img: SupervisedUserCircleIcon },
             // { item: "Submit Cashless", img: Cashless },
-            { item: "Preauth Add Doc", img: AddDoc },
-            { item: "CMS for Preauth", img: Cms },
-            { item: "CMS for Claim", img: Cms },
-            { item: "Submit Claim", img: Claim },
-            { item: "Submit Preauth", img: SubmitPreauth },
-            { item: "Payment History", img: History },
-            { item: "Provider Statement", img: Provider },
+            // { item: "Preauth Add Doc", img: AddDoc },
+            { item: "Preauth", img: ReceiptIcon },
+            { item: "Claim", img: PriceChangeIcon },
+            // { item: "Submit Claim", img: Claim },
+            // { item: "Submit Preauth", img: SubmitPreauth },
+            { item: "Payment History", img: HistoryIcon },
+            { item: "Provider Statement", img: ContentPasteIcon },
             // { item: "Empanelment Detail", img: Empanelment },tabnp
-            { item: "Preauth Search", img: Preauth },
+            // { item: "Preauth Search", img: Preauth },
             // { item: "Payment Reconciliation", img: PaymentReconciliation },
-            { item: "Rejected Claims", img: RejectedClaim },
-            { item: "Total Payable Amount", img: RejectedClaim },
+            // { item: "Rejected Claims", img: RejectedClaim },
+            { item: "Total Payable Amount", img: PaidIcon },
             // {
             //   item: "Enhancement Request and Rejection Reopen",
             //   img: Enhancement,
@@ -48,7 +55,8 @@ const MenuBar = () => {
             return (
                 <li key={`_${i}`} className={`${i === active ? "active_item" : "inactive_item"} list`} onClick={() => setActive(i)}>
                     <Link to={`/${removeSpaces(data.item)}`}>
-                        <img src={data.img} alt="" className="link_img" style={{ height: "1rem", width: "1rem" }} />
+                        {/* <img src={data.img} alt="" className="link_img" style={{ height: "1rem", width: "1rem" }} /> */}
+                        <data.img className={`${i === active ? "active_icon" : "inactive_icon"}`} />
                         <span className={`${i === active ? "active_item" : "inactive_item"}`} data-isopen={`${isOpen}`}>
                             {data.item}
                         </span>
@@ -67,7 +75,7 @@ const MenuBar = () => {
                     <Link to="/membereligibility">
                         <span className="logo_section">
                             <img src={Logo} alt="" style={{ height: "50px", width: "50px" }} />
-                            <span style={{ color: "white", margin: "20px" }}>eOxegen</span>
+                            <span className="name" style={{ color: "white", margin: "20px" }} data-NoShow={`${!isOpen}`}>eOxegen</span>
                         </span>
                     </Link>
                 </div>

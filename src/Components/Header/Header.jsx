@@ -37,7 +37,7 @@ const Header = () => {
                     <button className="expand" onClick={toggleMenuBar}>
                         <FontAwesomeIcon icon={faBars} className="fa-lg" />
                     </button>
-                    <img src={GALogo} alt="" width={150} />
+                    {/* <img src={GALogo} alt="" width={150} /> */}
                     {/* <Search /> Turn this on when global search functionality comes */}
                 </div>
                 <div className="d-flex">

@@ -3,7 +3,7 @@ import { ServiceInstance, SubmitServiceInstance } from "../axiosConfig";
 import { decideENV } from "../decideENV";
 
 export const MasterdDataUrl = "https://api.eoxegen.com/master-data-service/v1";
-const memberUrl = "https://api.eoxegen.com/member-query-service/v1/members?page=0&size=10&summary=true&active=true&"
+const memberUrl = "https://api.eoxegen.com/member-query-service/v1/members"
 
 const Instance = axios.create({
     baseURL: MasterdDataUrl,
@@ -25,8 +25,16 @@ export const getPreAuthDetailsFromMemberNo = async (membershipNo) => {
         },
     });
     let result;
+    let data = {
+        page:0,
+        size:10,
+        summary:true,
+        active:true,
+        key:'MEMBERSHIP_No',
+        value:membershipNo
+    }
     try {
-        result = await Instance.get(`?key=MEMBERSHIP_NO&value=${membershipNo}`);
+        result = await Instance.get('', { params: data });
         return { ok: true, data: result, error: null };
     } catch (error) {
         return { ok: false, data: null, error: error };

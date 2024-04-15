@@ -22,6 +22,7 @@ const SubmitPreAuth = () => {
     const [benefits, setBenefits] = React.useState([]);
     const [serviceTypes, setServiceTypes] = React.useState([]);
     const [diagnosis, setDiagnosis] = React.useState([]);
+    const [primaryDiagnosis, setPrimaryDiagnosis] = React.useState([]);
     const [data, setData] = React.useState({
         expectedDOA: "",
         expectedDOD: "",
@@ -93,7 +94,7 @@ const SubmitPreAuth = () => {
     }, []);
 
     useEffect(() => {
-        getDetailsFromMemberNo();
+        if (memberNo) getDetailsFromMemberNo();
     }, [memberNo]);
 
     const saveData = async (payload) => {
@@ -114,6 +115,7 @@ const SubmitPreAuth = () => {
             expectedDOA: new Date(data?.expectedDOA).getTime(),
             expectedDOD: new Date(data?.expectedDOD).getTime(),
             diagnosis: diagnosisIds,
+            primaryDigonesisId: primaryDiagnosis,
             contactNoOne: data?.mobileNo,
             contactNoTwo: data?.contactNoTwo,
             referalTicketRequired: data?.referalTicketRequired,
@@ -280,6 +282,7 @@ const SubmitPreAuth = () => {
                                             data={data}
                                             diagnosis={diagnosis}
                                             setDiagnosis={setDiagnosis}
+                                            setPrimaryDiagnosis={setPrimaryDiagnosis}
                                         />
                                     </div>
 
@@ -363,6 +366,7 @@ const Step1 = ({
     data,
     setData,
     setDiagnosis,
+    setPrimaryDiagnosis,
 }) => {
     const [userDetails] = useState(JSON.parse(sessionStorage.getItem("user")));
     const [serviceTypeValues, setServiceTypeValues] = useState([]);
@@ -499,8 +503,8 @@ const Step1 = ({
         let temp = [];
         result?.data?.data?.content?.forEach((ele) => {
             let obj = {
-                label: ele.code + " | " + ele.name,
-                name: ele.code + " | " + ele.name,
+                label: ele.name,
+                name: ele.name,
                 value: ele.id,
                 id: ele.id,
             };
@@ -789,7 +793,11 @@ const Step1 = ({
                             />
                         </Form.Label>
                         <Form.Label className="mt-4 col-lg-5">
-                            Diagnosis
+                            Primary Diagnosis
+                            <ReactSelect options={diagnosisList} onChange={(e) => setPrimaryDiagnosis(e.id)} />
+                        </Form.Label>
+                        <Form.Label className="mt-4 col-lg-5">
+                            Other Diagnoses
                             <ReactSelect options={diagnosisList} isMulti onChange={(e) => setDiagnosis(e)} />
                         </Form.Label>
                         <Form.Label className="mt-4 col-lg-5 d-flex align-items-center justify-content-start" style={{ maxHeight: "62px" }}>
@@ -910,7 +918,7 @@ const Step2 = ({ updateValues = () => {} }) => {
             list[index]["documentOriginalName"] = file.name;
 
             setDocumentList(list);
-            console.log("list", list)
+            console.log("list", list);
             const formData = new FormData();
             formData.append("docType", list[index]["documentType"]);
             formData.append("filePart", file);

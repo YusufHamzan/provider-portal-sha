@@ -113,7 +113,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/cmsforpreauth"
+                    path="/preauth"
                     element={
                         <ProtectedRoute>
                             <Layout>
