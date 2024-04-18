@@ -5,14 +5,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Dashboard from '../pages/Dashboard';
-import Claims from '../pages/Claims';
-import Policy from '../pages/Policy';
-import Providers from '../pages/Providers';
-import SubmitClaim from '../pages/SubmitCliam';
-import SubmitPreauth from '../pages/SubmitPreauth';
-import MemberList from '../pages/MemberList';
-import AppRoutes from '../Routes';
 
 export const drawerWidth = 240;
 
