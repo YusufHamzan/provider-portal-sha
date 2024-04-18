@@ -1,0 +1,16 @@
+.custom-datatable .p-datatable-tbody>tr>td {
+  font-size: 12px !important;
+}
+
+.custom-datatable .p-datatable-thead>tr>th {
+  font-size: 13px !important;
+}
+
+.p-datatable.p-datatable-gridlines .p-datatable-tbody>tr>td {
+  border-width: 0 0 1px 0 !important;
+  border-color: transparent !important;
+}
+
+.custom-dropdown-options .p-dropdown-panel .p-dropdown-item {
+  font-size: 8px !important; 
+}
