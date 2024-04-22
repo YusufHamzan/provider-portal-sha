@@ -56,7 +56,8 @@ export const Eo2v2DataGrid = (props) => {
       setLoading(false);
     } else {
       console.error("Invalid data format: 'pageData.content' is not an array");
-    }y
+    }
+    y;
   };
   console.log("pageData", props);
   useEffect(() => {
@@ -226,13 +227,13 @@ export const Eo2v2DataGrid = (props) => {
             {props.config.header.selectionMenus && buildEo2v2ActionMenu()}
             {props.config.header.addCreateButton && (
               <PButton
-                tooltip={props.config.header.createButtonText || "Create"}
+                tooltip={!props.config.header.createButtonText && "Create"}
                 tooltipOptions={{
                   position: "bottom",
                   mouseTrack: true,
                   mouseTrackTop: 15,
                 }}
-                style={{ width: "32px", height: "32px" }}
+                style={{ width: !props.config.header.createBtnText && "32px", height: "32px", background:props.config.header.createBtnText && "#313c96", color: props.config.header.createBtnText && "#fff" }}
                 severity="secondary"
                 rounded
                 raised
@@ -243,7 +244,10 @@ export const Eo2v2DataGrid = (props) => {
                   typeof props.config.header.onCreateButtonClick ===
                     "function" && props.config.header.onCreateButtonClick();
                 }}
-              />
+              >
+                <span style={{marginLeft:"4px"}}>{props.config.header.createBtnText &&
+                  `Create ${props.config.header.createBtnText}`}</span>
+              </PButton>
             )}
           </div>
         </div>

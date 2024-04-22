@@ -1,7 +1,6 @@
 // https://github.com/YusufHamzan/provider-portal.git
 
 import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
-import { ClaimService } from "../remote-api/api/claim-services";
 import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP } from "../utils/helper";
 import { Box } from "@mui/material";
@@ -11,8 +10,11 @@ import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import RateReviewIcon from '@mui/icons-material/RateReview';
+import { useNavigate } from 'react-router-dom';
+
 
 import React from "react";
+import { PreAuthService } from "../remote-api/api/claim-services/preauth-services";
 
 const getColor = (status) => {
   switch (status) {
@@ -72,8 +74,10 @@ const utclongDate = (date) => {
   if (!date) return undefined;
   return date.getTime();
 };
-const claimservice = new ClaimService();
+const claimservice = new PreAuthService();
+
 const PreAuthIPDListComponent = () => {
+  const navigate = useNavigate();
   const [count, setCount] = React.useState({
     approved: 0,
     cancelled: 0,
@@ -104,8 +108,8 @@ const PreAuthIPDListComponent = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            history.push(
-              `/claims/claims-preauth/${rowData?.id}?mode=viewOnly&auth=IPD`
+            navigate(
+              `/submit-preauth/${rowData?.id}`
             );
           }}
         >
@@ -226,7 +230,7 @@ const PreAuthIPDListComponent = () => {
     // );
   };
   const handleOpen = () => {
-    history.push("/claims/claims-preauth?mode=create&auth=IPD");
+    navigate("/submit-preauth");
   };
   const configuration = {
     enableSelection: false,
@@ -270,6 +274,7 @@ const PreAuthIPDListComponent = () => {
       enable: true,
       // addCreateButton: roleService.checkActionPermission(PAGE_NAME, 'CREATE'),
       addCreateButton: true,
+      createBtnText: "Preauth",
       onCreateButtonClick: handleOpen,
       text: "Pre-Auth - IPD",
       enableGlobalSearch: true,

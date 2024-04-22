@@ -34,7 +34,7 @@ const Header = ({ open, handleDrawerOpen }) => {
   }));
 
   return (
-    <AppBar position="fixed" open={open} color='transparent' elevation={0} >
+    <AppBar position="fixed" open={open} color='default' elevation={0} >
       <Toolbar>
         <IconButton
           color="inherit"
@@ -46,7 +46,7 @@ const Header = ({ open, handleDrawerOpen }) => {
             ...(open && { display: 'none' }),
           }}
         >
-          <MenuIcon sx={{ color: '#fff' }} />
+          <MenuIcon sx={{ color: '#313c96' }} />
         </IconButton>
         {/* <Typography variant="h6" noWrap component="div" >
           EOxegen

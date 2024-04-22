@@ -6,6 +6,8 @@ import Preauth from '../pages/Preauth';
 import MemberEligibility from '../pages/MemberEligibility';
 import PaymentHistory from '../pages/PaymentHistory';
 import ProviderStatement from '../pages/ProviderStatement';
+import SubmitPreauth from '../pages/SubmitPreauth';
+import SubmitClaim from '../pages/SubmitClaim';
 // import TotalPayableAmount from '../pages/TotalPayableAmount';
 
 export default function AppRoutes() {
@@ -18,14 +20,16 @@ export default function AppRoutes() {
       <Route path="/paymenthistory" element={<PaymentHistory />} />
       <Route path="/providerstatement" element={<ProviderStatement />} />
       {/* <Route path="/totalpayableamount" element={<TotalPayableAmount />} /> */}
+      <Route path="/submit-claim" element={<SubmitClaim />} />
+      <Route path="/submit-claim/:id" element={<SubmitClaim />} />
+      <Route path="/submit-preauth" element={<SubmitPreauth />} /> 
+      <Route path="/submit-preauth/:id" element={<SubmitPreauth />} /> 
 
 
       {/* <Route path="/claims/preauths" element={<Claims />} />
       <Route path="/policy" element={<Policy />} />
       <Route path="/policy/:policyNumber" element={<MemberList />} />
-      <Route path="/policy/:policyNumber/:membershipNo" element={<Claims />} />
-      <Route path="/submit-claim" element={<SubmitClaim />} />
-      <Route path="/submit-preauth" element={<SubmitPreauth />} /> */}
+      <Route path="/policy/:policyNumber/:membershipNo" element={<Claims />} />*/}
     </Routes>
   );
 }

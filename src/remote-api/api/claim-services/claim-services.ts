@@ -22,21 +22,9 @@ export class ClaimService {
       .pipe(map((response: { data: any }) => response.data));
   }
 
-  getAllPreauth(pageRequest: any): Observable<any> {
-    return http
-      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/preauths/${providerId}`, { params: pageRequest })
-      .pipe(map((response) => response));
-  }
-
   getClaimReim(pageRequest: any): Observable<any> {
     return http
       .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/reimbursements/${providerId}`, { params: pageRequest })
-      .pipe(map((response) => response));
-  }
-
-  getDashboardCount(): Observable<any> {
-    return http
-      .get<any>(`${this.QUERY_CONTEXT}/preauths/dashboard-count-provider-poartal/${providerId}`)
       .pipe(map((response) => response));
   }
 

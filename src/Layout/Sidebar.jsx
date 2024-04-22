@@ -92,14 +92,14 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       icon: <CategoryIcon />,
       submenus: [
         { text: 'Preauths', path: '/preauths' },
-        { text: 'Calims', path: '/claims' },
+        { text: 'Claims', path: '/claims' },
       ],
     },
     { text: 'Payment History', icon: <PolicyIcon />, path: '/paymenthistory' },
     { text: 'Provider Statement', icon: <DomainAddIcon />, path: '/providerstatement' },
     { text: 'Total Payable Amount', icon: <DomainAddIcon />, path: '/totalpayableamount' },
-    { text: 'Submit Claim', icon: <AssistantIcon />, path: '/submit-claim' },
-    { text: 'Submit Preauth', icon: <RequestQuoteIcon />, path: '/submit-preauth' },
+    // { text: 'Submit Claim', icon: <AssistantIcon />, path: '/submit-claim' },
+    // { text: 'Submit Preauth', icon: <RequestQuoteIcon />, path: '/submit-preauth' },
   ];
 
   const handleSubmenuClick = () => {

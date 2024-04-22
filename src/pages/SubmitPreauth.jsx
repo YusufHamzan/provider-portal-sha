@@ -1,12 +1,8 @@
-import React from 'react';
+import React from "react";
+import ClaimsPreAuthDetails from "../components/preauth/ClaimsPreAuthDetails";
 
 const SubmitPreauth = () => {
-  return (
-    <div>
-      <h1>Submit Preauth</h1>
-      <p>This is the Submit Preauth page content.</p>
-    </div>
-  );
+  return <ClaimsPreAuthDetails />;
 };
 
 export default SubmitPreauth;
