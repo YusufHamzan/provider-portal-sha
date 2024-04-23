@@ -86,6 +86,7 @@ export default function ClaimsDocumentComponent(props) {
   const classes = useStyles();
   const navigate = useNavigate();
   const { id } = useParams();
+  let providerId = localStorage.getItem("providerId");
   const preauthid = id ? id : localStorage.getItem('preauthid');
   const baseDocumentURL = `https://api.eoxegen.com/claim-query-service/v1/preauths/${preauthid}/docs/`;
 
@@ -171,7 +172,7 @@ export default function ClaimsDocumentComponent(props) {
       formData.append('filePart', file);
 
       if (preID) {
-        preAuthService.addDoc(preID, formData).subscribe(response => {
+        preAuthService.addDoc(preID, formData, providerId).subscribe(response => {
           preAuthService.getPreAuthById(preID).subscribe(response => {
             setPreAuthDetails(response);
           });

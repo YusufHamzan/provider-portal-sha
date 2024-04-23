@@ -80,7 +80,7 @@ const ClaimsPreAuthDetails = () => {
 
   const handleNext = () => {
     if (activeStep === 0) {
-      //API call 1st step
+      setActiveStep(1);
     } else if (activeStep === 1) {
       navigate(`/claims/claims-preauth?mode=viewList`);
       // window.location.reload();

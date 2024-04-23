@@ -78,6 +78,7 @@ const claimservice = new PreAuthService();
 
 const PreAuthIPDListComponent = () => {
   const navigate = useNavigate();
+  const providerId = localStorage.getItem("providerId");
   const [count, setCount] = React.useState({
     approved: 0,
     cancelled: 0,
@@ -87,7 +88,7 @@ const PreAuthIPDListComponent = () => {
     total: 0,
   });
 
-  let pas$ = claimservice.getDashboardCount();
+  let pas$ = claimservice.getDashboardCount(providerId);
   React.useEffect(() => {
     pas$.subscribe(result => {
       console.log('result', result)
@@ -232,7 +233,8 @@ const PreAuthIPDListComponent = () => {
       active: true,
       // ...(searchType && querytype[searchType]),
     };
-    return claimservice.getAllPreauth(pageRequest).pipe(
+    let providerId = localStorage.getItem("providerId");
+    return claimservice.getAllPreauth(pageRequest, providerId).pipe(
       map((data) => {
         // return data.content = data;
         let content = data?.data?.content;

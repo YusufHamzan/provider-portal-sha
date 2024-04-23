@@ -5,10 +5,10 @@ import { map } from "rxjs/operators";
 import { http } from "../../http.client";
 import { Page } from "../../models/page";
 
-let providerId = localStorage.getItem("providerId");
+// let providerId = localStorage.getItem("providerId");
 
 export class PreAuthService {
-  readonly COMMAND_CONTEXT = `/claim-query-service/v1`;
+  readonly COMMAND_CONTEXT = `/claim-command-service/v1`;
   readonly QUERY_CONTEXT = `/claim-query-service/v1`;
 
   getMembers(pageRequest: any, prospectId: any): Observable<Page<any>> {
@@ -22,15 +22,15 @@ export class PreAuthService {
       .pipe(map((response: { data: any }) => response.data));
   }
 
-  getAllPreauth(pageRequest: any): Observable<any> {
+  getAllPreauth(pageRequest: any, id:number): Observable<any> {
     return http
-      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/preauths/${providerId}`, { params: pageRequest })
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/preauths/${id}`, { params: pageRequest })
       .pipe(map((response) => response));
   }
 
-  getDashboardCount(): Observable<any> {
+  getDashboardCount(id:any): Observable<any> {
     return http
-      .get<any>(`${this.QUERY_CONTEXT}/preauths/dashboard-count-provider-poartal/${providerId}`)
+      .get<any>(`${this.QUERY_CONTEXT}/preauths/dashboard-count-provider-poartal/${id}`)
       .pipe(map((response) => response));
   }
 
@@ -61,9 +61,9 @@ export class PreAuthService {
   }
 
 
-  savePreAuth(payload: any): Observable<Map<string, any>> {
+  savePreAuth(payload: any, id:number): Observable<Map<string, any>> {
     return http
-      .post<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/preauths/${providerId}`, payload)
+      .post<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/preauths/${id}`, payload)
       .pipe(map((response) => response.data));
   }
 
@@ -113,10 +113,10 @@ export class PreAuthService {
   }
 
 
-  addDoc(id: string, payload: FormData): Observable<Map<string, any>> {
+  addDoc(id: string, payload: FormData, pId:number): Observable<Map<string, any>> {
     let headers = { 'Content-Type': 'multipart/form-data' };
     return http
-      .put<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/preauths/${id}/docs/${providerId}`, payload, { headers })
+      .put<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/preauths/${id}/docs/${pId}`, payload, { headers })
       .pipe(map((response) => response.data));
   }
   

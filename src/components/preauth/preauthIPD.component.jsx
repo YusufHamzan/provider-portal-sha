@@ -153,6 +153,7 @@ export default function ClaimsPreAuthIPDComponent() {
   const navigate = useNavigate();
   const { id } = useParams();
   const classes = useStyles();
+  const providerId = localStorage.getItem("providerId");
   const [selectedDOD, setSelectedDOD] = React.useState(new Date());
   const [selectedDOA, setSelectedDOA] = React.useState(new Date());
 
@@ -962,7 +963,7 @@ export default function ClaimsPreAuthIPDComponent() {
     }
 
     if (!preauthid && !id) {
-      preAuthService.savePreAuth(payload).subscribe((res) => {
+      preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
         localStorage.setItem("preauthid", res.id);
         props.handleNext();
       });
