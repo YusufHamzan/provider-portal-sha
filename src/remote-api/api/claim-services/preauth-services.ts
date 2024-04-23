@@ -70,7 +70,7 @@ export class PreAuthService {
 
   getPreAuthById(id: string): Observable<any> {
     return http
-      .get<any>(`${this.QUERY_CONTEXT}/${id}`)
+      .get<any>(`${this.QUERY_CONTEXT}/preauths/${id}`)
       .pipe(map((response) => response.data));
   }
 
@@ -116,7 +116,7 @@ export class PreAuthService {
   addDoc(id: string, payload: FormData): Observable<Map<string, any>> {
     let headers = { 'Content-Type': 'multipart/form-data' };
     return http
-      .put<Map<string, any>>(`${this.COMMAND_CONTEXT}/${id}/docs`, payload, { headers })
+      .put<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/preauths/${id}/docs/${providerId}`, payload, { headers })
       .pipe(map((response) => response.data));
   }
   

@@ -10,7 +10,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import { TabPanel, TabView } from "primereact/tabview";
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ClaimsPreAuthIPDComponent from "./preauthIPD.component";
 import ClaimsDocumentComponent from "./document.component";
 
@@ -48,14 +48,23 @@ function getSteps() {
   return ["Pre-Auth Claims", "Document details"];
 }
 
+function useQuery1() {
+  return new URLSearchParams(useLocation().search);
+}
+
 const ClaimsPreAuthDetails = () => {
+  const query1 = useQuery1();
   const { id } = useParams();
   const classes = useStyles();
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const [activeStep, setActiveStep] = React.useState(1);
+  const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const steps = getSteps();
+
+  React.useEffect(() => {
+    if (query1.get('addDoc')) setActiveStep(1);
+  }, []);
 
   const isStepOptional = (step) => {
     // return step === 1;
