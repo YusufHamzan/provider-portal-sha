@@ -131,7 +131,11 @@ export default function ClaimsDocumentComponent(props) {
       },
     ]);
   };
-
+  let preID = localStorage.getItem('preauthid');
+  if (id) {
+    preID = id;
+  }
+  
   const onRequestForReview = () => {
     let preID = localStorage.getItem('preauthid');
     if (id) {
@@ -141,12 +145,11 @@ export default function ClaimsDocumentComponent(props) {
 
     if (preAuthDetails.preAuthStatus == 'ADD_DOC_REQUESTED') {
       preAuthService.addDocAfterReviw(preID).subscribe(response => {
-        console.log(response);
-        navigate('/claims/claims-preauth?mode=viewList');
+        navigate('/preauths');
       });
     } else {
-      preAuthService.editPreAuth({}, preID, action).subscribe(res => {
-        navigate('/claims/claims-preauth?mode=viewList');
+      preAuthService.editPreAuth({}, preID, action, providerId).subscribe(res => {
+        navigate('/preauths');
         // window.location.reload();
       });
     }
@@ -173,7 +176,7 @@ export default function ClaimsDocumentComponent(props) {
 
       if (preID) {
         preAuthService.addDoc(preID, formData, providerId).subscribe(response => {
-          preAuthService.getPreAuthById(preID).subscribe(response => {
+          preAuthService.getPreAuthById(preID, providerId).subscribe(response => {
             setPreAuthDetails(response);
           });
           list[index]['documentName'] = response.id;
@@ -188,7 +191,7 @@ export default function ClaimsDocumentComponent(props) {
   };
 
   function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
+    return <Alert elevation={6} variant="filled" {...props} />;
   }
 
   const handleFileUploadMsgClose = (event, reason) => {
@@ -201,11 +204,11 @@ export default function ClaimsDocumentComponent(props) {
     }
   }, [id]);
 
-  React.useEffect(() => {
-    if (localStorage.getItem('preauthid')) {
-      populateStepTwo(localStorage.getItem('preauthid'));
-    }
-  }, [localStorage.getItem('preauthid')]);
+  // React.useEffect(() => {
+  //   if (localStorage.getItem('preauthid')) {
+  //     populateStepTwo(localStorage.getItem('preauthid'));
+  //   }
+  // }, [localStorage.getItem('preauthid')]);
 
   const populateStepTwo = id => {
     preAuthService.getPreAuthById(id).subscribe(res => {
@@ -354,7 +357,7 @@ export default function ClaimsDocumentComponent(props) {
               onClick={onRequestForReview}
               disabled={
                 !preAuthDetails.preAuthStatus ||
-                (preAuthDetails.preAuthStatus == 'DRAFT' && preAuthDetails?.subStatus != 'DOCUMENT_UPLOADED')
+                (preAuthDetails.preAuthStatus === 'DRAFT' && preAuthDetails?.subStatus != 'DOCUMENT_UPLOADED')
               }>
               {preAuthDetails.preAuthStatus === 'APPROVED' ? 'Request Enhancement' : 'Request'}
             </Button>

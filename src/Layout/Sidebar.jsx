@@ -91,8 +91,8 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       text: 'Claims',
       icon: <CategoryIcon />,
       submenus: [
-        { text: 'Preauths', path: '/preauths' },
-        { text: 'Claims', path: '/claims' },
+        { text: 'Preauths', path: '/preauths', icon:<AssistantIcon/> },
+        { text: 'Claims', path: '/claims', icon: <RequestQuoteIcon /> },
       ],
     },
     { text: 'Payment History', icon: <PolicyIcon />, path: '/paymenthistory' },
@@ -171,7 +171,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                           justifyContent: 'center',
                           color: '#9DA0CD'
                         }}>
-                          {/* submenu icons */}
+                          {submenu.icon}
                         </ListItemIcon>
                         <ListItemText primary={submenu.text} sx={{ opacity: open ? 1 : 0, color: '#9da0cd' }} />
                       </ListItemButton>

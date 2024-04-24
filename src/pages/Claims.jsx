@@ -1,61 +1,35 @@
 import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { ClaimService } from "../remote-api/api/claim-services";
-import { map } from 'rxjs/operators';
+import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP, REIM_STATUS_MSG_MAP } from "../utils/helper";
 
-const getColor = status => {
-  switch (status) {
-    case 'Pending Evaluation':
-      return { background: 'rgba(149,48,55,0.5)', border: 'rgba(149,48,55,1)' };
-    case 'Evaluation in progress':
-      return { background: 'rgba(255, 252, 127, 0.5)', border: 'rgba(255, 252, 255, 1)' };
-    case 'Requested for evaluation':
-      return { background: 'rgba(4, 59, 92, 0.5)', border: 'rgba(4, 59, 92, 1)', color:"#f1f1f1" };
-    case 'Approved':
-      return { background: 'rgba(1, 222, 116, 0.5)', border: 'rgba(1, 222, 116, 1)' };
-    case 'Rejected':
-      return { background: 'rgba(255,50,67,0.5)', border: 'rgba(255,50,67,1)' };
-    case 'Document requested':
-      return { background: 'rgba(165, 55, 253, 0.5)', border: 'rgba(165, 55, 253, 1)' };
-    case 'Approved failed':
-      return { background: 'rgb(139, 0, 0,0.5)', border: 'rgb(139, 0, 0)' };
-    case 'Draft':
-      return { background: 'rgba(128,128,128,0.5)', border: 'rgba(128,128,128,1)' };
-    case 'Waiting for Claim':
-      return { background: 'rgba(245, 222, 179, 0.5)', border: 'rgba(245, 222, 179,1)' };
-    case 'Cancelled':
-      return { background: 'rgba(149,48,55,0.5)', border: 'rgba(149,48,55,1)' };
-    case 'Reverted':
-      return { background: 'rgba(241, 241, 241, 0.5)', border: 'rgba(241, 241, 241, 1)' };
-    default:
-      return { background: 'rgba(227, 61, 148, 0.5)', border: 'rgba(227, 61, 148, 1)' };
-  }
-};
-
-const utclongDate = date => {
+const utclongDate = (date) => {
   if (!date) return undefined;
   return date.getTime();
 };
-const claimservice = new ClaimService()
+const claimservice = new ClaimService();
+
 const Claims = () => {
+  let providerId = localStorage.getItem("providerId");
 
   const columnsDefinations = [
     {
-      field: 'memberShipNo',
-      headerName: 'Membership No.',
-      body: rowData => (
+      field: "memberShipNo",
+      headerName: "Membership No.",
+      body: (rowData) => (
         <span
-          style={{ cursor: 'pointer', textDecoration: 'underline' }}
-          onClick={() => handleMembershipClick(rowData, 'membershipNo')}>
+          style={{ cursor: "pointer", textDecoration: "underline" }}
+          onClick={() => handleMembershipClick(rowData, "membershipNo")}
+        >
           {rowData.memberShipNo}
         </span>
       ),
     },
-    { field: 'memberName', headerName: 'Name' },
-    { field: 'policyNumber', headerName: 'Policy' },
-    { field: 'admissionDate', headerName: 'Admission Date' },
-    { field: 'dischargeDate', headerName: 'Discharge Date' },
-    { field: 'reimbursementStatus', headerName: 'Status' },
+    { field: "memberName", headerName: "Name" },
+    { field: "policyNumber", headerName: "Policy" },
+    { field: "admissionDate", headerName: "Admission Date" },
+    { field: "dischargeDate", headerName: "Discharge Date" },
+    { field: "reimbursementStatus", headerName: "Status" },
   ];
 
   const dataSource$ = (
@@ -64,43 +38,52 @@ const Claims = () => {
       size: 10,
       summary: true,
       active: true,
-    },
+      claimCategory: "CLAIM",
+      claimSource: "PRE_AUTH",
+    }
   ) => {
-    pageRequest.sort = ['rowCreatedDate dsc'];
-    pageRequest.claimType = ['REIMBURSEMENT_CLAIM'];
-    return claimservice.getClaimReim(pageRequest).pipe(map(data => {
-      let content = data?.data?.content;
-      console.log("dataaa", data, content)
-      let records = content.map(item => {
-        item['admissionDate'] = new Date(item.expectedDOA).toLocaleDateString();
-        item['dischargeDate'] = new Date(item.expectedDOD).toLocaleDateString();
-        item['stat'] = item.reimbursementStatus ? REIM_STATUS_MSG_MAP[item.reimbursementStatus] : null;
+    pageRequest.sort = ["rowCreatedDate dsc"];
+    // pageRequest.claimType = ['REIMBURSEMENT_CLAIM'];
+    return claimservice.getClaimReim(pageRequest, providerId).pipe(
+      map((data) => {
+        let content = data?.data?.content;
+        let records = content.map((item) => {
+          item["admissionDate"] = new Date(
+            item.expectedDOA
+          ).toLocaleDateString();
+          item["dischargeDate"] = new Date(
+            item.expectedDOD
+          ).toLocaleDateString();
+          item["stat"] = item.reimbursementStatus
+            ? REIM_STATUS_MSG_MAP[item.reimbursementStatus]
+            : null;
 
-        return item;
-      });
-      data.content = records;
-      return data;
-    }))
+          return item;
+        });
+        data.content = records;
+        return data;
+      })
+    );
   };
 
   const handleOpen = () => {
-    history.push('/claims/claims-preauth?mode=create&auth=IPD');
+    history.push("/claims/claims-preauth?mode=create&auth=IPD");
   };
-  
+
   const configuration = {
     enableSelection: false,
-    scrollHeight: '300px',
+    scrollHeight: "300px",
     pageSize: 10,
     // actionButtons: roleService.checkActionPermission(PAGE_NAME, 'UPDATE', openEditSection),
     // actionButtons: roleService.checkActionPermission(PAGE_NAME, 'UPDATE', actionBtnList),
     actionButtons: [
       {
-        key: 'update_preauth',
-        icon: 'pi pi-pencil',
+        key: "update_preauth",
+        icon: "pi pi-pencil",
         // disabled: disableEnhance,
         // className: classes.categoryButton,
         // onClick: openEditSection,
-        tooltip: 'Enhance',
+        tooltip: "Enhance",
       },
 
       // {
@@ -126,7 +109,7 @@ const Claims = () => {
       // addCreateButton: roleService.checkActionPermission(PAGE_NAME, 'CREATE'),
       addCreateButton: true,
       onCreateButtonClick: handleOpen,
-      text: 'Claim Reimbursement',
+      text: "Claim Reimbursement",
       enableGlobalSearch: false,
       // searchText: 'Search by code,name,type,contact',
       //   onSelectionChange: handleSelectedRows,
@@ -135,17 +118,15 @@ const Claims = () => {
     },
   };
 
-
-
   return (
     <Eo2v2DataGrid
       $dataSource={dataSource$}
       config={configuration}
       columnsDefination={columnsDefinations}
-    // onEdit={openEditSection}
-    // reloadTable={reloadTable}
+      // onEdit={openEditSection}
+      // reloadTable={reloadTable}
     />
-  )
-}
+  );
+};
 
 export default Claims;

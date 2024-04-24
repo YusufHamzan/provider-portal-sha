@@ -13,6 +13,7 @@ import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ClaimsPreAuthIPDComponent from "./preauthIPD.component";
 import ClaimsDocumentComponent from "./document.component";
+import PreAuthTimelineComponent from "./preauth.timeline.component";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,7 +81,7 @@ const ClaimsPreAuthDetails = () => {
 
   const handleNext = () => {
     if (activeStep === 0) {
-      setActiveStep(1);
+      // setActiveStep(1);
     } else if (activeStep === 1) {
       navigate(`/claims/claims-preauth?mode=viewList`);
       // window.location.reload();
@@ -98,7 +99,7 @@ const ClaimsPreAuthDetails = () => {
 
   const handleClose = (event) => {
     localStorage.removeItem("preauthid");
-    navigate(`/preauth`);
+    navigate(`/preauths`);
   };
 
   const getStepContent = (step) => {
@@ -132,6 +133,8 @@ const ClaimsPreAuthDetails = () => {
         return "Unknown step";
     }
   };
+
+
 
   return (
     <>
@@ -254,7 +257,7 @@ const ClaimsPreAuthDetails = () => {
           leftIcon="pi pi-user-minus mr-2"
           header="Pre-Auth Audit Trail"
         >
-          {/* <PreAuthTimelineComponent /> */}
+          <PreAuthTimelineComponent />
         </TabPanel>
       </TabView>
     </>

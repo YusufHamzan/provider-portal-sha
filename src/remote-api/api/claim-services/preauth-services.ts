@@ -68,9 +68,9 @@ export class PreAuthService {
   }
 
 
-  getPreAuthById(id: string): Observable<any> {
+  getPreAuthById(id: string, providerId:any): Observable<any> {
     return http
-      .get<any>(`${this.QUERY_CONTEXT}/preauths/${id}`)
+      .get<any>(`${this.QUERY_CONTEXT}/provider/preauths/${id}/${providerId}`)
       .pipe(map((response) => response.data));
   }
 
@@ -105,10 +105,11 @@ export class PreAuthService {
   editPreAuth(
     payload: any,
     id: string,
-    action: string
+    action: string,
+    providerId:string
   ): Observable<Map<string, any>> {
     return http
-      .patch<Map<string, any>>(`${this.COMMAND_CONTEXT}/${id}`, payload, { params: { action: action } })
+      .patch<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/preauths/${id}/${providerId}`, payload, { params: { action: action } })
       .pipe(map((response) => response.data));
   }
 

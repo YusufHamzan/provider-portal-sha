@@ -5,8 +5,6 @@ import { map } from "rxjs/operators";
 import { http } from "../../http.client";
 import { Page } from "../../models/page";
 
-let providerId = localStorage.getItem("providerId");
-
 export class ClaimService {
   readonly COMMAND_CONTEXT = `/claim-query-service/v1`;
   readonly QUERY_CONTEXT = `/claim-query-service/v1`;
@@ -22,9 +20,9 @@ export class ClaimService {
       .pipe(map((response: { data: any }) => response.data));
   }
 
-  getClaimReim(pageRequest: any): Observable<any> {
+  getClaimReim(pageRequest: any, providerId:number): Observable<any> {
     return http
-      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/reimbursements/${providerId}`, { params: pageRequest })
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/reimbursement/${providerId}`, { params: pageRequest })
       .pipe(map((response) => response));
   }
 
