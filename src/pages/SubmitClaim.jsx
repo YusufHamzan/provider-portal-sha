@@ -1,12 +1,8 @@
-import React from 'react';
+import React from "react";
+import ClaimsDetails from "../components/claims/ClaimsDetails";
 
 const SubmitClaim = () => {
-  return (
-    <div>
-      <h1>Submit Claim</h1>
-      <p>This is the Submit Claim page content.</p>
-    </div>
-  );
+  return <ClaimsDetails />;
 };
 
 export default SubmitClaim;

@@ -124,6 +124,16 @@ const PreAuthIPDListComponent = () => {
     { field: "admissionDate", headerName: "Admission Date" },
     { field: "dischargeDate", headerName: "Discharge Date" },
     {
+      field: 'vip',
+      headerName: 'Is Vip ?',
+      body: rowData => <span>{rowData.vip ? 'Yes' : 'No'}</span>,
+    },
+    {
+      field: 'political',
+      headerName: 'Is Political ?',
+      body: rowData => <span>{rowData.political ? 'Yes' : 'No'}</span>,
+    },
+    {
       field: "status",
       headerName: "Status",
       body: (rowData) => (

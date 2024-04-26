@@ -22,7 +22,7 @@ export class ClaimService {
 
   getClaimReim(pageRequest: any, providerId:number): Observable<any> {
     return http
-      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/reimbursement/${providerId}`, { params: pageRequest })
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/reimbursements/${providerId}`, { params: pageRequest })
       .pipe(map((response) => response));
   }
 

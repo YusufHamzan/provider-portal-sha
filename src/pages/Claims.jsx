@@ -2,6 +2,7 @@ import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { ClaimService } from "../remote-api/api/claim-services";
 import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP, REIM_STATUS_MSG_MAP } from "../utils/helper";
+import { useNavigate } from "react-router-dom";
 
 const utclongDate = (date) => {
   if (!date) return undefined;
@@ -11,7 +12,7 @@ const claimservice = new ClaimService();
 
 const Claims = () => {
   let providerId = localStorage.getItem("providerId");
-
+  const navigate = useNavigate();
   const columnsDefinations = [
     {
       field: "memberShipNo",
@@ -29,6 +30,16 @@ const Claims = () => {
     { field: "policyNumber", headerName: "Policy" },
     { field: "admissionDate", headerName: "Admission Date" },
     { field: "dischargeDate", headerName: "Discharge Date" },
+    {
+      field: 'vip',
+      headerName: 'Is Vip ?',
+      body: rowData => <span>{rowData.vip ? 'Yes' : 'No'}</span>,
+    },
+    {
+      field: 'political',
+      headerName: 'Is Political ?',
+      body: rowData => <span>{rowData.political ? 'Yes' : 'No'}</span>,
+    },
     { field: "reimbursementStatus", headerName: "Status" },
   ];
 
@@ -67,7 +78,7 @@ const Claims = () => {
   };
 
   const handleOpen = () => {
-    history.push("/claims/claims-preauth?mode=create&auth=IPD");
+    navigate("/submit-claim");
   };
 
   const configuration = {
@@ -109,7 +120,7 @@ const Claims = () => {
       // addCreateButton: roleService.checkActionPermission(PAGE_NAME, 'CREATE'),
       addCreateButton: true,
       onCreateButtonClick: handleOpen,
-      text: "Claim Reimbursement",
+      text: "Claims",
       enableGlobalSearch: false,
       // searchText: 'Search by code,name,type,contact',
       //   onSelectionChange: handleSelectedRows,
