@@ -59,7 +59,7 @@ export const Eo2v2DataGrid = (props) => {
     }
     y;
   };
-  console.log("pageData", props);
+  
   useEffect(() => {
     if (props.hasOwnProperty("selectedId")) {
       renderGrid({ totalElements: 0, content: [] });

@@ -81,6 +81,10 @@ const Claims = () => {
     navigate("/submit-claim");
   };
 
+  const openEditSection = reim => {
+    navigate(`/submit-claim/${reim.id}`);
+  };
+
   const configuration = {
     enableSelection: false,
     scrollHeight: "300px",
@@ -93,7 +97,7 @@ const Claims = () => {
         icon: "pi pi-pencil",
         // disabled: disableEnhance,
         // className: classes.categoryButton,
-        // onClick: openEditSection,
+        onClick: openEditSection,
         tooltip: "Enhance",
       },
 
@@ -119,6 +123,7 @@ const Claims = () => {
       enable: true,
       // addCreateButton: roleService.checkActionPermission(PAGE_NAME, 'CREATE'),
       addCreateButton: true,
+      createBtnText: "Claim",
       onCreateButtonClick: handleOpen,
       text: "Claims",
       enableGlobalSearch: false,

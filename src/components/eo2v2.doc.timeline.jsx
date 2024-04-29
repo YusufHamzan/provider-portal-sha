@@ -7,7 +7,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 
 export const EO2V2DocTimeline = ({ timeline = [] }) => {
   const uiTimeline = useMemo(() => {
-    return timeline.map((it, index) => {
+    return timeline?.map((it, index) => {
       return {
         ...it,
         key: index,
@@ -18,7 +18,7 @@ export const EO2V2DocTimeline = ({ timeline = [] }) => {
   }, [timeline]);
   return (
     <Timeline>
-      {uiTimeline.map(it => {
+      {uiTimeline?.map(it => {
         return (
           <TimelineItem>
             <TimelineSeparator>

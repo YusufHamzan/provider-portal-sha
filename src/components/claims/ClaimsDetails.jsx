@@ -1,12 +1,14 @@
 import { makeStyles, useTheme } from "@mui/styles";
 import { PreAuthService } from "../../remote-api/api/claim-services";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import React from "react";
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, Modal, Paper, RadioGroup, Snackbar, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, Modal, Paper, Radio, RadioGroup, Snackbar, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { Eo2v2DataGrid } from "../eo2v2.data.grid";
 import { TabPanel, TabView } from "primereact/tabview";
 import { Observable } from "rxjs";
 import ClaimsBasicComponent from "./cliam.basic.component";
+import ClaimsTimelineComponent from "./claim.timline.component";
+import ClaimsDocumentComponent from "./claim.doc.component";
 
 
 const useStyles = makeStyles(theme => ({
@@ -49,7 +51,7 @@ function useQuery1() {
 }
 
 function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <Alert elevation={6} variant="filled" {...props} />;
 }
 
 const style = {
@@ -65,8 +67,10 @@ const style = {
 };
 
 export default function ClaimsDetails(props) {
+  const providerId = localStorage.getItem("providerId")
   const query1 = useQuery1();
   const navigate = useNavigate();
+  const {id} = useParams();
   const theme = useTheme();
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -109,7 +113,7 @@ export default function ClaimsDetails(props) {
   const handleClose = event => {
     localStorage.removeItem('claimreimid');
 
-    navigate(`/claims/claims?mode=viewList`);
+    navigate(`/claims`);
     // window.location.reload();
   };
 
@@ -118,10 +122,10 @@ export default function ClaimsDetails(props) {
     if (event.target.value === 'No') {
       setSource('CI')
       setImportMode(false);
-      props.setTitle("Credit Claim")
+      // props.setTitle("Credit Claim")
     } else {
       setSource('PRE_AUTH')
-      props.setTitle("Preauth Claim")
+      // props.setTitle("Preauth Claim")
     }
   };
   const handlePreAuthId = event => {
@@ -130,7 +134,7 @@ export default function ClaimsDetails(props) {
 
   const importPreAuthData = pid => {
     if (pid) {
-      preauthService.getPreAuthById(pid).subscribe(res => {
+      preauthService.getPreAuthById(pid, providerId).subscribe(res => {
         if (res.preAuthStatus === 'WAITING_FOR_CLAIM') {
           setPreauthData(res);
           setImportMode(false);
@@ -144,7 +148,7 @@ export default function ClaimsDetails(props) {
   };
 
   const importFromPreAuth = () => {
-    navigate(`/claims/claims?mode=create&preId=` + preauthId);
+    navigate(`/submit-claim?preId=` + preauthId);
   };
 
   const isStepSkipped = step => {
@@ -201,14 +205,14 @@ export default function ClaimsDetails(props) {
           />
         );
       case 1:
-        return <>2222</>;
-        // return <ClaimsDocumentComponent preauthData={preauthData} handleClose={handleClose} handleNext={handleNext} />;
-      //   case 2:
-      //     return (
-      //       <AgentOtherDetailsComponent
-      //         handleClose={handleClose}
-      //       />
-      //     );
+        // return <>2222</>;
+        return <ClaimsDocumentComponent preauthData={preauthData} handleClose={handleClose} handleNext={handleNext} />;
+        // case 2:
+        //   return (
+        //     <AgentOtherDetailsComponent
+        //       handleClose={handleClose}
+        //     />
+        //   );
 
       default:
         return 'Unknown step';
@@ -244,7 +248,7 @@ export default function ClaimsDetails(props) {
   };
 
   const clickHandler = preAuth => {
-    Navigate(`/claims/claims?mode=create&preId=` + preAuth.id);
+    Navigate(`/submit-claim?preId=` + preAuth.id);
   };
 
   const columnsDefinations = [
@@ -285,7 +289,7 @@ export default function ClaimsDetails(props) {
 
   return (
     <div>
-      {query1.get('mode') === 'edit' ? (
+      {id ? (
         <Grid
           item
           xs={12}
@@ -309,7 +313,7 @@ export default function ClaimsDetails(props) {
           </span>
         </Grid>
       ) : null}
-      {query1.get('mode') === 'create' && importMode ? (
+      {!id && importMode ? (
         <Paper elevation="none" className={classes.prospectImportOuterContainer}>
           <Snackbar open={idErrorMsg} autoHideDuration={6000} onClose={handleIDErrorClose}>
             <Alert onClose={handleIDErrorClose} severity="error">
@@ -440,8 +444,7 @@ export default function ClaimsDetails(props) {
             </div>
           </TabPanel>
           <TabPanel leftIcon="pi pi-user mr-2" header="Claim Audit Trail">
-            {/* <ClaimsTimelineComponent /> */}
-            sdfghjk
+            <ClaimsTimelineComponent />
           </TabPanel>
         </TabView>
       )}

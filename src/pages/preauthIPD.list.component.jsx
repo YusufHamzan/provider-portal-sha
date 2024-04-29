@@ -154,46 +154,46 @@ const PreAuthIPDListComponent = () => {
         </span>
       ),
     },
-    {
-      field: "View",
-      headerName: "View Docs",
-      body: (rowData) => (
-        <Button
-          style={{
-            backgroundColor: "#f4f5fa",
-            // opacity: '0.9',
-            color: "#3c3c3c",
-            border: "1px solid",
-            borderRadius: "8px",
-            padding: "4px",
-          }}
-        >
-          View
-        </Button>
-      ),
-    },
-    {
-      field: "upload",
-      headerName: "Upload Docs",
-      body: (rowData) => (
-        <Button
-          style={{
-            backgroundColor: "#313c96",
-            color: "#f1f1f1",
-            border: "1px solid",
-            borderRadius: "8px",
-            padding: "4px",
-          }}
-          onClick={() => {
-            navigate(
-              `/submit-preauth/${rowData?.id}?addDoc=true`
-            );
-          }}
-        >
-          Upload
-        </Button>
-      ),
-    },
+    // {
+    //   field: "View",
+    //   headerName: "View Docs",
+    //   body: (rowData) => (
+    //     <Button
+    //       style={{
+    //         backgroundColor: "#f4f5fa",
+    //         // opacity: '0.9',
+    //         color: "#3c3c3c",
+    //         border: "1px solid",
+    //         borderRadius: "8px",
+    //         padding: "4px",
+    //       }}
+    //     >
+    //       View
+    //     </Button>
+    //   ),
+    // },
+    // {
+    //   field: "upload",
+    //   headerName: "Upload Docs",
+    //   body: (rowData) => (
+    //     <Button
+    //       style={{
+    //         backgroundColor: "#313c96",
+    //         color: "#f1f1f1",
+    //         border: "1px solid",
+    //         borderRadius: "8px",
+    //         padding: "4px",
+    //       }}
+    //       onClick={() => {
+    //         navigate(
+    //           `/submit-preauth/${rowData?.id}?addDoc=true`
+    //         );
+    //       }}
+    //     >
+    //       Upload
+    //     </Button>
+    //   ),
+    // },
   ];
 
   const dataSource$ = (
@@ -281,46 +281,62 @@ const PreAuthIPDListComponent = () => {
     //   }),
     // );
   };
+
   const handleOpen = () => {
     navigate("/submit-preauth");
   };
+
+  const openDocumentsSection = preAuth => {
+    navigate(
+      `/submit-preauth/${rowData?.id}?addDoc=true`
+    );
+  };
+
   const configuration = {
     enableSelection: false,
     scrollHeight: "285px",
     pageSize: 10,
-    // actionButtons: [
-    //   {
-    //     key: "update_preauth",
-    //     icon: "pi pi-pencil",
-    //     // disabled: disableEnhance,
-    //     // className: classes.categoryButton,
-    //     // onClick: openEditSection,
-    //     tooltip: "Enhance",
-    //   },
-    //   {
-    //     key: "timeleine_preauth",
-    //     icon: "pi pi-calendar-times",
-    //     // className: classes.categoryButton,
-    //     // onClick: openTimeLine,
-    //     tooltip: "Timeleine",
-    //   },
-    //   {
-    //     key: "claim_preauth",
-    //     icon: "pi pi-money-bill",
-    //     // className: classes.categoryButton,
-    //     // disabled: disableClaimReimburse,
-    //     // onClick: openReimbursement,
-    //     tooltip: "Claim",
-    //   },
-    //   {
-    //     key: "claim_preauth",
-    //     icon: "pi pi-paperclip",
-    //     // className: classes.categoryButton,
-    //     // disabled: disableAddDocs,
-    //     // onClick: openDocumentsSection,
-    //     tooltip: "Add Documents",
-    //   },
-    // ],
+    actionButtons: [
+      {
+        key: "update_preauth",
+        icon: "pi pi-pencil",
+        // disabled: disableEnhance,
+        // className: classes.categoryButton,
+        // onClick: openEditSection,
+        tooltip: "Enhance",
+      },
+      // {
+      //   key: "timeleine_preauth",
+      //   icon: "pi pi-calendar-times",
+      //   // className: classes.categoryButton,
+      //   // onClick: openTimeLine,
+      //   tooltip: "Timeleine",
+      // },
+      // {
+      //   key: "claim_preauth",
+      //   icon: "pi pi-money-bill",
+      //   // className: classes.categoryButton,
+      //   // disabled: disableClaimReimburse,
+      //   // onClick: openReimbursement,
+      //   tooltip: "Claim",
+      // },
+      // {
+      //   key: "claim_preauth",
+      //   icon: "pi pi-file-pdf",
+      //   // className: classes.categoryButton,
+      //   // disabled: disableAddDocs,
+      //   onClick: openDocumentsSection,
+      //   tooltip: "View Documents",
+      // },
+      {
+        key: "claim_preauth",
+        icon: "pi pi-paperclip",
+        // className: classes.categoryButton,
+        // disabled: disableAddDocs,
+        onClick: openDocumentsSection,
+        tooltip: "Add Documents",
+      },
+    ],
 
     header: {
       enable: true,
