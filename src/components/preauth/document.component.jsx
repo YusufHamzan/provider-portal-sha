@@ -7,6 +7,7 @@ import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Sn
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import AddIcon from "@mui/icons-material/Add";
+import PdfReview from "./component/pdf.preview";
 
 const preAuthService = new PreAuthService();
 
@@ -97,7 +98,7 @@ export default function ClaimsDocumentComponent(props) {
 
   const handleClose = () => {
     localStorage.removeItem('preauthid');
-    navigate('/claims/claims-preauth?mode=viewList');
+    navigate('/preauths');
     // window.location.reload();
   };
 

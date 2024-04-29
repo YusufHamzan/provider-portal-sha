@@ -203,7 +203,6 @@ const BenefitCostComponent = props => {
     <Grid container spacing={3} key={i} style={{ marginBottom: '20px' }}>
       <Grid item xs={4}>
         <FormControl style={{ minWidth: 220 }}>
-        {console.log(benefitsWithCost)}
           <Autocomplete
             name="benefitId"
             defaultValue={x.benefitId}

@@ -157,7 +157,6 @@ export default function ClaimsDocumentComponent(props) {
 
     if (preAuthDetails.preAuthStatus == 'ADD_DOC_REQUESTED') {
       preAuthService.addDocAfterReviw(preID).subscribe(response => {
-        console.log(response);
         history.push('/claims/claims-preauth?mode=viewList');
       });
     } else {

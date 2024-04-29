@@ -91,7 +91,6 @@ const PreAuthIPDListComponent = () => {
   let pas$ = claimservice.getDashboardCount(providerId);
   React.useEffect(() => {
     pas$.subscribe(result => {
-      console.log('result', result)
       setCount(result?.data);
     });
   }, []);
@@ -110,7 +109,7 @@ const PreAuthIPDListComponent = () => {
           }}
           onClick={() => {
             navigate(
-              `/submit-preauth/${rowData?.id}`
+              `/view-preauth/${rowData?.id}?modeViewOnly`
             );
           }}
         >
@@ -248,7 +247,6 @@ const PreAuthIPDListComponent = () => {
       map((data) => {
         // return data.content = data;
         let content = data?.data?.content;
-        console.log("dataaaa", data, content);
         let records = content.map((item) => {
           item["admissionDate"] = new Date(
             item.expectedDOA
@@ -288,7 +286,7 @@ const PreAuthIPDListComponent = () => {
 
   const openDocumentsSection = preAuth => {
     navigate(
-      `/submit-preauth/${rowData?.id}?addDoc=true`
+      `/submit-preauth/${preAuth?.id}?addDoc=true`
     );
   };
 
