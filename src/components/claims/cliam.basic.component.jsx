@@ -110,6 +110,10 @@ const useStyles = makeStyles((theme) => ({
   saveBtn: {
     marginRight: "5px",
   },
+  buttonDanger: {
+    backgroundColor: "#dc3545",
+    color: "#f1f1f1",
+  },
 }));
 
 function useQuery1() {
@@ -1216,7 +1220,7 @@ export default function ClaimsBasicComponent(props) {
                         >
                           {benefitsWithCost.length !== 1 && (
                             <Button
-                              className="mr10 p-button-danger"
+                              className={`mr10 p-button-danger ${classes.buttonDanger}`}
                               onClick={() => handleRemoveClaimCost(i)}
                               variant="contained"
                               // color="secondary"
@@ -1597,7 +1601,7 @@ export default function ClaimsBasicComponent(props) {
                           >
                             {invoiceDetailsList.length !== 1 && (
                               <Button
-                                className="mr10 p-button-danger"
+                                className={`mr10 p-button-danger ${classes.buttonDanger}`}
                                 onClick={() => handleRemoveServicedetails(i)}
                                 variant="contained"
                                 disabled={disableAllFields ? true : false}
@@ -2044,7 +2048,7 @@ export default function ClaimsBasicComponent(props) {
                     >
                       {benefitsWithCost.length !== 1 && (
                         <Button
-                          className="mr10 p-button-danger"
+                          className={`mr10 p-button-danger ${classes.buttonDanger}`}
                           onClick={() => handleRemoveClaimCost(i)}
                           variant="contained"
                           disabled={disableAllFields ? true : false}
@@ -2424,7 +2428,7 @@ export default function ClaimsBasicComponent(props) {
                       >
                         {invoiceDetailsList.length !== 1 && (
                           <Button
-                            className="mr10 p-button-danger"
+                            className={`mr10 p-button-danger ${classes.buttonDanger}`}
                             onClick={() => handleRemoveServicedetails(i)}
                             variant="contained"
                             // color="secondary"

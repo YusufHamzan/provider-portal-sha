@@ -3,15 +3,14 @@
 import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP } from "../utils/helper";
-import { Box, Button } from "@mui/material";
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import DraftsOutlinedIcon from '@mui/icons-material/DraftsOutlined';
-import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import RateReviewIcon from '@mui/icons-material/RateReview';
-import { useNavigate } from 'react-router-dom';
-
+import { Box, Button, Tooltip } from "@mui/material";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
+import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import RateReviewIcon from "@mui/icons-material/RateReview";
+import { useNavigate } from "react-router-dom";
 
 import React from "react";
 import { PreAuthService } from "../remote-api/api/claim-services/preauth-services";
@@ -62,6 +61,11 @@ const getColor = (status) => {
         background: "rgba(241, 241, 241, 0.5)",
         border: "rgba(241, 241, 241, 1)",
       };
+    case "Claim Initiated":
+      return {
+        background: "rgba(38,194, 129, 0.5)",
+        border: "rgba(38, 194, 129, 1)",
+      };
     default:
       return {
         background: "rgba(227, 61, 148, 0.5)",
@@ -90,11 +94,10 @@ const PreAuthIPDListComponent = () => {
 
   let pas$ = claimservice.getDashboardCount(providerId);
   React.useEffect(() => {
-    pas$.subscribe(result => {
+    pas$.subscribe((result) => {
       setCount(result?.data);
     });
   }, []);
-
 
   const columnsDefinations = [
     {
@@ -108,9 +111,7 @@ const PreAuthIPDListComponent = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            navigate(
-              `/view-preauth/${rowData?.id}?modeViewOnly`
-            );
+            navigate(`/view-preauth/${rowData?.id}?modeViewOnly`);
           }}
         >
           {rowData.id}
@@ -123,76 +124,41 @@ const PreAuthIPDListComponent = () => {
     { field: "admissionDate", headerName: "Admission Date" },
     { field: "dischargeDate", headerName: "Discharge Date" },
     {
-      field: 'vip',
-      headerName: 'Is Vip ?',
-      body: rowData => <span>{rowData.vip ? 'Yes' : 'No'}</span>,
+      field: "vip",
+      headerName: "Is Vip ?",
+      body: (rowData) => <span>{rowData.vip ? "Yes" : "No"}</span>,
     },
     {
-      field: 'political',
-      headerName: 'Is Political ?',
-      body: rowData => <span>{rowData.political ? 'Yes' : 'No'}</span>,
+      field: "political",
+      headerName: "Is Political ?",
+      body: (rowData) => <span>{rowData.political ? "Yes" : "No"}</span>,
     },
     {
       field: "status",
       headerName: "Status",
       body: (rowData) => (
-        <span
-          style={{
-            backgroundColor: getColor(rowData.status).background,
-            // opacity: '0.9',
-            color: getColor(rowData.status).color
-              ? getColor(rowData.status).color
-              : "#3c3c3c",
-            border: "1px solid",
-            borderColor: getColor(rowData?.status).border,
-            borderRadius: "8px",
-            padding: "4px",
-          }}
-        >
-          {rowData.status}
-        </span>
+        <Tooltip title={rowData?.status === "Document requested" && rowData?.addDocRemark}>
+        <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+          <span
+            style={{
+              backgroundColor: getColor(rowData.status).background,
+              // opacity: '0.9',
+              color: getColor(rowData.status).color
+                ? getColor(rowData.status).color
+                : "#3c3c3c",
+              fontSize: "12px",
+              fontWeight: "600",
+              borderRadius: "8px",
+              padding: "6px",
+            }}
+          >
+            {rowData.status}
+          </span>
+          {/* {rowData?.status === "Document requested" && <span style={{textTransform:"capitalize"}}>{rowData?.addDocRemark}</span>} */}
+        </div>
+        </Tooltip>
       ),
     },
-    // {
-    //   field: "View",
-    //   headerName: "View Docs",
-    //   body: (rowData) => (
-    //     <Button
-    //       style={{
-    //         backgroundColor: "#f4f5fa",
-    //         // opacity: '0.9',
-    //         color: "#3c3c3c",
-    //         border: "1px solid",
-    //         borderRadius: "8px",
-    //         padding: "4px",
-    //       }}
-    //     >
-    //       View
-    //     </Button>
-    //   ),
-    // },
-    // {
-    //   field: "upload",
-    //   headerName: "Upload Docs",
-    //   body: (rowData) => (
-    //     <Button
-    //       style={{
-    //         backgroundColor: "#313c96",
-    //         color: "#f1f1f1",
-    //         border: "1px solid",
-    //         borderRadius: "8px",
-    //         padding: "4px",
-    //       }}
-    //       onClick={() => {
-    //         navigate(
-    //           `/submit-preauth/${rowData?.id}?addDoc=true`
-    //         );
-    //       }}
-    //     >
-    //       Upload
-    //     </Button>
-    //   ),
-    // },
   ];
 
   const dataSource$ = (
@@ -202,12 +168,6 @@ const PreAuthIPDListComponent = () => {
       summary: true,
       active: true,
       preAuthType: "IPD",
-      // fromExpectedDOA: fromExpectedDOA,
-      // toExpectedDOA: fromExpectedDOA,
-      // fromExpectedDOD: fromExpectedDOD,
-      // toExpectedDOD: toExpectedDOD,
-      // fromDate: fromDate,
-      // toDate: toDate,
     }
   ) => {
     pageRequest.sort = ["rowCreatedDate dsc"];
@@ -284,10 +244,12 @@ const PreAuthIPDListComponent = () => {
     navigate("/submit-preauth");
   };
 
-  const openDocumentsSection = preAuth => {
-    navigate(
-      `/submit-preauth/${preAuth?.id}?addDoc=true`
-    );
+  const openDocumentsSection = (preAuth) => {
+    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true`);
+  };
+
+  const openEditSection = (preAuth) => {
+    navigate(`/submit-preauth/${preAuth.id}`);
   };
 
   const configuration = {
@@ -300,7 +262,7 @@ const PreAuthIPDListComponent = () => {
         icon: "pi pi-pencil",
         // disabled: disableEnhance,
         // className: classes.categoryButton,
-        // onClick: openEditSection,
+        onClick: openEditSection,
         tooltip: "Enhance",
       },
       // {

@@ -73,6 +73,10 @@ const useStyles = makeStyles((theme) => ({
   saveBtn: {
     marginRight: "5px",
   },
+  buttonDanger: {
+    backgroundColor: "#dc3545",
+    color: "#f1f1f1",
+  },
 }));
 
 function useQuery1() {
@@ -317,7 +321,7 @@ export default function ClaimsDocumentComponent(props) {
                 {query.get("mode") !== "viewOnly" &&
                   documentList.length !== 1 && (
                     <Button
-                      className="mr10 p-button-danger"
+                      className={`mr10 p-button-danger ${classes.buttonDanger}`}
                       onClick={() => handleRemoveDocumentList(i)}
                       variant="contained"
                       color="secondary"

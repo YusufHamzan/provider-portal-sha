@@ -9,7 +9,8 @@ export const PRE_AUTH_STATUS_MSG_MAP={
     "DRAFT":"Draft",
     "WAITING_FOR_CLAIM":"Waiting for Claim",
     "CANCELLED":"Cancelled",
-    "REVERTED": "Reverted"
+    "REVERTED": "Reverted",
+    "CLAIM_INITIATED":"Claim Initiated"
   }
 
   export const REIM_STATUS_MSG_MAP={

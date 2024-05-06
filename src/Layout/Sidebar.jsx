@@ -91,7 +91,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       text: 'Claims',
       icon: <CategoryIcon />,
       submenus: [
-        { text: 'Preauths', path: '/preauths', icon:<AssistantIcon/> },
+        { text: 'Pre-auth', path: '/preauths', icon:<AssistantIcon/> },
         { text: 'Claims', path: '/claims', icon: <RequestQuoteIcon /> },
       ],
     },

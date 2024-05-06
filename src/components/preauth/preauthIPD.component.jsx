@@ -98,6 +98,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#01de74",
     color: "#f1f1f1",
   },
+  buttonDanger: {
+    backgroundColor: "#dc3545",
+    color: "#f1f1f1",
+  },
 }));
 
 const benefitService = new BenefitService();
@@ -1546,10 +1550,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   >
                     {benefitsWithCost.length !== 1 && (
                       <Button
-                        className={`mr10 ${classes.buttonSecondary}`}
+                        className={`mr10 ${classes.buttonDanger}`}
                         onClick={() => handleRemoveClaimCost(i)}
                         variant="contained"
-                        color="secondary"
+                        color="error"
                         style={{ marginLeft: "5px" }}
                       >
                         <DeleteIcon />
@@ -2023,10 +2027,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   >
                     {serviceDetailsList.length !== 1 && (
                       <Button
-                        className={`mr10 ${classes.buttonSecondary}`}
+                        className={`mr10 ${classes.buttonDanger}`}
                         onClick={() => handleRemoveServicedetails(i)}
                         variant="contained"
-                        color="secondary"
+                        color="error"
                         style={{ marginLeft: "5px" }}
                       >
                         <DeleteIcon />
