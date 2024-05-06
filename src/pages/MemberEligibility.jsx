@@ -1,4 +1,12 @@
+import { Box } from "@mui/material";
+
 const MemberEligibility = () => {
-  return <h1>Member Eligibility : Coming Soon</h1>;
+  return (
+    <>
+      <Box>
+        MemberEligibility
+      </Box>
+    </>
+  );
 };
 export default MemberEligibility;

@@ -37,7 +37,7 @@ const getColor = (status) => {
       };
     case "Rejected":
       return { background: "rgba(255,50,67,0.5)", border: "rgba(255,50,67,1)" };
-    case "Document requested":
+    case "Document Requested":
       return {
         background: "rgba(165, 55, 253, 0.5)",
         border: "rgba(165, 55, 253, 1)",
@@ -65,6 +65,11 @@ const getColor = (status) => {
       return {
         background: "rgba(38,194, 129, 0.5)",
         border: "rgba(38, 194, 129, 1)",
+      };
+    case "Document Submited":
+      return {
+        background: "rgba(238,194, 29, 0.5)",
+        border: "rgba(238, 194, 29, 1)",
       };
     default:
       return {
@@ -137,7 +142,7 @@ const PreAuthIPDListComponent = () => {
       field: "status",
       headerName: "Status",
       body: (rowData) => (
-        <Tooltip title={rowData?.status === "Document requested" && rowData?.addDocRemark}>
+        <Tooltip title={rowData?.status === "Document Requested" && rowData?.addDocRemark}>
         <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
           <span
             style={{
@@ -154,7 +159,6 @@ const PreAuthIPDListComponent = () => {
           >
             {rowData.status}
           </span>
-          {/* {rowData?.status === "Document requested" && <span style={{textTransform:"capitalize"}}>{rowData?.addDocRemark}</span>} */}
         </div>
         </Tooltip>
       ),
