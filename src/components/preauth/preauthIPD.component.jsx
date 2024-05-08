@@ -698,7 +698,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       });
   };
 
-  const getMemberDetails = (id, policyNumber) => {
+  const getMemberDetails = (id) => {
     let pageRequest = {
       page: 0,
       size: 10,

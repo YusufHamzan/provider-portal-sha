@@ -91,7 +91,7 @@ export default function ClaimsDetails(props) {
     // return step === 1;
   };
 
-  console.log("query.get", query1.get("type"))
+  // console.log("query.get", query1.get("type"))
 
   React.useEffect(()=>{
     if(query1.get("type") === "credit"){

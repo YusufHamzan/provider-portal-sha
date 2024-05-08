@@ -105,12 +105,6 @@ export default function ClaimsDocumentComponent(props) {
 
   const [documentList, setDocumentList] = React.useState([{ ...docTempalte }]);
 
-  const handleClose = () => {
-    localStorage.removeItem("claimreimid");
-    navigate("/claims/claims?mode=viewList");
-    // window.location.reload();
-  };
-
   // const useObservable = (observable, setter) => {
   //     useEffect(() => {
   //         let subscription = observable.subscribe((result) => {
@@ -148,7 +142,11 @@ export default function ClaimsDocumentComponent(props) {
       reimID = id;
     }
     reimService.editReimbursement({}, reimID, "requested").subscribe((res) => {
-      navigate("/claims");
+      if(query1.get("type") === "credit"){
+      navigate("/credit-claims");
+    } else{
+        navigate("/claims");
+      }
       // window.location.reload();
     });
   };
