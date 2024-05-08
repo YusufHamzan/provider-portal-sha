@@ -6,7 +6,7 @@ import { http } from "../../http.client";
 import { Page } from "../../models/page";
 import { Reimbursement } from "../../models/reimbursement";
 
-export class ClaimService {
+export class CreditClaimService {
   readonly COMMAND_CONTEXT = `/claim-command-service/v1`;
   readonly QUERY_CONTEXT = `/claim-query-service/v1`;
 
@@ -21,17 +21,16 @@ export class ClaimService {
       .pipe(map((response: { data: any }) => response.data));
   }
 
-  getDashboardCountClaims(id:any): Observable<any> {
+  getDashboardCountCreditClaims(id:any): Observable<any> {
     return http
-      .get<any>(`${this.QUERY_CONTEXT}/provider/reimbursements/dashboard-count/${id}`)
+      .get<any>(`${this.QUERY_CONTEXT}/provider/reimbursements/credit-claim-count/${id}`)
       .pipe(map((response) => response));
   }
 
   getClaimReim(pageRequest: any, providerId: number): Observable<any> {
     return http
       .get<Page<any>>(
-        `${this.QUERY_CONTEXT}/provider/reimbursements/preauth-details/${providerId}`,
-        // provider/reimbursements/preauth-details/1233358561196470272?page=0&size=10&summary=true&active=true
+        `${this.QUERY_CONTEXT}/provider/reimbursements/credit-claim-details/${providerId}`,
         { params: pageRequest }
       )
       .pipe(map((response) => response));

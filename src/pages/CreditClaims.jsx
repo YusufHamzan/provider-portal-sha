@@ -1,5 +1,4 @@
 import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
-import { ClaimService } from "../remote-api/api/claim-services";
 import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP, REIM_STATUS_MSG_MAP } from "../utils/helper";
 import { useNavigate } from "react-router-dom";
@@ -11,14 +10,15 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import React from "react";
+import { CreditClaimService } from "../remote-api/api/claim-services/credit-claim-services";
 
 const utclongDate = (date) => {
   if (!date) return undefined;
   return date.getTime();
 };
-const claimservice = new ClaimService();
+const claimservice = new CreditClaimService();
 
-const Claims = () => {
+const CreditClaims = () => {
   let providerId = localStorage.getItem("providerId");
   const navigate = useNavigate();
   const [count, setCount] = React.useState({
@@ -59,7 +59,7 @@ const Claims = () => {
     { field: "reimbursementStatus", headerName: "Status" },
   ];
 
-  let pas$ = claimservice.getDashboardCountClaims(providerId);
+  let pas$ = claimservice.getDashboardCountCreditClaims(providerId);
   React.useEffect(() => {
     pas$.subscribe((result) => {
       setCount(result?.data);
@@ -101,11 +101,11 @@ const Claims = () => {
   };
 
   const handleOpen = () => {
-    navigate("/submit-claim?type=preauth");
+    navigate("/submit-claim?type=credit");
   };
 
   const openEditSection = (reim) => {
-    navigate(`/submit-claim/${reim.id}?type=preauth`);
+    navigate(`/submit-claim/${reim.id}?type=credit`);
   };
 
   const configuration = {
@@ -146,9 +146,9 @@ const Claims = () => {
       enable: true,
       // addCreateButton: roleService.checkActionPermission(PAGE_NAME, 'CREATE'),
       addCreateButton: true,
-      createBtnText: "Claim",
+      createBtnText: "Credit Claim",
       onCreateButtonClick: handleOpen,
-      text: "Claims",
+      text: "Credit Claims",
       enableGlobalSearch: false,
       // searchText: 'Search by code,name,type,contact',
       //   onSelectionChange: handleSelectedRows,
@@ -373,4 +373,4 @@ const Claims = () => {
   );
 };
 
-export default Claims;
+export default CreditClaims;

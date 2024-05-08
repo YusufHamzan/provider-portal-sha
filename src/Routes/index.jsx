@@ -9,6 +9,7 @@ import ProviderStatement from '../pages/ProviderStatement';
 import SubmitPreauth from '../pages/SubmitPreauth';
 import PreauthView from "../pages/PreauthView"
 import SubmitClaim from '../pages/SubmitClaim';
+import CreditClaims from '../pages/CreditClaims';
 // import TotalPayableAmount from '../pages/TotalPayableAmount';
 
 export default function AppRoutes() {
@@ -18,6 +19,7 @@ export default function AppRoutes() {
       <Route path="/membereligibility" element={<MemberEligibility />} />
       <Route path="/preauths" element={<Preauth />} />
       <Route path="/claims" element={<Claims />} />
+      <Route path="/credit-claims" element={<CreditClaims />} />
       <Route path="/paymenthistory" element={<PaymentHistory />} />
       <Route path="/providerstatement" element={<ProviderStatement />} />
       {/* <Route path="/totalpayableamount" element={<TotalPayableAmount />} /> */}

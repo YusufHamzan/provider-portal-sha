@@ -91,6 +91,18 @@ export default function ClaimsDetails(props) {
     // return step === 1;
   };
 
+  console.log("query.get", query1.get("type"))
+
+  React.useEffect(()=>{
+    if(query1.get("type") === "credit"){
+      setSource('CI')
+      setImportMode(false);
+    } else {
+      setSource('PRE_AUTH')
+      setSelectedChoice("Yes");
+    }
+  },[])
+
   React.useEffect(() => {
     let membershipNo = query1.get('membershipNo');
     if (query1.get('isPreAuth')) {
@@ -341,7 +353,7 @@ export default function ClaimsDetails(props) {
             </Grid>
           </Grid> */}
           <Grid container spacing={3} style={{ marginBottom: '20px' }}>
-            <Grid item xs={6}>
+            {/* <Grid item xs={6}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Do you want to import data from PreAuth</FormLabel>
                 <RadioGroup
@@ -355,7 +367,7 @@ export default function ClaimsDetails(props) {
                   <FormControlLabel value="No" control={<Radio />} label="No" />
                 </RadioGroup>
               </FormControl>
-            </Grid>
+            </Grid> */}
             {selectedChoice === 'Yes' && (
               <Grid item xs={4}>
                 <TextField

@@ -19,6 +19,7 @@ import AssistantIcon from '@mui/icons-material/Assistant';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import PeopleIcon from '@mui/icons-material/People';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 import Collapse from '@mui/material/Collapse';
 import { Link } from 'react-router-dom';
 import { drawerWidth } from '.';
@@ -93,6 +94,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       submenus: [
         { text: 'Pre-auth', path: '/preauths', icon:<AssistantIcon/> },
         { text: 'Claims', path: '/claims', icon: <RequestQuoteIcon /> },
+        { text: 'Credit Claims', path: '/credit-claims', icon: <CreditCardIcon /> },
       ],
     },
     { text: 'Payment History', icon: <PolicyIcon />, path: '/paymenthistory' },

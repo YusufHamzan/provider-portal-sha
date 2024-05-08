@@ -45,7 +45,7 @@ export const Eo2v2DataGrid = (props) => {
   const [items, setItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState(null);
   const [scrollHeight, setScrollHeight] = useState("");
-
+console.log("loading")
   const renderGrid = (pageData) => {
     // setTotalRecords(pageData.totalElements);
     // setItems(pageData.content);

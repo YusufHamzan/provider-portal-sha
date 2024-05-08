@@ -175,41 +175,40 @@ const PreAuthIPDListComponent = () => {
     }
   ) => {
     pageRequest.sort = ["rowCreatedDate dsc"];
+    let isSearched = false
+    console.log("bbbbbbbbbbbbb", pageRequest.searchKey)
+    let providerId = localStorage.getItem("providerId");
     if (pageRequest.searchKey) {
+      isSearched=true;
       pageRequest["memberShipNo"] = pageRequest.searchKey.toUpperCase();
       pageRequest["preAuthStatus"] = pageRequest.searchKey.toUpperCase();
       pageRequest["policyNumber"] = pageRequest.searchKey.toUpperCase();
       pageRequest["id"] = pageRequest.searchKey.toUpperCase();
       pageRequest["name"] = pageRequest.searchKey.toUpperCase();
+      pageRequest['preAuthType']= "IPD",
+      pageRequest['providerId']= providerId,
       delete pageRequest.searchKey;
     }
 
-    const querytype = {
-      // 1: {
-      //   fromExpectedDOA: utclongDate(fromExpectedDOA),
-      //   toExpectedDOA: toExpectedDOA ? utclongDate(toExpectedDOA) : utclongDate(fromExpectedDOA),
-      // },
-      // 2: {
-      //   fromExpectedDOD: utclongDate(fromExpectedDOD),
-      //   toExpectedDOD: toExpectedDOD ? utclongDate(toExpectedDOD) : utclongDate(fromExpectedDOD),
-      // },
-      // 3: {
-      //   fromDate: utclongDate(fromDate),
-      //   toDate: toDate ? utclongDate(toDate) : utclongDate(fromDate),
-      // },
-    };
-
-    const pagerequestquery = {
-      page: pageRequest.page,
-      size: pageRequest.size,
-      summary: true,
-      active: true,
-      // ...(searchType && querytype[searchType]),
-    };
-    let providerId = localStorage.getItem("providerId");
-    return claimservice.getAllPreauth(pageRequest, providerId).pipe(
+    console.log("aaaaaaaaa", pageRequest.searchKey)
+    return isSearched ? claimservice.getFilteredPreauth(pageRequest, providerId).pipe(
       map((data) => {
-        // return data.content = data;
+        let content = data?.data?.content;
+        let records = content.map((item) => {
+          item["admissionDate"] = new Date(
+            item.expectedDOA
+          ).toLocaleDateString();
+          item["dischargeDate"] = new Date(
+            item.expectedDOD
+          ).toLocaleDateString();
+          item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+          return item;
+        });
+        data.content = records;
+        return data?.data;
+      })
+    ) : claimservice.getAllPreauth(pageRequest, providerId).pipe(
+      map((data) => {
         let content = data?.data?.content;
         let records = content.map((item) => {
           item["admissionDate"] = new Date(
