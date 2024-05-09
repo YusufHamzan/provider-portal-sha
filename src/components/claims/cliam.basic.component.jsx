@@ -144,7 +144,7 @@ export default function ClaimsBasicComponent(props) {
   const [selectedInvoiceItems, setSelectedInvoiceItems] = React.useState([]);
   const [selectedInvoiceItemIndex, setSelectedInvoiceItemIndex] =
     React.useState(0);
-  const [alertMsg, setAlertMsg] = React.useState("");
+  const [alertMsg, alert] = React.useState("");
   const [openSnack, setOpenSnack] = React.useState(false);
   const [uploadSuccess, setUploadSuccess] = React.useState(false);
   const [benefitOptions, setBenefitOptions] = React.useState([]);
@@ -708,23 +708,21 @@ export default function ClaimsBasicComponent(props) {
           });
         }
       } else {
-        setAlertMsg(`No Data found for ${id}`);
+        alert(`No Data found for ${id}`);
         setOpenSnack(true);
       }
     });
   };
 
   const handleSubmit = () => {
-    console.log("enter")
     if (new Date(selectedDOA).getTime() > new Date(selectedDOD).getTime()) {
-      setAlertMsg("Admission date must be lower than Discharge date");
+      alert("Admission date must be lower than Discharge date");
       setOpenSnack(true);
-      console.log("11111")
       return;
     }
-
+    
     if (formik.values.contactNoOne.toString().length !== 10) {
-      setAlertMsg("Contact One must be of 10 digits");
+      alert("Contact One must be of 10 digits");
       setOpenSnack(true);
       console.log("2222")
       return;
@@ -733,18 +731,18 @@ export default function ClaimsBasicComponent(props) {
       formik.values.contactNoTwo !== "" &&
       formik.values.contactNoTwo.toString().length !== 10
     ) {
-      setAlertMsg("Contact Two must be of 10 digits");
+      alert("Contact Two must be of 10 digits");
       setOpenSnack(true);
       console.log("33333")
       return;
     }
-
+    
     benefitsWithCost.forEach((ele) => {
       if (ele.benefitId !== "OTHER") {
         ele.otherType = "";
       }
     });
-
+    
     benefitsWithCost.forEach((ctc) => {
       ctc.estimatedCost = Number(ctc.estimatedCost);
     });
@@ -765,50 +763,51 @@ export default function ClaimsBasicComponent(props) {
     };
     let arr = [];
     formik.values.diagnosis &&
-      formik.values.diagnosis.forEach((di) => {
-        arr.push(di.id.toString());
-      });
+    formik.values.diagnosis.forEach((di) => {
+      arr.push(di.id.toString());
+    });
     payload["diagnosis"] = arr;
-
+    
     if (props.preauthData !== "" && props.preauthData) {
       payload["source"] = "PRE_AUTH";
       payload["reimbursementSourceId"] = props.preauthData.id;
     }
-
+    
     let claimreimid = localStorage.getItem("claimreimid")
-      ? localStorage.getItem("claimreimid")
-      : "";
+    ? localStorage.getItem("claimreimid")
+    : "";
     if (query.get("mode") === "edit") {
       if (claimreimid || id) {
         if (claimreimid) {
           reimbursementService
-            .editReimbursement(payload, claimreimid, 1)
-            .subscribe((res) => {
-              props.handleNext();
-            });
+          .editReimbursement(payload, claimreimid, 1)
+          .subscribe((res) => {
+            props.handleNext();
+          });
         }
         if (id) {
           reimbursementService
-            .editReimbursement(payload, id, 1)
-            .subscribe((res) => {
-              props.handleNext();
-            });
+          .editReimbursement(payload, id, 1)
+          .subscribe((res) => {
+            props.handleNext();
+          });
         }
       }
     }
     if (query.get("mode") === "create") {
-      if (!claimreimid && !id) {
-        if (query.get("preId")) {
-          let claimreimid = `r-${query.get("preId")}`;
-          localStorage.setItem("claimreimid", claimreimid);
-        }
+      // if (!claimreimid && !id) {
+        console.log("enter", payload)
+        // if (query.get("preId")) {
+        //   let claimreimid = `r-${query.get("preId")}`;
+        //   localStorage.setItem("claimreimid", claimreimid);
+        // }
         reimbursementService
           .saveReimbursement(payload, providerId)
           .subscribe((res) => {
             localStorage.setItem("claimreimid", res.id);
             props.handleNext();
           });
-      }
+      // }
     }
   };
 

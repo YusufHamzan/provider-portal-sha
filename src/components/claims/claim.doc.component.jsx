@@ -142,7 +142,7 @@ export default function ClaimsDocumentComponent(props) {
       reimID = id;
     }
     reimService.editReimbursement({}, reimID, "requested").subscribe((res) => {
-      if (query1.get("type") === "credit") {
+      if (query.get("type") === "credit") {
         navigate("/credit-claims");
       } else {
         navigate("/claims");

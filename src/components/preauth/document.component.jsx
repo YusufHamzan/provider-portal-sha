@@ -192,16 +192,13 @@ export default function ClaimsDocumentComponent(props) {
       const formData = new FormData();
       formData.append("docType", list[index]["documentType"]);
       formData.append("filePart", file);
-console.log("0000", list, file)
       if (preID) {
         preAuthService
           .addDoc(preID, formData, providerId)
           .subscribe((response) => {
-            console.log("111",response)
             preAuthService
             .getPreAuthById(preID, providerId)
             .subscribe((response) => {
-                console.log("222",response)
                 setPreAuthDetails(response);
               });
             list[index]["documentName"] = response.id;

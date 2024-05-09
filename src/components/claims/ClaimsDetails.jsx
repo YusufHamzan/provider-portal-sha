@@ -160,7 +160,7 @@ export default function ClaimsDetails(props) {
   };
 
   const importFromPreAuth = () => {
-    navigate(`/submit-claim?preId=` + preauthId);
+    navigate(`/submit-claim?preId=${preauthId}&mode=create`);
   };
 
   const isStepSkipped = step => {
@@ -260,7 +260,7 @@ export default function ClaimsDetails(props) {
   };
 
   const clickHandler = preAuth => {
-    Navigate(`/submit-claim?preId=` + preAuth.id);
+    Navigate(`/submit-claim?preId=${preAuth.id}&mode=edit`);
   };
 
   const columnsDefinations = [
