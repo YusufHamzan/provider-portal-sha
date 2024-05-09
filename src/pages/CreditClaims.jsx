@@ -101,11 +101,11 @@ const CreditClaims = () => {
   };
 
   const handleOpen = () => {
-    navigate("/submit-claim?type=credit");
+    navigate("/submit-claim?type=credit&mode=create");
   };
 
   const openEditSection = (reim) => {
-    navigate(`/submit-claim/${reim.id}?type=credit`);
+    navigate(`/submit-claim/${reim.id}?type=credit&mode=edit`);
   };
 
   const configuration = {

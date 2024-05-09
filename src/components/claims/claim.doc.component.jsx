@@ -142,9 +142,9 @@ export default function ClaimsDocumentComponent(props) {
       reimID = id;
     }
     reimService.editReimbursement({}, reimID, "requested").subscribe((res) => {
-      if(query1.get("type") === "credit"){
-      navigate("/credit-claims");
-    } else{
+      if (query1.get("type") === "credit") {
+        navigate("/credit-claims");
+      } else {
         navigate("/claims");
       }
       // window.location.reload();
@@ -174,8 +174,13 @@ export default function ClaimsDocumentComponent(props) {
       const formData = new FormData();
       formData.append("docType", list[index]["documentType"]);
       formData.append("filePart", file);
-
+console.log("file", file, list)
       reimService.addDoc(reimID, formData, providerId).subscribe((response) => {
+        reimService
+          .getReimbursementById(reimID, providerId)
+          .subscribe((res) => {
+            setreimDetails(res);
+          });
         list[index]["documentName"] = response.id;
         list[index]["docFormat"] = response.docFormat;
         setDocumentList(list);
@@ -186,9 +191,9 @@ export default function ClaimsDocumentComponent(props) {
     reader.readAsDataURL(file);
   };
 
-  function Alert(props) {
-    return <Alert elevation={6} variant="filled" {...props} />;
-  }
+  // function Alert(props) {
+  //   return <Alert elevation={6} variant="filled" {...props} />;
+  // }
 
   const handleFileUploadMsgClose = (event, reason) => {
     setUploadSuccess(false);
@@ -226,7 +231,7 @@ export default function ClaimsDocumentComponent(props) {
               key={i}
               style={{ marginBottom: "15px" }}
             >
-              <Snackbar
+              {/* <Snackbar
                 open={uploadSuccess}
                 autoHideDuration={3000}
                 onClose={handleFileUploadMsgClose}
@@ -234,7 +239,7 @@ export default function ClaimsDocumentComponent(props) {
                 <Alert onClose={handleFileUploadMsgClose} severity="success">
                   File uploaded successfully
                 </Alert>
-              </Snackbar>
+              </Snackbar> */}
               <Grid item xs={4}>
                 <FormControl className={classes.formControl}>
                   <InputLabel
@@ -354,8 +359,13 @@ export default function ClaimsDocumentComponent(props) {
               variant="contained"
               color="primary"
               onClick={onRequestForReview}
-              // disabled={reimDetails.reimbursementStatus != 'PENDING_EVALUATION' || reimDetails.reimbursementStatus != "DRAFT"}
-              disabled={reimDetails.reimbursementStatus !== "DRAFT" && reimDetails.subStatus !== 'DOCUMENT_UPLOADED'}
+              // disabled
+              // disabled={ reimDetails.subStatus === 'DOCUMENT_UPLOADED' || reimDetails.subStatus === null}
+              disabled={
+                reimDetails.reimbursementStatus !== "DRAFT" &&
+                (reimDetails.subStatus === "DOCUMENT_UPLOADED" ||
+                  reimDetails.subStatus === null)
+              }
             >
               Request
             </Button>

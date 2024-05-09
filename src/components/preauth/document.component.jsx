@@ -19,7 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import AddIcon from "@mui/icons-material/Add";
 import PdfReview from "./component/pdf.preview";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const preAuthService = new PreAuthService();
 
@@ -192,14 +192,16 @@ export default function ClaimsDocumentComponent(props) {
       const formData = new FormData();
       formData.append("docType", list[index]["documentType"]);
       formData.append("filePart", file);
-
+console.log("0000", list, file)
       if (preID) {
         preAuthService
           .addDoc(preID, formData, providerId)
           .subscribe((response) => {
+            console.log("111",response)
             preAuthService
-              .getPreAuthById(preID, providerId)
-              .subscribe((response) => {
+            .getPreAuthById(preID, providerId)
+            .subscribe((response) => {
+                console.log("222",response)
                 setPreAuthDetails(response);
               });
             list[index]["documentName"] = response.id;
@@ -213,9 +215,9 @@ export default function ClaimsDocumentComponent(props) {
     reader.readAsDataURL(file);
   };
 
-  function Alert(props) {
-    return <Alert elevation={6} variant="filled" {...props} />;
-  }
+  // function Alert(props) {
+  //   return <Alert elevation={6} variant="filled" {...props} />;
+  // }
 
   const handleFileUploadMsgClose = (event, reason) => {
     setUploadSuccess(false);
@@ -244,21 +246,22 @@ export default function ClaimsDocumentComponent(props) {
 
   return (
     <Paper elevation="none">
-      <Box
-        sx={{
-          background: "rgba(255,49,49,0.3)",
-          borderRadius: "8px",
-          border: "1px solid rgba(255,49,49,1)",
-          padding: "6px",
-          display:"flex",
-          gap:"4px",
-          marginTop:"12px"
-        }}
-      >
-        <InfoOutlinedIcon color="red"/>
-        {preAuthDetails.preAuthStatus === "ADD_DOC_REQUESTED" &&
-          preAuthDetails?.addDocRemark}
-      </Box>
+      {preAuthDetails.preAuthStatus === "ADD_DOC_REQUESTED" && (
+        <Box
+          sx={{
+            background: "rgba(255,49,49,0.3)",
+            borderRadius: "8px",
+            border: "1px solid rgba(255,49,49,1)",
+            padding: "6px",
+            display: "flex",
+            gap: "4px",
+            marginTop: "12px",
+          }}
+        >
+          <InfoOutlinedIcon color="red" />
+          {preAuthDetails?.addDocRemark}
+        </Box>
+      )}
       <Box p={3} my={2}>
         {documentList.map((x, i) => {
           const { docFormat, documentName } = x;
@@ -273,7 +276,7 @@ export default function ClaimsDocumentComponent(props) {
               key={i}
               style={{ marginBottom: "15px" }}
             >
-              <Snackbar
+              {/* <Snackbar
                 open={uploadSuccess}
                 autoHideDuration={3000}
                 onClose={handleFileUploadMsgClose}
@@ -281,7 +284,7 @@ export default function ClaimsDocumentComponent(props) {
                 <Alert onClose={handleFileUploadMsgClose} severity="success">
                   File uploaded successfully
                 </Alert>
-              </Snackbar>
+              </Snackbar> */}
               <Grid item xs={3}>
                 <FormControl className={classes.formControl}>
                   <InputLabel

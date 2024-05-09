@@ -358,7 +358,8 @@ export default function ClaimsBasicComponent(props) {
 
   React.useEffect(() => {
     if (localStorage.getItem("claimreimid")) {
-      populateStepOne(localStorage.getItem("claimreimid"));
+      if (query.get("mode") === "edit")
+        populateStepOne(localStorage.getItem("claimreimid"));
     }
   }, [localStorage.getItem("claimreimid")]);
 
@@ -714,15 +715,18 @@ export default function ClaimsBasicComponent(props) {
   };
 
   const handleSubmit = () => {
+    console.log("enter")
     if (new Date(selectedDOA).getTime() > new Date(selectedDOD).getTime()) {
       setAlertMsg("Admission date must be lower than Discharge date");
       setOpenSnack(true);
+      console.log("11111")
       return;
     }
 
     if (formik.values.contactNoOne.toString().length !== 10) {
       setAlertMsg("Contact One must be of 10 digits");
       setOpenSnack(true);
+      console.log("2222")
       return;
     }
     if (
@@ -731,6 +735,7 @@ export default function ClaimsBasicComponent(props) {
     ) {
       setAlertMsg("Contact Two must be of 10 digits");
       setOpenSnack(true);
+      console.log("33333")
       return;
     }
 
@@ -773,35 +778,37 @@ export default function ClaimsBasicComponent(props) {
     let claimreimid = localStorage.getItem("claimreimid")
       ? localStorage.getItem("claimreimid")
       : "";
-
-    if (claimreimid || id) {
-      if (claimreimid) {
-        reimbursementService
-          .editReimbursement(payload, claimreimid, 1)
-          .subscribe((res) => {
-            props.handleNext();
-          });
-      }
-      if (id) {
-        reimbursementService
-          .editReimbursement(payload, id, 1)
-          .subscribe((res) => {
-            props.handleNext();
-          });
+    if (query.get("mode") === "edit") {
+      if (claimreimid || id) {
+        if (claimreimid) {
+          reimbursementService
+            .editReimbursement(payload, claimreimid, 1)
+            .subscribe((res) => {
+              props.handleNext();
+            });
+        }
+        if (id) {
+          reimbursementService
+            .editReimbursement(payload, id, 1)
+            .subscribe((res) => {
+              props.handleNext();
+            });
+        }
       }
     }
-
-    if (!claimreimid && !id) {
-      if (query.get("preId")) {
-        let claimreimid = `r-${query.get("preId")}`;
-        localStorage.setItem("claimreimid", claimreimid);
+    if (query.get("mode") === "create") {
+      if (!claimreimid && !id) {
+        if (query.get("preId")) {
+          let claimreimid = `r-${query.get("preId")}`;
+          localStorage.setItem("claimreimid", claimreimid);
+        }
+        reimbursementService
+          .saveReimbursement(payload, providerId)
+          .subscribe((res) => {
+            localStorage.setItem("claimreimid", res.id);
+            props.handleNext();
+          });
       }
-      reimbursementService
-        .saveReimbursement(payload, providerId)
-        .subscribe((res) => {
-          localStorage.setItem("claimreimid", res.id);
-          props.handleNext();
-        });
     }
   };
 

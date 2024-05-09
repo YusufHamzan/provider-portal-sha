@@ -244,15 +244,15 @@ const PreAuthIPDListComponent = () => {
   };
 
   const handleOpen = () => {
-    navigate("/submit-preauth");
+    navigate("/submit-preauth?mode=create");
   };
 
   const openDocumentsSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true`);
+    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true&mode=edit`);
   };
 
   const openEditSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth.id}`);
+    navigate(`/submit-preauth/${preAuth.id}?mode=edit`);
   };
 
   const configuration = {
