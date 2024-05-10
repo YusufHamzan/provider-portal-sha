@@ -22,11 +22,10 @@ const getColor = (status) => {
     case "Evaluation in progress":
       return {
         background: "rgba(255, 252, 127, 0.5)",
-        border: "rgba(255, 252, 255, 1)",
       };
     case "Requested for evaluation":
       return {
-        background: "rgba(4, 59, 92, 0.5)",
+        background: "#002776",
         border: "rgba(4, 59, 92, 1)",
         color: "#f1f1f1",
       };
@@ -39,27 +38,27 @@ const getColor = (status) => {
       return { background: "rgba(255,50,67,0.5)", border: "rgba(255,50,67,1)" };
     case "Document Requested":
       return {
-        background: "rgba(165, 55, 253, 0.5)",
-        border: "rgba(165, 55, 253, 1)",
+        background: "#ffc107",
+        color: "#212529",
       };
     case "Approved failed":
       return { background: "rgb(139, 0, 0,0.5)", border: "rgb(139, 0, 0)" };
     case "Draft":
       return {
-        background: "rgba(128,128,128,0.5)",
-        border: "rgba(128,128,128,1)",
+        background: "#17a2b8",
+        color: "#f1f1f1",
       };
     case "Waiting for Claim":
       return {
-        background: "rgba(245, 222, 179, 0.5)",
-        border: "rgba(245, 222, 179,1)",
+        background: "#ffc107",
+        color: "#212529",
       };
     case "Cancelled":
-      return { background: "rgba(149,48,55,0.5)", border: "rgba(149,48,55,1)" };
+      return { background: "#c70000", color: "#f1f1f1" };
     case "Reverted":
       return {
-        background: "rgba(241, 241, 241, 0.5)",
-        border: "rgba(241, 241, 241, 1)",
+        background: "#808000",
+        color: "#f1f1f1",
       };
     case "Claim Initiated":
       return {
@@ -68,8 +67,8 @@ const getColor = (status) => {
       };
     case "Document Submited":
       return {
-        background: "rgba(238,194, 29, 0.5)",
-        border: "rgba(238, 194, 29, 1)",
+        background: "#313c96",
+        color: "#f1f1f1",
       };
     default:
       return {
@@ -142,24 +141,35 @@ const PreAuthIPDListComponent = () => {
       field: "status",
       headerName: "Status",
       body: (rowData) => (
-        <Tooltip title={rowData?.status === "Document Requested" && rowData?.addDocRemark}>
-        <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-          <span
+        <Tooltip
+          title={
+            rowData?.status === "Document Requested" && rowData?.addDocRemark
+          }
+        >
+          <div
             style={{
-              backgroundColor: getColor(rowData.status).background,
-              // opacity: '0.9',
-              color: getColor(rowData.status).color
-                ? getColor(rowData.status).color
-                : "#3c3c3c",
-              fontSize: "12px",
-              fontWeight: "600",
-              borderRadius: "8px",
-              padding: "6px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            {rowData.status}
-          </span>
-        </div>
+            <span
+              style={{
+                backgroundColor: getColor(rowData.status).background,
+                // opacity: '0.9',
+                color: getColor(rowData.status).color
+                  ? getColor(rowData.status).color
+                  : "#3c3c3c",
+                fontSize: "12px",
+                fontWeight: "600",
+                borderRadius: "8px",
+                padding: "6px",
+              }}
+            >
+              {rowData.status}
+            </span>
+          </div>
         </Tooltip>
       ),
     },
@@ -174,56 +184,56 @@ const PreAuthIPDListComponent = () => {
       preAuthType: "IPD",
     }
   ) => {
-    pageRequest.sort = ["rowCreatedDate dsc"];
-    let isSearched = false
-    console.log("bbbbbbbbbbbbb", pageRequest.searchKey)
+    // pageRequest.sort = ["rowCreatedDate dsc"];
+    let isSearched = false;
     let providerId = localStorage.getItem("providerId");
     if (pageRequest.searchKey) {
-      isSearched=true;
+      isSearched = true;
       pageRequest["memberShipNo"] = pageRequest.searchKey.toUpperCase();
       pageRequest["preAuthStatus"] = pageRequest.searchKey.toUpperCase();
       pageRequest["policyNumber"] = pageRequest.searchKey.toUpperCase();
       pageRequest["id"] = pageRequest.searchKey.toUpperCase();
-      pageRequest["name"] = pageRequest.searchKey.toUpperCase();
-      pageRequest['preAuthType']= "IPD",
-      pageRequest['providerId']= providerId,
-      delete pageRequest.searchKey;
+      pageRequest["memberName"] = pageRequest.searchKey.toUpperCase();
+      (pageRequest["preAuthType"] = "IPD"),
+        (pageRequest["providerId"] = providerId),
+        delete pageRequest.searchKey;
     }
 
-    console.log("aaaaaaaaa", pageRequest.searchKey)
-    return isSearched ? claimservice.getFilteredPreauth(pageRequest, providerId).pipe(
-      map((data) => {
-        let content = data?.data?.content;
-        let records = content.map((item) => {
-          item["admissionDate"] = new Date(
-            item.expectedDOA
-          ).toLocaleDateString();
-          item["dischargeDate"] = new Date(
-            item.expectedDOD
-          ).toLocaleDateString();
-          item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
-          return item;
-        });
-        data.content = records;
-        return data?.data;
-      })
-    ) : claimservice.getAllPreauth(pageRequest, providerId).pipe(
-      map((data) => {
-        let content = data?.data?.content;
-        let records = content.map((item) => {
-          item["admissionDate"] = new Date(
-            item.expectedDOA
-          ).toLocaleDateString();
-          item["dischargeDate"] = new Date(
-            item.expectedDOD
-          ).toLocaleDateString();
-          item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
-          return item;
-        });
-        data.content = records;
-        return data?.data;
-      })
-    );
+    return isSearched
+      ? claimservice.getFilteredPreauth(pageRequest, providerId).pipe(
+          map((data) => {
+            let content = data?.data?.content;
+            let records = content.map((item) => {
+              item["admissionDate"] = new Date(
+                item.expectedDOA
+              ).toLocaleDateString();
+              item["dischargeDate"] = new Date(
+                item.expectedDOD
+              ).toLocaleDateString();
+              item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+              return item;
+            });
+            data.content = records;
+            return data?.data;
+          })
+        )
+      : claimservice.getAllPreauth(pageRequest, providerId).pipe(
+          map((data) => {
+            let content = data?.data?.content;
+            let records = content.map((item) => {
+              item["admissionDate"] = new Date(
+                item.expectedDOA
+              ).toLocaleDateString();
+              item["dischargeDate"] = new Date(
+                item.expectedDOD
+              ).toLocaleDateString();
+              item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+              return item;
+            });
+            data.content = records;
+            return data?.data;
+          })
+        );
     // return preAuthService.getAllPreAuths(searchType ? pagerequestquery : pageRequest).pipe(
     //   tap(data => {
     //     // props.setCount(data?.data?.totalElements);

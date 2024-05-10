@@ -36,6 +36,15 @@ export class ClaimService {
       )
       .pipe(map((response) => response));
   }
+  
+  getFilteredClaimReim(pageRequest: any, providerId: number): Observable<any> {
+    return http
+      .get<Page<any>>(
+        `${this.QUERY_CONTEXT}/provider/reimbursements/preauth-claim-filter/reimbursement`,
+        { params: pageRequest }
+      )
+      .pipe(map((response) => response));
+  }
 
   changeStatus(
     id: any,

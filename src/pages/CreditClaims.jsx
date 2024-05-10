@@ -76,28 +76,61 @@ const CreditClaims = () => {
       // claimSource: "PRE_AUTH",
     }
   ) => {
+    let isSearched = false;
+    let providerId = localStorage.getItem("providerId");
     // pageRequest.sort = ["rowCreatedDate dsc"];
     // pageRequest.claimType = ['REIMBURSEMENT_CLAIM'];
-    return claimservice.getClaimReim(pageRequest, providerId).pipe(
-      map((data) => {
-        let content = data?.data?.content;
-        let records = content.map((item) => {
-          item["admissionDate"] = new Date(
-            item.expectedDOA
-          ).toLocaleDateString();
-          item["dischargeDate"] = new Date(
-            item.expectedDOD
-          ).toLocaleDateString();
-          item["stat"] = item.reimbursementStatus
-            ? REIM_STATUS_MSG_MAP[item.reimbursementStatus]
-            : null;
+    if (pageRequest.searchKey) {
+      isSearched = true;
+      pageRequest["memberShipNo"] = pageRequest.searchKey.toUpperCase();
+      pageRequest["claimStatus"] = pageRequest.searchKey.toUpperCase();
+      pageRequest["policyNo"] = pageRequest.searchKey.toUpperCase();
+      pageRequest["id"] = pageRequest.searchKey.toUpperCase();
+      pageRequest["memberName"] = pageRequest.searchKey.toUpperCase();
+      (pageRequest["providerId"] = providerId), delete pageRequest.searchKey;
+    }
 
-          return item;
-        });
-        data.content = records;
-        return data?.data;
-      })
-    );
+    return isSearched
+      ? claimservice.getFilteredClaimReim(pageRequest, providerId).pipe(
+          map((data) => {
+            let content = data?.data?.content;
+            let records = content.map((item) => {
+              item["admissionDate"] = new Date(
+                item.expectedDOA
+              ).toLocaleDateString();
+              item["dischargeDate"] = new Date(
+                item.expectedDOD
+              ).toLocaleDateString();
+              item["stat"] = item.reimbursementStatus
+                ? REIM_STATUS_MSG_MAP[item.reimbursementStatus]
+                : null;
+
+              return item;
+            });
+            data.content = records;
+            return data?.data;
+          })
+        )
+      : claimservice.getClaimReim(pageRequest, providerId).pipe(
+          map((data) => {
+            let content = data?.data?.content;
+            let records = content.map((item) => {
+              item["admissionDate"] = new Date(
+                item.expectedDOA
+              ).toLocaleDateString();
+              item["dischargeDate"] = new Date(
+                item.expectedDOD
+              ).toLocaleDateString();
+              item["stat"] = item.reimbursementStatus
+                ? REIM_STATUS_MSG_MAP[item.reimbursementStatus]
+                : null;
+
+              return item;
+            });
+            data.content = records;
+            return data?.data;
+          })
+        );
   };
 
   const handleOpen = () => {
@@ -149,8 +182,8 @@ const CreditClaims = () => {
       createBtnText: "Credit Claim",
       onCreateButtonClick: handleOpen,
       text: "Credit Claims",
-      enableGlobalSearch: false,
-      // searchText: 'Search by code,name,type,contact',
+      enableGlobalSearch: true,
+      searchText: "Search by Membership Number, Name, Policy Number and Status",
       //   onSelectionChange: handleSelectedRows,
       //   selectionMenus: [{ icon: "", text: "Blacklist", disabled: selectionBlacklistMenuDisabled, onClick: openBlacklist }],
       //   selectionMenuButtonText: "Action"
