@@ -231,7 +231,7 @@ console.log("file", file, list)
               key={i}
               style={{ marginBottom: "15px" }}
             >
-              {/* <Snackbar
+              <Snackbar
                 open={uploadSuccess}
                 autoHideDuration={3000}
                 onClose={handleFileUploadMsgClose}
@@ -239,7 +239,7 @@ console.log("file", file, list)
                 <Alert onClose={handleFileUploadMsgClose} severity="success">
                   File uploaded successfully
                 </Alert>
-              </Snackbar> */}
+              </Snackbar>
               <Grid item xs={4}>
                 <FormControl className={classes.formControl}>
                   <InputLabel

@@ -71,7 +71,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
-    backgroundColor: '#303c95',
+    backgroundColor: '#002776',
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   }));
@@ -92,7 +92,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       text: 'Claims',
       icon: <CategoryIcon />,
       submenus: [
-        { text: 'Pre-auth', path: '/preauths', icon:<AssistantIcon/> },
+        { text: 'Pre-Auth', path: '/preauths', icon:<AssistantIcon/> },
         { text: 'Claims', path: '/claims', icon: <RequestQuoteIcon /> },
         { text: 'Credit Claims', path: '/credit-claims', icon: <CreditCardIcon /> },
       ],
@@ -109,7 +109,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
   };
 
   return (
-    <Drawer variant="permanent" open={open} PaperProps={{ sx: { backgroundColor: '#303c95' } }}>
+    <Drawer variant="permanent" open={open} PaperProps={{ sx: { backgroundColor: '#002776' } }}>
       <DrawerHeader>
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === 'rtl' ? <ChevronRightIcon /> : <i className="pi pi-angle-double-left" style={{ marginRight: '0.5rem', opacity: open ? 1 : 0, color: 'white' }}></i>}

@@ -199,6 +199,12 @@ const PreAuthIPDListComponent = () => {
         delete pageRequest.searchKey;
     }
 
+    if(!isSearched){
+      pageRequest["preAuthType"] = "IPD";
+      pageRequest["summary"] = true;
+      pageRequest["active"] = true;
+    }
+
     return isSearched
       ? claimservice.getFilteredPreauth(pageRequest, providerId).pipe(
           map((data) => {

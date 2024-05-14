@@ -46,7 +46,7 @@ const Header = ({ open, handleDrawerOpen }) => {
             ...(open && { display: "none" }),
           }}
         >
-          <MenuIcon sx={{ color: "#313c96" }} />
+          <MenuIcon sx={{ color: "#002776" }} />
         </IconButton>
         {/* <Typography variant="h6" noWrap component="div" >
           EOxegen

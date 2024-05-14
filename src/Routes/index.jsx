@@ -22,7 +22,6 @@ export default function AppRoutes() {
       <Route path="/credit-claims" element={<CreditClaims />} />
       <Route path="/paymenthistory" element={<PaymentHistory />} />
       <Route path="/providerstatement" element={<ProviderStatement />} />
-      {/* <Route path="/totalpayableamount" element={<TotalPayableAmount />} /> */}
       <Route path="/submit-claim" element={<SubmitClaim />} />
       <Route path="/submit-claim/:id" element={<SubmitClaim />} />
       <Route path="/submit-preauth" element={<SubmitPreauth />} /> 

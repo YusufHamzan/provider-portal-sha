@@ -12,6 +12,7 @@ import { PreAuthService } from "../../remote-api/api/claim-services/preauth-serv
 import { MemberService } from "../../remote-api/api/member-services";
 import { BehaviorSubject, forkJoin } from "rxjs";
 import {
+  Alert,
   Autocomplete,
   Box,
   Checkbox,
@@ -206,10 +207,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       handleSubmit();
     },
   });
-
-  function Alert(props) {
-    return <Alert elevation={6} variant="filled" {...props} />;
-  }
 
   const allSelected =
     diagnosisList &&
@@ -1085,7 +1082,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             onClose={handleMsgErrorClose}
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
           >
-            <Alert onClose={handleMsgErrorClose} severity="error">
+            <Alert onClose={handleMsgErrorClose} variant="filled" severity="error">
               {alertMsg}
             </Alert>
           </Snackbar>

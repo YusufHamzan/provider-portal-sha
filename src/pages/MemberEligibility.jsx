@@ -15,8 +15,11 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Alert,
+  Avatar,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -25,6 +28,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -93,9 +97,9 @@ export default function MemberEligibility() {
   const query = useQuery();
   const theme = useTheme();
   const [enteredMembershipNo, setEnteredMembershipNo] = React.useState();
-  const [showBalanceDetails, setShowBalanceDetails] = React.useState(false);
-  const [expanded, setExpanded] = React.useState(true);
-  const [tableData, setTableData] = React.useState();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [alertMsg, setAlertMsg] = React.useState();
+  const [openSnack, setOpenSnack] = React.useState(false);
   const [claimTableData, setClaimTableData] = React.useState();
   const [memberData, setMemberData] = React.useState();
   const [benefitData, setBenefitData] = React.useState();
@@ -218,13 +222,27 @@ export default function MemberEligibility() {
         setAlertMsg(`No Data found for ${id}`);
         setOpenSnack(true);
       }
+      setIsLoading(false);
     });
   };
 
-  console.log("memberData", memberData);
+  console.log("memberData", isLoading);
 
   return (
     <>
+      <Snackbar
+        open={openSnack}
+        autoHideDuration={3000}
+        onClose={() => {
+          setOpenSnack(false);
+          setAlertMsg("");
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert variant="filled" severity="error" icon="">
+          {alertMsg}
+        </Alert>
+      </Snackbar>
       <Paper elevation="3" style={{ padding: 15 }}>
         <Grid container spacing={3} style={{ marginBottom: "20px" }}>
           <Grid
@@ -261,11 +279,20 @@ export default function MemberEligibility() {
               <Button
                 className={`responsiveButton ${classes.buttonPrimary}`}
                 variant="contained"
-                onClick={() => populateMemberFromSearch("number")}
+                onClick={() => {
+                  setIsLoading(true);
+                  populateMemberFromSearch("number");
+                }}
                 type="button"
                 style={{ borderRadius: "10px", background: "#313c96" }}
               >
-                Search
+                {isLoading ? (
+                  <CircularProgress
+                    sx={{ color: "white", width: "20px", height: "20px" }}
+                  />
+                ) : (
+                  "Search"
+                )}
               </Button>
             </Grid>
           )}
@@ -284,13 +311,26 @@ export default function MemberEligibility() {
 
               <Button
                 variant="contained"
-                onClick={() => populateMemberFromSearch("name")}
+                onClick={() => {
+                  setIsLoading(true);
+                  populateMemberFromSearch("name");
+                }}
                 className={classes.buttonPrimary}
                 color="primary"
                 type="button"
-                style={{ marginLeft: "3%", borderRadius: "10px", background: "#313c96" }}
+                style={{
+                  marginLeft: "3%",
+                  borderRadius: "10px",
+                  background: "#313c96",
+                }}
               >
-                Search
+                {isLoading ? (
+                  <CircularProgress
+                    sx={{ color: "white", width: "20px", height: "20px" }}
+                  />
+                ) : (
+                  "Search"
+                )}
               </Button>
 
               {/* Dialog component goes here */}
@@ -353,8 +393,15 @@ export default function MemberEligibility() {
             </Grid>
           )}
         </Grid>
-        {memberData && (
+      </Paper>
+      {memberData && (
+        <Paper elevation="3" style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
+            <Grid xs={12} sm={12} md={12}>
+              <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
+                <Avatar sizes="400"></Avatar>
+              </Box>
+            </Grid>
             <Grid xs={12} sm={6} md={4}>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>corporate name</Typography>
@@ -462,8 +509,8 @@ export default function MemberEligibility() {
               </Box>
             </Grid>
           </Grid>
-        )}
-      </Paper>
+        </Paper>
+      )}
 
       {/* {showServices && (
         <Paper elevation="none" style={{ padding: "15px 30px", marginTop: '10px' }}>

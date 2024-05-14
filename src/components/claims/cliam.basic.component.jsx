@@ -12,6 +12,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import {
+  Alert,
   Autocomplete,
   Box,
   Button,
@@ -28,6 +29,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -884,10 +886,6 @@ export default function ClaimsBasicComponent(props) {
     setSelectedInvoiceItemIndex(0);
   };
 
-  function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
-
   const handleChange = (event) => {
     setSearchType(event.target.value);
   };
@@ -936,6 +934,11 @@ export default function ClaimsBasicComponent(props) {
       }
     }
   }, [formik.values, diagnosisList]);
+
+  const handleMsgErrorClose = () => {
+    setOpenSnack(false);
+    alert("");
+  };
 
   return (
     <Paper elevation="none">
@@ -1665,6 +1668,17 @@ export default function ClaimsBasicComponent(props) {
             </Grid>
           </Grid>
         ) : (
+          <>
+          <Snackbar
+            open={openSnack}
+            autoHideDuration={4000}
+            onClose={handleMsgErrorClose}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            <Alert onClose={handleMsgErrorClose} variant="filled" severity="error">
+              {alertMsg}
+            </Alert>
+          </Snackbar>
           <div>
             <form onSubmit={formik.handleSubmit}>
               <Grid container spacing={3} style={{ marginBottom: "20px" }}>
@@ -2489,6 +2503,7 @@ export default function ClaimsBasicComponent(props) {
               )}
             </form>
           </div>
+          </>
         )}
       </Box>
     </Paper>
