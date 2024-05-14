@@ -193,7 +193,7 @@ const PreAuthIPDListComponent = () => {
       pageRequest["preAuthStatus"] = pageRequest.searchKey.toUpperCase();
       pageRequest["policyNumber"] = pageRequest.searchKey.toUpperCase();
       pageRequest["id"] = pageRequest.searchKey.toUpperCase();
-      pageRequest["name"] = pageRequest.searchKey.toUpperCase();
+      pageRequest["memberName"] = pageRequest.searchKey.toUpperCase();
       (pageRequest["preAuthType"] = "IPD"),
         (pageRequest["providerId"] = providerId),
         delete pageRequest.searchKey;
