@@ -26,7 +26,7 @@ export default function AppRoutes() {
       <Route path="/submit-claim/:id" element={<SubmitClaim />} />
       <Route path="/submit-preauth" element={<SubmitPreauth />} /> 
       <Route path="/submit-preauth/:id" element={<SubmitPreauth />} /> 
-      <Route path="/view-preauth/:id" element={<PreauthView />} /> 
+      <Route path="/view/:id" element={<PreauthView />} /> 
 
 
       {/* <Route path="/claims/preauths" element={<Claims />} />

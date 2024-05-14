@@ -115,7 +115,7 @@ const PreAuthIPDListComponent = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            navigate(`/view-preauth/${rowData?.id}?modeViewOnly`);
+            navigate(`/view/${rowData?.id}?mode=viewOnly&type=preauth`);
           }}
         >
           {rowData.id}
@@ -193,7 +193,7 @@ const PreAuthIPDListComponent = () => {
       pageRequest["preAuthStatus"] = pageRequest.searchKey.toUpperCase();
       pageRequest["policyNumber"] = pageRequest.searchKey.toUpperCase();
       pageRequest["id"] = pageRequest.searchKey.toUpperCase();
-      pageRequest["memberName"] = pageRequest.searchKey.toUpperCase();
+      pageRequest["name"] = pageRequest.searchKey.toUpperCase();
       (pageRequest["preAuthType"] = "IPD"),
         (pageRequest["providerId"] = providerId),
         delete pageRequest.searchKey;

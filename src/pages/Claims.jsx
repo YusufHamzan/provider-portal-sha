@@ -36,7 +36,10 @@ const Claims = () => {
       body: (rowData) => (
         <span
           style={{ cursor: "pointer", textDecoration: "underline" }}
-          onClick={() => handleMembershipClick(rowData, "membershipNo")}
+          onClick={() => {
+            navigate(`/view/${rowData?.id}?mode=viewOnly&type=claim`);
+          }}
+          // onClick={() => handleMembershipClick(rowData, "membershipNo")}
         >
           {rowData.memberShipNo}
         </span>

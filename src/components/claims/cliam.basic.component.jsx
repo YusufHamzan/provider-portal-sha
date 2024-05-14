@@ -726,7 +726,6 @@ export default function ClaimsBasicComponent(props) {
     if (formik.values.contactNoOne.toString().length !== 10) {
       alert("Contact One must be of 10 digits");
       setOpenSnack(true);
-      console.log("2222")
       return;
     }
     if (
@@ -735,7 +734,6 @@ export default function ClaimsBasicComponent(props) {
     ) {
       alert("Contact Two must be of 10 digits");
       setOpenSnack(true);
-      console.log("33333")
       return;
     }
     
@@ -798,7 +796,6 @@ export default function ClaimsBasicComponent(props) {
     }
     if (query.get("mode") === "create") {
       // if (!claimreimid && !id) {
-        console.log("enter", payload)
         // if (query.get("preId")) {
         //   let claimreimid = `r-${query.get("preId")}`;
         //   localStorage.setItem("claimreimid", claimreimid);

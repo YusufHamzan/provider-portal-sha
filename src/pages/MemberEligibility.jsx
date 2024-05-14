@@ -226,8 +226,6 @@ export default function MemberEligibility() {
     });
   };
 
-  console.log("memberData", isLoading);
-
   return (
     <>
       <Snackbar

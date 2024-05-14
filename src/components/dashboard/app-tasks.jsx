@@ -62,22 +62,18 @@ function TaskItem({ task, checked, onChange }) {
 
   const handleMarkComplete = () => {
     handleCloseMenu();
-    console.info('MARK COMPLETE', task.id);
   };
 
   const handleShare = () => {
     handleCloseMenu();
-    console.info('SHARE', task.id);
   };
 
   const handleEdit = () => {
     handleCloseMenu();
-    console.info('EDIT', task.id);
   };
 
   const handleDelete = () => {
     handleCloseMenu();
-    console.info('DELETE', task.id);
   };
 
   return (

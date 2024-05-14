@@ -174,7 +174,7 @@ export default function ClaimsDocumentComponent(props) {
       const formData = new FormData();
       formData.append("docType", list[index]["documentType"]);
       formData.append("filePart", file);
-console.log("file", file, list)
+
       reimService.addDoc(reimID, formData, providerId).subscribe((response) => {
         reimService
           .getReimbursementById(reimID, providerId)
