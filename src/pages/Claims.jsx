@@ -11,6 +11,7 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import React from "react";
+import { PoliticalDot, VIPDot } from "../components/vip.dot";
 
 const utclongDate = (date) => {
   if (!date) return undefined;
@@ -31,8 +32,8 @@ const Claims = () => {
   });
   const columnsDefinations = [
     {
-      field: "memberShipNo",
-      headerName: "Membership No.",
+      field: "id",
+      headerName: "Claim No.",
       body: (rowData) => (
         <span
           style={{ cursor: "pointer", textDecoration: "underline" }}
@@ -41,24 +42,39 @@ const Claims = () => {
           }}
           // onClick={() => handleMembershipClick(rowData, "membershipNo")}
         >
-          {rowData.memberShipNo}
+          {rowData.id}
         </span>
       ),
     },
-    { field: "memberName", headerName: "Name" },
+    { field: "memberShipNo", headerName: "Membership No." },
+    {
+      field: "memberName",
+      headerName: "Name",
+      body: (rowData) => (
+        <span>
+          {rowData.memberName}
+          {rowData.vip && (
+            <VIPDot/>
+          )}
+          {rowData.political && (
+            <PoliticalDot/>
+          )}
+        </span>
+      ),
+    },
     { field: "policyNumber", headerName: "Policy" },
     { field: "admissionDate", headerName: "Admission Date" },
     { field: "dischargeDate", headerName: "Discharge Date" },
-    {
-      field: "vip",
-      headerName: "Is Vip ?",
-      body: (rowData) => <span>{rowData.vip ? "Yes" : "No"}</span>,
-    },
-    {
-      field: "political",
-      headerName: "Is Political ?",
-      body: (rowData) => <span>{rowData.political ? "Yes" : "No"}</span>,
-    },
+    // {
+    //   field: "vip",
+    //   headerName: "Is Vip ?",
+    //   body: (rowData) => <span>{rowData.vip ? "Yes" : "No"}</span>,
+    // },
+    // {
+    //   field: "political",
+    //   headerName: "Is Political ?",
+    //   body: (rowData) => <span>{rowData.political ? "Yes" : "No"}</span>,
+    // },
     { field: "reimbursementStatus", headerName: "Status" },
   ];
 

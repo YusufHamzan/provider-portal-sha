@@ -1,9 +1,9 @@
 // https://github.com/YusufHamzan/provider-portal.git
 
-import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
+import { Eo2v2DataGrid } from "../eo2v2.data.grid";
 import { map } from "rxjs/operators";
-import { PRE_AUTH_STATUS_MSG_MAP } from "../utils/helper";
-import { Box, Button, Tooltip } from "@mui/material";
+import { PRE_AUTH_STATUS_MSG_MAP } from "../../utils/helper";
+import { Box, Button, Tooltip, styled } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
@@ -11,9 +11,10 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import { useNavigate } from "react-router-dom";
-
-import React from "react";
-import { PreAuthService } from "../remote-api/api/claim-services/preauth-services";
+import React, { useEffect, useState } from "react";
+import { PreAuthService } from "../../remote-api/api/claim-services/preauth-services";
+import { BenefitService } from "../../remote-api/api/master-services/benefit-service";
+import { PoliticalDot, VIPDot } from "../vip.dot";
 
 const getColor = (status) => {
   switch (status) {
@@ -83,10 +84,12 @@ const utclongDate = (date) => {
   return date.getTime();
 };
 const claimservice = new PreAuthService();
+const benefitService = new BenefitService();
 
 const PreAuthIPDListComponent = () => {
   const navigate = useNavigate();
   const providerId = localStorage.getItem("providerId");
+  const [benefits, setBenefits] = useState();
   const [count, setCount] = React.useState({
     approved: 0,
     cancelled: 0,
@@ -97,16 +100,31 @@ const PreAuthIPDListComponent = () => {
   });
 
   let pas$ = claimservice.getDashboardCount(providerId);
+  let bts$ = benefitService.getAllBenefit({ page: 0, size: 100000 });
+
+  // const useObservable = (observable, setter) => {
+  useEffect(() => {
+    let subscription = benefitService
+      .getAllBenefit({ page: 0, size: 100000 })
+      .subscribe((result) => {
+        setBenefits(result.content);
+      });
+    return () => subscription.unsubscribe();
+  }, []);
+  // };
+
+  // useObservable(bts$, setBenefits);
+
   React.useEffect(() => {
     pas$.subscribe((result) => {
       setCount(result?.data);
     });
   }, []);
-
+  // console.log("benefits", benefits);
   const columnsDefinations = [
     {
       field: "id",
-      headerName: "Claim No.",
+      headerName: "Pre-Auth No.",
       body: (rowData) => (
         <span
           style={{
@@ -123,20 +141,54 @@ const PreAuthIPDListComponent = () => {
       ),
     },
     { field: "memberShipNo", headerName: "Membership No." },
-    { field: "memberName", headerName: "Name" },
+    {
+      field: "memberName",
+      headerName: "Name",
+      body: (rowData) => (
+        <span>
+          {rowData.memberName}
+          {rowData.vip && (
+            <VIPDot/>
+          )}
+          {rowData.political && (
+            <PoliticalDot/>
+          )}
+        </span>
+      ),
+    },
     { field: "policyNumber", headerName: "Policy No." },
     { field: "admissionDate", headerName: "Admission Date" },
     { field: "dischargeDate", headerName: "Discharge Date" },
     {
-      field: "vip",
-      headerName: "Is Vip ?",
-      body: (rowData) => <span>{rowData.vip ? "Yes" : "No"}</span>,
+      field: "estimatedCose",
+      headerName: "Estimated Cost",
+      body: (rowData) => (
+        <span>
+          {rowData.benefitsWithCost?.map((el) => {
+            let name = benefits.find((item) => item.id === el?.benefitId).name;
+            console.log(name);
+            return (
+              <>
+                <div>
+                  <span>{name}</span>&nbsp; :&nbsp;
+                  <span>{el?.estimatedCost}</span>
+                </div>
+              </>
+            );
+          })}
+        </span>
+      ),
     },
-    {
-      field: "political",
-      headerName: "Is Political ?",
-      body: (rowData) => <span>{rowData.political ? "Yes" : "No"}</span>,
-    },
+    // {
+    //   field: "vip",
+    //   headerName: "Is Vip ?",
+    //   body: (rowData) => <span>{rowData.vip ? "Yes" : "No"}</span>,
+    // },
+    // {
+    //   field: "political",
+    //   headerName: "Is Political ?",
+    //   body: (rowData) => <span>{rowData.political ? "Yes" : "No"}</span>,
+    // },
     {
       field: "status",
       headerName: "Status",
@@ -199,7 +251,7 @@ const PreAuthIPDListComponent = () => {
         delete pageRequest.searchKey;
     }
 
-    if(!isSearched){
+    if (!isSearched) {
       pageRequest["preAuthType"] = "IPD";
       pageRequest["summary"] = true;
       pageRequest["active"] = true;

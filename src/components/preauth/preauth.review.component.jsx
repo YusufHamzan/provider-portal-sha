@@ -1612,7 +1612,9 @@ export default function PreAuthReview(props) {
     <Box>
       <Box display={"flex"} justifyContent={"space-between"}>
         <Box item xs={6} style={{ marginLeft: "10px" }}>
-          <span style={{ color: "#313c96", fontWeight: "bold" }}>Preauth</span>:{" "}
+          <span style={{ color: "#313c96", fontWeight: "bold" }}>{type === "preauth" && "Preauth: " }</span>
+          <span style={{ color: "#313c96", fontWeight: "bold" }}>{type === "claim" && "Claim: " }</span>
+          <span style={{ color: "#313c96", fontWeight: "bold" }}>{type === "creditClaim" && "Credit Claim: " }</span>
           {id}
         </Box>
         <Box item xs={6} style={{ marginRight: "10px" }}>
@@ -1647,7 +1649,7 @@ export default function PreAuthReview(props) {
             <PreauthClaimDetails />
           </TabPanel>
         ) : (
-          <TabPanel leftIcon="pi pi-money-bill mr-2" header="Invoice Details">
+          <TabPanel leftIcon="pi pi-money-bill mr-2" header="Claim Details">
             <ClaimDetails />
           </TabPanel>
         )}

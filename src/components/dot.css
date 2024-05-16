@@ -1,0 +1,32 @@
+.blink_vip {
+	animation: blinker 2s linear infinite;
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	border: 1px solid rgba(122, 222, 16, 1);
+	background-color: rgba(122, 222, 16, 1);
+	border-radius: 100%;
+    margin-left: 5px;
+    box-shadow: 0px 0px 2px 1px green;
+  }
+  @keyframes blinker {
+	50% {
+	  opacity: 0.6;
+	}
+  }
+.blink_political {
+	animation: blinker 2s linear infinite;
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	border: 1px solid rgba(49, 60, 150,1);
+	background-color: rgba(49, 60, 150,1);
+	border-radius: 100%;
+    margin-left: 5px;
+    box-shadow: 0px 0px 2px 1px blue;
+  }
+  @keyframes blinker {
+	50% {
+	  opacity: 0.6;
+	}
+  }

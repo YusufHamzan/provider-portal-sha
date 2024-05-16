@@ -83,7 +83,7 @@ const ClaimsPreAuthDetails = () => {
     if (activeStep === 0) {
       // setActiveStep(1);
     } else if (activeStep === 1) {
-      navigate(`/claims/claims-preauth?mode=viewList`);
+      navigate(`/preauths`);
       // window.location.reload();
     }
 

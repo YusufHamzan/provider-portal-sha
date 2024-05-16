@@ -11,6 +11,7 @@ import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalance
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import React from "react";
 import { CreditClaimService } from "../remote-api/api/claim-services/credit-claim-services";
+import { PoliticalDot, VIPDot } from "../components/vip.dot";
 
 const utclongDate = (date) => {
   if (!date) return undefined;
@@ -31,8 +32,8 @@ const CreditClaims = () => {
   });
   const columnsDefinations = [
     {
-      field: "memberShipNo",
-      headerName: "Membership No.",
+      field: "id",
+      headerName: "Claim No.",
       body: (rowData) => (
         <span
           style={{ cursor: "pointer", textDecoration: "underline" }}
@@ -41,11 +42,26 @@ const CreditClaims = () => {
           }}
           // onClick={() => handleMembershipClick(rowData, "membershipNo")}
         >
-          {rowData.memberShipNo}
+          {rowData.id}
         </span>
       ),
     },
-    { field: "memberName", headerName: "Name" },
+    { field: "memberShipNo", headerName: "Membership No." },
+    {
+      field: "memberName",
+      headerName: "Name",
+      body: (rowData) => (
+        <span>
+          {rowData.memberName}
+          {rowData.vip && (
+            <VIPDot/>
+          )}
+          {rowData.political && (
+            <PoliticalDot/>
+          )}
+        </span>
+      ),
+    },
     { field: "policyNumber", headerName: "Policy" },
     { field: "admissionDate", headerName: "Admission Date" },
     { field: "dischargeDate", headerName: "Discharge Date" },

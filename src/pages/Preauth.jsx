@@ -1,5 +1,5 @@
 import { TabPanel, TabView } from "primereact/tabview";
-import PreAuthIPDListComponent from "./preauth.list";
+import PreAuthIPDListComponent from "../components/preauth/preauth.list";
 
 const Preauth = () => {
   return (
