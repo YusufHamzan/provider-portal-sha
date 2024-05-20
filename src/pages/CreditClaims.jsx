@@ -2,26 +2,32 @@ import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP, REIM_STATUS_MSG_MAP } from "../utils/helper";
 import { useNavigate } from "react-router-dom";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import RateReviewIcon from "@mui/icons-material/RateReview";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CreditClaimService } from "../remote-api/api/claim-services/credit-claim-services";
 import { PoliticalDot, VIPDot } from "../components/vip.dot";
+import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
+import { BenefitService } from "../remote-api/api/master-services/benefit-service";
+import { useKeycloak } from "@react-keycloak/web";
+import { jwtDecode } from "jwt-decode";
 
 const utclongDate = (date) => {
   if (!date) return undefined;
   return date.getTime();
 };
 const claimservice = new CreditClaimService();
+const benefitService = new BenefitService();
 
 const CreditClaims = () => {
   let providerId = localStorage.getItem("providerId");
   const navigate = useNavigate();
+  const [benefits, setBenefits] = useState();
   const [count, setCount] = React.useState({
     approved: 0,
     cancelled: 0,
@@ -30,6 +36,83 @@ const CreditClaims = () => {
     requested: 0,
     total: 0,
   });
+
+  const { keycloak } = useKeycloak();
+  let token = window["getToken"] && window["getToken"]();
+  const { name } = jwtDecode(token);
+
+  useEffect(() => {
+    let subscription = benefitService
+      .getAllBenefit({ page: 0, size: 100000 })
+      .subscribe((result) => {
+        setBenefits(result.content);
+      });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleProvider = (rowData) => {
+    const invoiceProviders = rowData.invoices.map((inv) => {
+      return (
+        <Typography sx={{ fontSize: "12px" }}>{`${name}: ${
+          inv.invoiceAmount || 0
+        }`}</Typography>
+      );
+    });
+
+    return (
+      <SimpleTreeView>
+          {invoiceProviders}
+      </SimpleTreeView>
+    );
+  };
+
+  const renderBenefitWithCost = (rowData) => {
+    const benefitsWithCost = rowData.benefitsWithCost?.map((ben) => {
+      const benefitName = benefits?.find(
+        (item) => item.id === ben?.benefitId
+      )?.name;
+      return benefitName ? (
+        <TreeItem
+          itemId={ben?.benefitId}
+          label={
+            <Typography
+              sx={{ fontSize: "12px" }}
+            >{`${benefitName}: ${ben?.estimatedCost}`}</Typography>
+          }
+        ></TreeItem>
+      ) : (
+        <TreeItem
+          itemId={ben?.benefitId}
+          label={
+            <Typography sx={{ fontSize: "12px" }}>{`Unknown: ${
+              ben?.estimatedCost || null
+            }`}</Typography>
+          }
+        ></TreeItem>
+      );
+    });
+
+    const totalAmount = rowData.benefitsWithCost.reduce(
+      (acc, curr) => acc + curr.estimatedCost,
+      0
+    );
+
+    return (
+      <SimpleTreeView>
+        <TreeItem
+          itemId="grid"
+          label={
+            <Typography
+              sx={{ fontSize: "12px" }}
+            >{`Benifits: ${totalAmount}`}</Typography>
+          }
+        >
+          {benefitsWithCost}
+        </TreeItem>
+      </SimpleTreeView>
+    );
+  };
+
   const columnsDefinations = [
     {
       field: "id",
@@ -53,28 +136,34 @@ const CreditClaims = () => {
       body: (rowData) => (
         <span>
           {rowData.memberName}
-          {rowData.vip && (
-            <VIPDot/>
-          )}
-          {rowData.political && (
-            <PoliticalDot/>
-          )}
+          {rowData.vip && <VIPDot />}
+          {rowData.political && <PoliticalDot />}
         </span>
       ),
     },
-    { field: "policyNumber", headerName: "Policy" },
-    { field: "admissionDate", headerName: "Admission Date" },
-    { field: "dischargeDate", headerName: "Discharge Date" },
+    { field: "policyNumber", headerName: "Policy", expand: true  },
+    { field: "admissionDate", headerName: "Admission Date", expand: true  },
+    { field: "dischargeDate", headerName: "Discharge Date", expand: true  },
     {
-      field: "vip",
-      headerName: "Is Vip ?",
-      body: (rowData) => <span>{rowData.vip ? "Yes" : "No"}</span>,
+      field: "provider",
+      headerName: "Providers & Cost",
+      body: handleProvider,
     },
     {
-      field: "political",
-      headerName: "Is Political ?",
-      body: (rowData) => <span>{rowData.political ? "Yes" : "No"}</span>,
+      field: "benefitWithCost",
+      headerName: "Benefit & Cost",
+      body: renderBenefitWithCost,
     },
+    // {
+    //   field: "vip",
+    //   headerName: "Is Vip ?",
+    //   body: (rowData) => <span>{rowData.vip ? "Yes" : "No"}</span>,
+    // },
+    // {
+    //   field: "political",
+    //   headerName: "Is Political ?",
+    //   body: (rowData) => <span>{rowData.political ? "Yes" : "No"}</span>,
+    // },
     { field: "reimbursementStatus", headerName: "Status" },
   ];
 
@@ -164,6 +253,7 @@ const CreditClaims = () => {
     enableSelection: false,
     scrollHeight: "300px",
     pageSize: 10,
+    rowExpand: true,
     // actionButtons: roleService.checkActionPermission(PAGE_NAME, 'UPDATE', openEditSection),
     // actionButtons: roleService.checkActionPermission(PAGE_NAME, 'UPDATE', actionBtnList),
     actionButtons: [

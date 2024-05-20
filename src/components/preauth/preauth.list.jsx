@@ -3,7 +3,7 @@
 import { Eo2v2DataGrid } from "../eo2v2.data.grid";
 import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP } from "../../utils/helper";
-import { Box, Button, Tooltip, styled } from "@mui/material";
+import { Box, Button, Tooltip, Typography, styled } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
@@ -15,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import { PreAuthService } from "../../remote-api/api/claim-services/preauth-services";
 import { BenefitService } from "../../remote-api/api/master-services/benefit-service";
 import { PoliticalDot, VIPDot } from "../vip.dot";
+import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
 
 const getColor = (status) => {
   switch (status) {
@@ -100,7 +101,6 @@ const PreAuthIPDListComponent = () => {
   });
 
   let pas$ = claimservice.getDashboardCount(providerId);
-  let bts$ = benefitService.getAllBenefit({ page: 0, size: 100000 });
 
   // const useObservable = (observable, setter) => {
   useEffect(() => {
@@ -120,7 +120,62 @@ const PreAuthIPDListComponent = () => {
       setCount(result?.data);
     });
   }, []);
-  // console.log("benefits", benefits);
+  
+  // const handleProvider = (rowData) => {
+  //   const length = rowData?.providers?.length
+  //   const invoiceProviders = rowData?.providers?.map(prov => {
+  //     const provider = providers.find(p => p.id === prov.providerId);
+
+  //     if (provider) {
+  //       if (prov.benefit.length) {
+  //         return <TreeItem itemId={prov.providerId} label={<Typography sx={{ fontSize: '12px' }}>{`${provider?.providerBasicDetails?.name}: ${prov.estimatedCost}`}</Typography>}>
+  //           {renderBenefitWithCost({ benefitsWithCost: prov.benefit })}
+  //         </TreeItem>
+  //       } else {
+  //         return (
+  //           <TreeItem itemId={prov.providerId} label={<Typography sx={{ fontSize: '12px' }}>{`${provider?.providerBasicDetails?.name}: ${prov.estimatedCost}`}</Typography>}></TreeItem>
+  //         );
+  //       }
+  //     } else {
+  //       return (
+  //         <TreeItem itemId={prov.providerId} label={<Typography sx={{ fontSize: '12px' }}>{`Unknown: ${prov.estimatedCost || null}`}</Typography>}></TreeItem>
+  //       );
+  //     }
+  //   });
+
+
+  //   const totalAmount = rowData.providers.reduce((acc, curr) => acc + curr.estimatedCost, 0);
+
+  //   return (
+  //     <SimpleTreeView>
+  //       <TreeItem itemId="grid" label={<Typography sx={{ fontSize: '12px' }}>{`${length} ${length === 1 ? 'Provider: ' : 'Providers: '} ${totalAmount}`}</Typography>}>
+  //         {invoiceProviders}
+  //       </TreeItem>
+  //     </SimpleTreeView >
+  //   );
+  // };
+
+  const renderBenefitWithCost = (rowData) => {
+    const length = rowData?.benefitsWithCost?.length
+    const benefitsWithCost = rowData.benefitsWithCost?.map(ben => {
+      const benefitName = benefits?.find((item) => item.id === ben?.benefitId)?.name;
+      return benefitName ? (
+        <TreeItem itemId={ben?.benefitId} label={<Typography sx={{ fontSize: '12px' }}>{`${benefitName}: ${ben?.estimatedCost}`}</Typography>}></TreeItem>
+      ) : <TreeItem itemId={ben?.benefitId} label={<Typography sx={{ fontSize: '12px' }}>{`Unknown: ${ben?.estimatedCost || null}`}</Typography>}></TreeItem>;
+
+    })
+
+    const totalAmount = rowData.benefitsWithCost.reduce((acc, curr) => acc + curr.estimatedCost, 0);
+
+    return (
+      <SimpleTreeView >
+        <TreeItem itemId="benefit" label={<Typography sx={{ fontSize: '12px' }}>{`${length} ${length === 1 ? 'Benefit: ' : 'Benefits: '} ${totalAmount}`}</Typography>}>
+          {benefitsWithCost}
+        </TreeItem>
+      </SimpleTreeView >
+    );
+  };
+
   const columnsDefinations = [
     {
       field: "id",
@@ -156,29 +211,37 @@ const PreAuthIPDListComponent = () => {
         </span>
       ),
     },
-    { field: "policyNumber", headerName: "Policy No." },
-    { field: "admissionDate", headerName: "Admission Date" },
-    { field: "dischargeDate", headerName: "Discharge Date" },
+    // {
+    //   field: 'provider', headerName: 'Providers & Cost',
+    //   body: handleProvider
+    // },
     {
-      field: "estimatedCose",
-      headerName: "Estimated Cost",
-      body: (rowData) => (
-        <span>
-          {rowData.benefitsWithCost?.map((el) => {
-            let name = benefits.find((item) => item.id === el?.benefitId).name;
-            console.log(name);
-            return (
-              <>
-                <div>
-                  <span>{name}</span>&nbsp; :&nbsp;
-                  <span>{el?.estimatedCost}</span>
-                </div>
-              </>
-            );
-          })}
-        </span>
-      ),
+      field: 'benefitWithCost', headerName: 'Benefit & Cost',
+      body: renderBenefitWithCost
     },
+    { field: "policyNumber", headerName: "Policy No.",expand: true },
+    { field: "admissionDate", headerName: "Admission Date", expand: true },
+    { field: "dischargeDate", headerName: "Discharge Date", expand: true },
+    // {
+    //   field: "estimatedCose",
+    //   headerName: "Estimated Cost",
+    //   body: (rowData) => (
+    //     <span>
+    //       {rowData.benefitsWithCost?.map((el) => {
+    //         let name = benefits.find((item) => item.id === el?.benefitId).name;
+    //         console.log(name);
+    //         return (
+    //           <>
+    //             <div>
+    //               <span>{name}</span>&nbsp; :&nbsp;
+    //               <span>{el?.estimatedCost}</span>
+    //             </div>
+    //           </>
+    //         );
+    //       })}
+    //     </span>
+    //   ),
+    // },
     // {
     //   field: "vip",
     //   headerName: "Is Vip ?",
@@ -326,6 +389,7 @@ const PreAuthIPDListComponent = () => {
   const configuration = {
     enableSelection: false,
     scrollHeight: "285px",
+    rowExpand: true,
     pageSize: 10,
     actionButtons: [
       {

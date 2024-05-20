@@ -21,6 +21,7 @@ import "primeflex/primeflex.css";
 import { Grid } from "@mui/material";
 import Eo2v2DataGridPropTypes from "./Eo2v2.data.grid.props.types";
 import toWords from "split-camelcase-to-words";
+import { Skeleton } from "primereact/skeleton";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -44,29 +45,19 @@ export const Eo2v2DataGrid = (props) => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [items, setItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState(null);
-  const [scrollHeight, setScrollHeight] = useState("");
-
+  const [expandedRows, setExpandedRows] = useState(null);
   const renderGrid = (pageData) => {
-    // setTotalRecords(pageData.totalElements);
-    // setItems(pageData.content);
-    // setLoading(false);
-    if (Array.isArray(pageData.content)) {
-      setTotalRecords(pageData.totalElements);
-      setItems(pageData.content);
-      setLoading(false);
-    } else {
-      console.error("Invalid data format: 'pageData.content' is not an array");
-    }
-    y;
+    setTotalRecords(pageData.totalElements);
+    setItems(pageData.content);
+    setLoading(false);
   };
-  
+
   useEffect(() => {
     if (props.hasOwnProperty("selectedId")) {
       renderGrid({ totalElements: 0, content: [] });
     } else {
       props.$dataSource().subscribe(renderGrid);
     }
-    setScrollHeight("520px"); //props.config.scrollHeight
   }, []);
 
   useEffect(() => {
@@ -123,25 +114,6 @@ export const Eo2v2DataGrid = (props) => {
         title={props.config.header.selectionMenuButtonText}
       ></Eo2v2ActionMenu>
     );
-  };
-
-  const setCreateBtnBrkPnt = (breakPoint) => {
-    if (
-      props.config.header.selectionMenus &&
-      props.config.header.selectionMenus?.length > 0
-    ) {
-      if (breakPoint === "lg") {
-        return 1;
-      } else {
-        return 2;
-      }
-    } else {
-      if (breakPoint === "lg") {
-        return 5;
-      } else {
-        return 4;
-      }
-    }
   };
 
   function isValidDate(timestamp) {
@@ -227,13 +199,13 @@ export const Eo2v2DataGrid = (props) => {
             {props.config.header.selectionMenus && buildEo2v2ActionMenu()}
             {props.config.header.addCreateButton && (
               <PButton
-                tooltip={!props.config.header.createButtonText && "Create"}
+                tooltip={props.config.header.createButtonText || "Create"}
                 tooltipOptions={{
                   position: "bottom",
                   mouseTrack: true,
                   mouseTrackTop: 15,
                 }}
-                style={{ width: !props.config.header.createBtnText && "32px", height: "32px", background:props.config.header.createBtnText && "#313c96", color: props.config.header.createBtnText && "#fff" }}
+                style={{ width: "32px", height: "32px" }}
                 severity="secondary"
                 rounded
                 raised
@@ -244,10 +216,7 @@ export const Eo2v2DataGrid = (props) => {
                   typeof props.config.header.onCreateButtonClick ===
                     "function" && props.config.header.onCreateButtonClick();
                 }}
-              >
-                <span style={{marginLeft:"4px"}}>{props.config.header.createBtnText &&
-                  `Create ${props.config.header.createBtnText}`}</span>
-              </PButton>
+              />
             )}
           </div>
         </div>
@@ -297,7 +266,7 @@ export const Eo2v2DataGrid = (props) => {
     return (
       <Grid container>
         {props.config.actionButtons.map((button, id) => (
-          <Grid item xs={6} style={{ gap: "10px" }} key={`acbtns-${id}`}>
+          <Grid item xs={4} style={{ gap: "10px" }} key={`acbtns-${id}`}>
             <PButton
               key={`acbtns-${id}`}
               rounded
@@ -356,6 +325,7 @@ export const Eo2v2DataGrid = (props) => {
         headerStyle={column.headerStyle}
         bodyStyle={column.bodyStyle}
         editor={props?.config?.editCell && column.editor ? column.editor : null}
+        expand={column.expand}
         onCellEditComplete={(e) =>
           onCellEditComplete(e, handleCellEditComplete)
         }
@@ -380,6 +350,10 @@ export const Eo2v2DataGrid = (props) => {
     );
   };
 
+  const allowExpansion = (rowData) => {
+    return rowData.orders.length > 0;
+  };
+
   const buildColumns = () => {
     let columns = [];
     if (props.config.enableSelection) {
@@ -389,10 +363,18 @@ export const Eo2v2DataGrid = (props) => {
       );
       columns.push(selectionColumn);
     }
+    if (props.config.rowExpand === true) {
+      columns.push(<Column expander={true} style={{ width: "20px" }} />);
+    }
 
-    props.columnsDefination
-      .map(columnDefination)
-      .forEach((item) => columns.push(item));
+    props.columnsDefination.map(columnDefination).forEach((item) => {
+      if (
+        !item?.props?.expand ||
+        (item.props.expand && item.props.expand !== true)
+      ) {
+        columns.push(item);
+      }
+    });
 
     if (props.config && props.config.progressColumn) {
       columns.push(buildProgressColumn());
@@ -414,10 +396,6 @@ export const Eo2v2DataGrid = (props) => {
     props.config.header?.enable &&
       typeof props.config.header.onSelectionChange === "function" &&
       props.config.header.onSelectionChange(e.value);
-  };
-
-  const rowClassName = (data) => {
-    return isSelectable(data.id, "id") ? "" : "p-disabled";
   };
 
   const isSelectable = (value, field) => {
@@ -479,12 +457,37 @@ export const Eo2v2DataGrid = (props) => {
     onLoadedData(items);
   }, [items]);
 
+  const buildExpansionColumns = () => {
+    return props.columnsDefination.map(columnDefination).filter((item) => {
+      return (
+        item.props.expand || (item.props.expand && item.props.expand === true)
+      );
+    });
+  };
+
+  const rowExpansionTemplate = (data) => {
+    const expansionColumns = buildExpansionColumns();
+
+    return (
+      <DataTable emptyMessage="No data found" value={[data]}>
+        {expansionColumns}
+      </DataTable>
+    );
+  };
+
   return (
-    // <div style={{ backgroundColor: 'var(--surface-f)', borderRadius: '0 0 8px 8px' }}>
-    <div>
+    <div
+      style={{
+        backgroundColor: "var(--surface-f)",
+        borderRadius: "0 0 8px 8px",
+      }}
+    >
       <ConfirmPopup />
       <DataTable
         header={renderHeader()}
+        expandedRows={expandedRows}
+        onRowToggle={(e) => setExpandedRows(e.data)}
+        rowExpansionTemplate={rowExpansionTemplate}
         dataKey="id"
         value={items}
         editMode={
@@ -499,12 +502,10 @@ export const Eo2v2DataGrid = (props) => {
         style={props?.style}
         rows={rows}
         resizableColumns
-        // showGridlines
+        showGridlines
         lazy
         onPage={onPage}
         loading={loading}
-        scrollable
-        scrollHeight={scrollHeight}
         selectionMode={props?.config?.rowClickDisable ? "checkbox" : null}
         selection={selectedItems}
         columnResizeMode="expand"
@@ -512,7 +513,7 @@ export const Eo2v2DataGrid = (props) => {
         isDataSelectable={isRowSelectable}
         onRowEditComplete={onRowEditComplete}
         data
-        className={`custom-datatable`}
+        className={`custom-datatable shadow-6`}
         emptyMessage="No data found"
         first={first}
         totalRecords={totalRecords}
