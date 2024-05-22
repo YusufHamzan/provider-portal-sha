@@ -57,6 +57,12 @@ function useQuery() {
 }
 
 const useStyles = makeStyles((theme) => ({
+  pictureContainer: {
+    width: 200,
+    height: 200,
+    borderRadius:"50%",
+    marginLeft:"10%"
+  },
   AccordionSummary: {
     // backgroundColor: theme.palette.background.default,
   },
@@ -205,7 +211,7 @@ export default function MemberEligibility() {
     });
   };
 
-  console.log("resss", selectedDocument)
+  console.log("resss", selectedDocument);
 
   const getMemberDetails = (id) => {
     let pageRequest = {
@@ -427,9 +433,25 @@ export default function MemberEligibility() {
         <Paper elevation="3" style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
             <Grid xs={12} sm={12} md={12}>
-              <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
+              {/* <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
                 <Avatar sizes="400"></Avatar>
-              </Box>
+              </Box> */}
+              <Grid
+                item
+                xs={4}
+                sm={3}
+                container
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Box className={classes.pictureContainer}>
+                  {selectedDocument ? (
+                    <img src={selectedDocument} className={classes.pictureContainer}/>
+                  ) : (
+                    <img src={"/icons/no-profile-picture.webp"} className={classes.pictureContainer}/>
+                  )}
+                </Box>
+              </Grid>
             </Grid>
             <Grid xs={12} sm={6} md={4}>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
