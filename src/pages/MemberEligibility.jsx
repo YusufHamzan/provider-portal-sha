@@ -110,6 +110,7 @@ export default function MemberEligibility() {
   const [searchType, setSearchType] = React.useState("membership_no");
   const [membershipNumber, setMembershipNumber] = React.useState();
   const [openClientModal, setOpenClientModal] = React.useState(false);
+  const [selectedDocument, setSelectedDocument] = React.useState(null);
   const [memberName, setMemberName] = React.useState({
     name: "",
     policyNumber: "",
@@ -177,6 +178,35 @@ export default function MemberEligibility() {
     handleClosed();
   };
 
+  const getImage = (id) => {
+    memberService.getMemberImage(id).subscribe((res) => {
+      console.log(res);
+      // setImageData(res);
+      let subscription;
+      if (res) {
+        subscription = memberService
+          .getMemberImageType(res?.id, res?.documentName)
+          .subscribe({
+            next: (resp) => {
+              const blob = new Blob([resp]);
+              const url = URL.createObjectURL(blob);
+              setSelectedDocument(url);
+            },
+            error: (error) => {
+              console.error("Error fetching image data:", error);
+            },
+          });
+      }
+      return () => {
+        if (subscription) {
+          subscription.unsubscribe();
+        }
+      };
+    });
+  };
+
+  console.log("resss", selectedDocument)
+
   const getMemberDetails = (id) => {
     let pageRequest = {
       page: 0,
@@ -201,6 +231,7 @@ export default function MemberEligibility() {
           // setMemberData(res.content[0]);
         } else {
           setMemberData(res.content[0]);
+          getImage(res?.content[0]?.id);
           // formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           // setMemberBasic({
           //   ...memberBasic,
