@@ -36,6 +36,14 @@ export class PreAuthService {
       .pipe(map((response) => response));
   }
 
+  getAdvancedFilteredPreauth(pageRequest: any, id:number): Observable<any> {
+    return http
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/provider/preauths/provider-poartal/date-filter`, { params: pageRequest })
+
+      // /provider/preauths/${id}`, { params: pageRequest })
+      .pipe(map((response) => response));
+  }
+
   getDashboardCount(id:any): Observable<any> {
     return http
       .get<any>(`${this.QUERY_CONTEXT}/preauths/dashboard-count-provider-poartal/${id}`)
