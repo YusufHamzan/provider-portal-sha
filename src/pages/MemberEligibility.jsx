@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     width: 200,
     height: 200,
     borderRadius:"50%",
-    marginLeft:"10%"
+    // marginLeft:"10%"
   },
   AccordionSummary: {
     // backgroundColor: theme.palette.background.default,
@@ -191,7 +191,7 @@ export default function MemberEligibility() {
       let subscription;
       if (res) {
         subscription = memberService
-          .getMemberImageType(res?.id, res?.documentName)
+          .getMemberImageType(id, res?.documentName)
           .subscribe({
             next: (resp) => {
               const blob = new Blob([resp]);
