@@ -411,7 +411,7 @@ const PreAuthIPDListComponent = () => {
       size: pageRequest.size,
       summary: true,
       active: true,
-      sort: ["rowCreatedDate+dsc"],
+      sort: ["rowCreatedDate dsc"],
       preAuthType:"IPD",
       providerId: providerId,
       ...(searchType && querytype[searchType]),
