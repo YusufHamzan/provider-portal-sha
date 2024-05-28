@@ -47,10 +47,11 @@ import { MemberService } from "../remote-api/api/member-services";
 import { BenefitService } from "../remote-api/api/master-services/benefit-service";
 import { ServiceTypeService } from "../remote-api/api/master-services/service-type-service";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ProvidersService } from "../remote-api/api/provider-services/provider.services";
 
 const memberService = new MemberService();
 const benefitService = new BenefitService();
-// const preauthService = new PreAuthService();
+const providerService = new ProvidersService();
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   pictureContainer: {
     width: 200,
     height: 200,
-    borderRadius:"50%",
+    borderRadius: "50%",
     // marginLeft:"10%"
   },
   AccordionSummary: {
@@ -137,6 +138,17 @@ export default function MemberEligibility() {
     planScheme: "",
     productName: "",
   });
+  const [file, setFile] = React.useState("");
+  const [filePart, setFilePart] = React.useState("");
+  const hiddenFileInput = React.useRef(null);
+
+  const handleClick = (event) => {
+    hiddenFileInput.current.click();
+  };
+  const handleSecondChange = (event) => {
+    setFile(URL.createObjectURL(event.target.files[0]));
+    console.log("aaa", event.target.files[0]);
+  };
 
   const handleChange = (event) => {
     setSearchType(event.target.value);
@@ -211,7 +223,7 @@ export default function MemberEligibility() {
     });
   };
 
-  console.log("resss", selectedDocument);
+  console.log("resss", memberData);
 
   const getMemberDetails = (id) => {
     let pageRequest = {
@@ -260,6 +272,16 @@ export default function MemberEligibility() {
         setOpenSnack(true);
       }
       setIsLoading(false);
+    });
+  };
+
+  const onVerifyClick = () => {
+    const formData = new FormData();
+    formData.append('docType', 'documentType');
+    formData.append("filePart", file);
+
+    providerService.verifyImage(memberData?.id, formData).subscribe((res) => {
+      console.log(res, "ressssssssss");
     });
   };
 
@@ -432,7 +454,7 @@ export default function MemberEligibility() {
       {memberData && (
         <Paper elevation="3" style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
-            <Grid xs={12} sm={12} md={12}>
+            <Grid xs={12} sm={12} md={12} container>
               {/* <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
                 <Avatar sizes="400"></Avatar>
               </Box> */}
@@ -446,11 +468,61 @@ export default function MemberEligibility() {
               >
                 <Box className={classes.pictureContainer}>
                   {selectedDocument ? (
-                    <img src={selectedDocument} className={classes.pictureContainer}/>
+                    <img
+                      src={selectedDocument}
+                      className={classes.pictureContainer}
+                    />
                   ) : (
-                    <img src={"/icons/no-profile-picture.webp"} className={classes.pictureContainer}/>
+                    <img
+                      src={"/icons/no-profile-picture.webp"}
+                      className={classes.pictureContainer}
+                    />
                   )}
                 </Box>
+              </Grid>
+              <Grid
+                item
+                xs={4}
+                sm={3}
+                container
+                justifyContent="center"
+                alignItems="center"
+                // style={{ position: "relative", width: "fit-content" }}
+              >
+                <img
+                  style={{
+                    cursor: "pointer",
+                    border: "1px solid black",
+                  }}
+                  onClick={handleClick}
+                  src={file ? file : "/icons/uploadImage.png"}
+                  className={classes.pictureContainer}
+                />
+                <input
+                  type="file"
+                  ref={hiddenFileInput}
+                  onChange={handleSecondChange}
+                  accept="image/*"
+                  style={{ display: "none" }}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={4}
+                sm={3}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  style={{ background: "#313c96" }}
+                  onClick={onVerifyClick}
+                >
+                  Verify Image
+                </Button>
               </Grid>
             </Grid>
             <Grid xs={12} sm={6} md={4}>

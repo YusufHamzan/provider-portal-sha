@@ -67,4 +67,13 @@ export class ProvidersService {
 			.patch<Map<string, any>>(`${this.COMMAND_CONTEXT}/category`, payload)
 			.pipe(map((response) => response.data));
 	}
+
+	verifyImage(id: string, payload: FormData): Observable<Map<string, any>> {
+		let headers = { "Content-Type": "multipart/form-data" };
+		return http
+			.post<Map<string, any>>(`${this.QUERY_CONTEXT}/verify?memberId=${id}`, payload, {
+				headers,
+			  })
+			.pipe(map((response) => response.data));
+	}
 }
