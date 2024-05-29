@@ -182,7 +182,7 @@ const Claims = () => {
   ) => {
     let isSearched = false;
     let providerId = localStorage.getItem("providerId");
-    pageRequest.sort = ["rowCreatedDate dsc"];
+    // pageRequest.sort = ["rowCreatedDate dsc"];
     // pageRequest.claimType = ['REIMBURSEMENT_CLAIM'];
     if (pageRequest.searchKey) {
       isSearched = true;
