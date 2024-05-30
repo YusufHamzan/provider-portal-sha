@@ -54,4 +54,7 @@ export class MemberService {
       )
       .pipe(map((response) => response.data));
   }
+  getMemberBalance(id: any): Observable<Page<any>> {
+    return http.get<Page<any>>(`${this.QUERY_CONTEXT}/balance?membershipNo=${id}`).pipe(map(response => response.data));
+  }
 }

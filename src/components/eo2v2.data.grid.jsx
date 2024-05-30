@@ -47,8 +47,8 @@ export const Eo2v2DataGrid = (props) => {
   const [selectedItems, setSelectedItems] = useState(null);
   const [expandedRows, setExpandedRows] = useState(null);
   const renderGrid = (pageData) => {
-    setTotalRecords(pageData.totalElements);
-    setItems(pageData.content);
+    setTotalRecords(pageData?.totalElements);
+    setItems(pageData?.content);
     setLoading(false);
   };
 

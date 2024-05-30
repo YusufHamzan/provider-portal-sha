@@ -48,6 +48,8 @@ import { BenefitService } from "../remote-api/api/master-services/benefit-servic
 import { ServiceTypeService } from "../remote-api/api/master-services/service-type-service";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ProvidersService } from "../remote-api/api/provider-services/provider.services";
+import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
+import { Observable, map } from "rxjs";
 
 const memberService = new MemberService();
 const benefitService = new BenefitService();
@@ -59,8 +61,8 @@ function useQuery() {
 
 const useStyles = makeStyles((theme) => ({
   pictureContainer: {
-    width: 200,
-    height: 200,
+    width: 100,
+    height: 100,
     borderRadius: "50%",
     // marginLeft:"10%"
   },
@@ -98,6 +100,32 @@ let ad$ = serviceDiagnosis.getServicesbyId("867854874246590464", {
   active: true,
   nonGroupedServices: false,
 });
+
+const columnsDefinations = [
+  { field: "benefit", headerName: "Benefit" },
+  { field: "waitingPeriod", headerName: "Waiting Period" },
+  { field: "maxLimit", headerName: "Max Limit(KSH)" },
+  {
+    field: "consumed",
+    headerName: "Consumed(KSH)",
+    body: (rowData) => (
+      <span
+        style={{
+          cursor: "pointer",
+          textDecoration: "underline",
+          color: "blue",
+        }}
+        // onClick={() => {
+        //   setShowServices(false);
+        //   getClaimsByBenefit(rowData?.benefitId);
+        // }}
+      >
+        {rowData.consumed}
+      </span>
+    ),
+  },
+  { field: "balance", headerName: "Balance(KSH)" },
+];
 
 export default function MemberEligibility() {
   const navigate = useNavigate();
@@ -141,15 +169,22 @@ export default function MemberEligibility() {
   const [file, setFile] = React.useState("");
   const [filePart, setFilePart] = React.useState("");
   const hiddenFileInput = React.useRef(null);
+  const [showBalanceDetails, setShowBalanceDetails] = React.useState(false);
+  const [tableData, setTableData] = React.useState();
+  const [fileURL, setFileURL] = React.useState('');
+
 
   const handleClick = (event) => {
     hiddenFileInput.current.click();
   };
   const handleSecondChange = (event) => {
-    setFile(URL.createObjectURL(event.target.files[0]));
-    console.log("aaa", event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    setFileURL(URL.createObjectURL(selectedFile));
+    // setFile(URL.createObjectURL(event.target["files"][0]));
+    // console.log("aaa", event.target["files"][0]);
   };
-
+console.log(file, fileURL)
   const handleChange = (event) => {
     setSearchType(event.target.value);
   };
@@ -178,21 +213,19 @@ export default function MemberEligibility() {
 
   const handleSelect = (data) => {
     setMemberData(data);
-    // formik.setFieldValue("contactNoOne", data.mobileNo);
-    // setMemberBasic({
-    //   ...memberBasic,
-    //   name: data.name,
-    //   age: data.age,
-    //   gender: data.gender,
-    //   membershipNo: data.membershipNo,
-    //   relations: data.relations,
-    //   policyNumber: data.policyNumber,
-    //   enrolentToDate: new Date(data.policyEndDate),
-    //   enrolmentFromDate: new Date(data.policyStartDate),
-    //   planName: data.planName,
-    //   planScheme: data.planScheme,
-    //   productName: data.productName,
-    // });
+    memberService
+      .getMemberBalance(data?.membershipNo)
+      .subscribe((resesponse) => {
+        const temp = resesponse.map((item) => {
+          const benefit = benefitData.find((ele) => ele.id === item.benefit);
+          item.benefitId = benefit.id;
+          item.benefit = benefit.name;
+          item.consumed = item.maxLimit - item.balance;
+          return item;
+        });
+        setTableData(temp);
+        setShowBalanceDetails(true);
+      });
     handleClosed();
   };
 
@@ -223,8 +256,6 @@ export default function MemberEligibility() {
     });
   };
 
-  console.log("resss", memberData);
-
   const getMemberDetails = (id) => {
     let pageRequest = {
       page: 0,
@@ -243,29 +274,28 @@ export default function MemberEligibility() {
 
     memberService.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
+        console.log(res);
         if (searchType === "name") {
           setMemberName({ res });
           handleopenClientModal();
-          // setMemberData(res.content[0]);
         } else {
           setMemberData(res.content[0]);
           getImage(res?.content[0]?.id);
-          // formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-          // setMemberBasic({
-          //   ...memberBasic,
-          //   name: res.content[0].name,
-          //   clientType: res.content[0].clientType,
-          //   age: res.content[0].age,
-          //   gender: res.content[0].gender,
-          //   membershipNo: res.content[0].membershipNo,
-          //   relations: res.content[0].relations,
-          //   policyNumber: res.content[0].policyNumber,
-          //   enrolentToDate: new Date(res.content[0].policyEndDate),
-          //   enrolmentFromDate: new Date(res.content[0].policyStartDate),
-          //   planName: res.content[0].planName,
-          //   planScheme: res.content[0].planScheme,
-          //   productName: res.content[0].productName,
-          // });
+          memberService
+            .getMemberBalance(res?.content[0]?.membershipNo)
+            .subscribe((resesponse) => {
+              const temp = resesponse.map((item) => {
+                const benefit = benefitData?.find(
+                  (ele) => ele.id === item.benefit
+                );
+                item.benefitId = benefit?.id;
+                item.benefit = benefit?.name;
+                item.consumed = item.maxLimit - item.balance;
+                return item;
+              });
+              setTableData(temp);
+              setShowBalanceDetails(true);
+            });
         }
       } else {
         setAlertMsg(`No Data found for ${id}`);
@@ -277,12 +307,31 @@ export default function MemberEligibility() {
 
   const onVerifyClick = () => {
     const formData = new FormData();
-    formData.append('docType', 'documentType');
-    formData.append("filePart", file);
+    formData.append("file", file);
 
     providerService.verifyImage(memberData?.id, formData).subscribe((res) => {
       console.log(res, "ressssssssss");
     });
+  };
+
+  const configuration = {
+    enableSelection: false,
+    scrollHeight: "285px",
+    pageSize: 10,
+  };
+
+  const data$ = new Observable((subscriber) => {
+    subscriber.next(tableData);
+  });
+  console.log(tableData, "dataaaaa");
+  const dataSource$ = () => {
+    return data$.pipe(
+      map((data) => {
+        data.content = data;
+        console.log("dataaaaa", data);
+        return data;
+      })
+    );
   };
 
   return (
@@ -341,7 +390,11 @@ export default function MemberEligibility() {
                   populateMemberFromSearch("number");
                 }}
                 type="button"
-                style={{ borderRadius: "10px", background: "#313c96" }}
+                style={{
+                  borderRadius: "10px",
+                  background: "#313c96",
+                  fontSize: "12px",
+                }}
               >
                 {isLoading ? (
                   <CircularProgress
@@ -378,6 +431,7 @@ export default function MemberEligibility() {
                 style={{
                   marginLeft: "3%",
                   borderRadius: "10px",
+                  fontSize: "12px",
                   background: "#313c96",
                 }}
               >
@@ -518,7 +572,7 @@ export default function MemberEligibility() {
               >
                 <Button
                   variant="contained"
-                  style={{ background: "#313c96" }}
+                  style={{ background: "#313c96", fontSize: "12px" }}
                   onClick={onVerifyClick}
                 >
                   Verify Image
@@ -632,6 +686,14 @@ export default function MemberEligibility() {
               </Box>
             </Grid>
           </Grid>
+
+          <Paper elevation="none" style={{ padding: 15, marginTop: "10px" }}>
+            <Eo2v2DataGrid
+              $dataSource={dataSource$}
+              config={configuration}
+              columnsDefination={columnsDefinations}
+            />
+          </Paper>
         </Paper>
       )}
 
