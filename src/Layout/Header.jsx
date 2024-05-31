@@ -1,6 +1,6 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
-import { IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -33,6 +33,8 @@ const Header = ({ open, handleDrawerOpen }) => {
     }),
   }));
 
+  const clientLogo = "/icons/sha_logo.svg";
+
   return (
     <AppBar position="fixed" open={open} color="default" elevation={0}>
       <Toolbar>
@@ -52,14 +54,16 @@ const Header = ({ open, handleDrawerOpen }) => {
           EOxegen
         </Typography>
         <Avatar icon="pi pi-user" size="normal" shape="circle" /> */}
-        <Typography
+        <Box>
+          <img src={clientLogo} alt="" />
+        </Box>{" "}
+        {/* <Typography
           variant="body1"
           component="a"
           sx={{ flexGrow: 1, marginleft: 4, cursor: "pointer" }}
         >
           {name}
-        </Typography>
-
+        </Typography> */}
         <Button
           onClick={() => {
             localStorage.clear();

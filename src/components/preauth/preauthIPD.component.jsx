@@ -1415,7 +1415,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     label="Policy To Date"
                     autoOk={true}
                     disabled
-                    value={dayjs(memberBasic.enrolmentToDate)}
+                    value={dayjs(memberBasic.enrolentToDate)}
                     onChange={handleDOA}
                     KeyboardButtonProps={{
                       "aria-label": "change ing date",

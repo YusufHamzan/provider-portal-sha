@@ -306,6 +306,7 @@ console.log(file, fileURL)
   };
 
   const onVerifyClick = () => {
+    
     const formData = new FormData();
     formData.append("file", file);
 
@@ -549,7 +550,7 @@ console.log(file, fileURL)
                     border: "1px solid black",
                   }}
                   onClick={handleClick}
-                  src={file ? file : "/icons/uploadImage.png"}
+                  src={fileURL ? fileURL : "/icons/uploadImage.png"}
                   className={classes.pictureContainer}
                 />
                 <input
