@@ -22,6 +22,7 @@ import { Grid } from "@mui/material";
 import Eo2v2DataGridPropTypes from "./Eo2v2.data.grid.props.types";
 import toWords from "split-camelcase-to-words";
 import { Skeleton } from "primereact/skeleton";
+import { useLocation } from "react-router-dom";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -46,12 +47,18 @@ export const Eo2v2DataGrid = (props) => {
   const [items, setItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState(null);
   const [expandedRows, setExpandedRows] = useState(null);
+  const location = useLocation();
+  // console.log(location.pathname);/membereligibility
   const renderGrid = (pageData) => {
+    console.log(pageData)
     setTotalRecords(pageData?.totalElements);
     setItems(pageData?.content);
+    if(location.pathname === "/membereligibility"){
+      setItems(pageData);
+    }
     setLoading(false);
   };
-
+console.log(items)
   useEffect(() => {
     if (props.hasOwnProperty("selectedId")) {
       renderGrid({ totalElements: 0, content: [] });

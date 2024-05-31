@@ -144,6 +144,7 @@ export default function MemberEligibility() {
   const classes = useStyles();
   const [searchType, setSearchType] = React.useState("membership_no");
   const [membershipNumber, setMembershipNumber] = React.useState();
+  const [severity, setSeverity] = React.useState();
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedDocument, setSelectedDocument] = React.useState(null);
   const [memberName, setMemberName] = React.useState({
@@ -171,8 +172,7 @@ export default function MemberEligibility() {
   const hiddenFileInput = React.useRef(null);
   const [showBalanceDetails, setShowBalanceDetails] = React.useState(false);
   const [tableData, setTableData] = React.useState();
-  const [fileURL, setFileURL] = React.useState('');
-
+  const [fileURL, setFileURL] = React.useState("");
 
   const handleClick = (event) => {
     hiddenFileInput.current.click();
@@ -181,10 +181,8 @@ export default function MemberEligibility() {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
     setFileURL(URL.createObjectURL(selectedFile));
-    // setFile(URL.createObjectURL(event.target["files"][0]));
-    // console.log("aaa", event.target["files"][0]);
   };
-console.log(file, fileURL)
+
   const handleChange = (event) => {
     setSearchType(event.target.value);
   };
@@ -231,7 +229,6 @@ console.log(file, fileURL)
 
   const getImage = (id) => {
     memberService.getMemberImage(id).subscribe((res) => {
-      console.log(res);
       // setImageData(res);
       let subscription;
       if (res) {
@@ -274,7 +271,6 @@ console.log(file, fileURL)
 
     memberService.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
-        console.log(res);
         if (searchType === "name") {
           setMemberName({ res });
           handleopenClientModal();
@@ -299,6 +295,7 @@ console.log(file, fileURL)
         }
       } else {
         setAlertMsg(`No Data found for ${id}`);
+        setSeverity("error")
         setOpenSnack(true);
       }
       setIsLoading(false);
@@ -306,12 +303,18 @@ console.log(file, fileURL)
   };
 
   const onVerifyClick = () => {
-    
     const formData = new FormData();
     formData.append("file", file);
 
     providerService.verifyImage(memberData?.id, formData).subscribe((res) => {
-      console.log(res, "ressssssssss");
+      if (res?.faceMatched) {
+        setSeverity("success")
+        setAlertMsg(`Face matched`);
+      } else {
+        setSeverity("error")
+        setAlertMsg(`Face does not match`);
+      }
+      setOpenSnack(true);
     });
   };
 
@@ -324,12 +327,14 @@ console.log(file, fileURL)
   const data$ = new Observable((subscriber) => {
     subscriber.next(tableData);
   });
-  console.log(tableData, "dataaaaa");
+
+  console.log("dataaaaaaaatable", tableData);
+
   const dataSource$ = () => {
     return data$.pipe(
       map((data) => {
-        data.content = data;
-        console.log("dataaaaa", data);
+        // data.content = data;
+        // console.log("dataaaaa", data);
         return data;
       })
     );
@@ -346,7 +351,7 @@ console.log(file, fileURL)
         }}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert variant="filled" severity="error" icon="">
+        <Alert variant="filled" severity={severity} icon="">
           {alertMsg}
         </Alert>
       </Snackbar>
