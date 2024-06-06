@@ -215,9 +215,9 @@ export default function MemberEligibility() {
       .getMemberBalance(data?.membershipNo)
       .subscribe((resesponse) => {
         const temp = resesponse.map((item) => {
-          const benefit = benefitData.find((ele) => ele.id === item.benefit);
-          item.benefitId = benefit.id;
-          item.benefit = benefit.name;
+          const benefit = benefitData?.find((ele) => ele.id === item.benefit);
+          item.benefitId = benefit?.id;
+          item.benefit = benefit?.name;
           item.consumed = item.maxLimit - item.balance;
           return item;
         });
