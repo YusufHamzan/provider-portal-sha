@@ -37,6 +37,16 @@ export class ClaimService {
       .pipe(map((response) => response));
   }
   
+  getClaimdata(pageRequest: any, providerId: number): Observable<any> {
+    return http
+      .get<Page<any>>(
+        `${this.QUERY_CONTEXT}/provider/reimbursements/claim-credit/date-filter`,
+        // provider/reimbursements/preauth-details/1233358561196470272?page=0&size=10&summary=true&active=true
+        { params: pageRequest }
+      )
+      .pipe(map((response) => response));
+  }
+
   getFilteredClaimReim(pageRequest: any, providerId: number): Observable<any> {
     return http
       .get<Page<any>>(

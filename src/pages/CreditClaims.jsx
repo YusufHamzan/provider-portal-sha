@@ -2,7 +2,7 @@ import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { map } from "rxjs/operators";
 import { PRE_AUTH_STATUS_MSG_MAP, REIM_STATUS_MSG_MAP } from "../utils/helper";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
@@ -17,9 +17,27 @@ import { BenefitService } from "../remote-api/api/master-services/benefit-servic
 import { useKeycloak } from "@react-keycloak/web";
 import { jwtDecode } from "jwt-decode";
 
+import { CloseOutlined } from "@mui/icons-material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  background: "#fff",
+  // border: '2px solid #000',
+  boxShadow: 24,
+  padding: "2% 3%",
+};
 const utclongDate = (date) => {
+  // console.log("date", dayjs(date).valueOf(), date)
   if (!date) return undefined;
-  return date.getTime();
+  return dayjs(date).valueOf();
 };
 const claimservice = new CreditClaimService();
 const benefitService = new BenefitService();
@@ -28,6 +46,15 @@ const CreditClaims = () => {
   let providerId = localStorage.getItem("providerId");
   const navigate = useNavigate();
   const [benefits, setBenefits] = useState();
+  const [fromExpectedDOA, setFromExpectedDOA] = React.useState(null);
+  const [toExpectedDOA, setToExpectedDOA] = React.useState(null);
+  const [fromExpectedDOD, setFromExpectedDOD] = React.useState(null);
+  const [toExpectedDOD, setToExpectedDOD] = React.useState(null);
+  const [fromDate, setFromDate] = React.useState(null);
+  const [toDate, setToDate] = React.useState(null);
+  const [searchType, setSearchType] = React.useState();
+  const [searchModal, setSearchModal] = React.useState(false);
+  const [reloadTable, setReloadTable] = React.useState(false);
   const [count, setCount] = React.useState({
     approved: 0,
     cancelled: 0,
@@ -41,6 +68,7 @@ const CreditClaims = () => {
   let token = window["getToken"] && window["getToken"]();
   const { name } = jwtDecode(token);
 
+  
   useEffect(() => {
     let subscription = benefitService
       .getAllBenefit({ page: 0, size: 100000 })
@@ -59,11 +87,7 @@ const CreditClaims = () => {
       );
     });
 
-    return (
-      <SimpleTreeView>
-          {invoiceProviders}
-      </SimpleTreeView>
-    );
+    return <SimpleTreeView>{invoiceProviders}</SimpleTreeView>;
   };
 
   const renderBenefitWithCost = (rowData) => {
@@ -141,9 +165,9 @@ const CreditClaims = () => {
         </span>
       ),
     },
-    { field: "policyNumber", headerName: "Policy", expand: true  },
-    { field: "admissionDate", headerName: "Admission Date", expand: true  },
-    { field: "dischargeDate", headerName: "Discharge Date", expand: true  },
+    { field: "policyNumber", headerName: "Policy", expand: true },
+    { field: "admissionDate", headerName: "Admission Date", expand: true },
+    { field: "dischargeDate", headerName: "Discharge Date", expand: true },
     {
       field: "provider",
       headerName: "Providers & Cost",
@@ -180,14 +204,11 @@ const CreditClaims = () => {
       size: 10,
       summary: true,
       active: true,
-      // claimCategory: "CLAIM",
-      // claimSource: "PRE_AUTH",
     }
   ) => {
+    // pageRequest.sort = ["rowCreatedDate dsc"];
     let isSearched = false;
     let providerId = localStorage.getItem("providerId");
-    // pageRequest.sort = ["rowCreatedDate dsc"];
-    // pageRequest.claimType = ['REIMBURSEMENT_CLAIM'];
     if (pageRequest.searchKey) {
       isSearched = true;
       pageRequest["memberShipNo"] = pageRequest.searchKey.toUpperCase();
@@ -198,47 +219,108 @@ const CreditClaims = () => {
       (pageRequest["providerId"] = providerId), delete pageRequest.searchKey;
     }
 
-    return isSearched
-      ? claimservice.getFilteredClaimReim(pageRequest, providerId).pipe(
-          map((data) => {
-            let content = data?.data?.content;
-            let records = content.map((item) => {
-              item["admissionDate"] = new Date(
-                item.expectedDOA
-              ).toLocaleDateString();
-              item["dischargeDate"] = new Date(
-                item.expectedDOD
-              ).toLocaleDateString();
-              item["stat"] = item.reimbursementStatus
-                ? REIM_STATUS_MSG_MAP[item.reimbursementStatus]
-                : null;
+    if (!isSearched) {
+      // pageRequest["preAuthType"] = "IPD";
+      pageRequest["summary"] = true;
+      pageRequest["active"] = true;
+    }
 
-              return item;
-            });
-            data.content = records;
-            return data?.data;
-          })
-        )
-      : claimservice.getClaimReim(pageRequest, providerId).pipe(
-          map((data) => {
-            let content = data?.data?.content;
-            let records = content.map((item) => {
-              item["admissionDate"] = new Date(
-                item.expectedDOA
-              ).toLocaleDateString();
-              item["dischargeDate"] = new Date(
-                item.expectedDOD
-              ).toLocaleDateString();
-              item["stat"] = item.reimbursementStatus
-                ? REIM_STATUS_MSG_MAP[item.reimbursementStatus]
-                : null;
+    const querytype = {
+      1: {
+        fromExpectedDOA: utclongDate(fromExpectedDOA),
+        toExpectedDOA: toExpectedDOA
+          ? utclongDate(toExpectedDOA)
+          : utclongDate(fromExpectedDOA),
+      },
+      2: {
+        fromExpectedDOD: utclongDate(fromExpectedDOD),
+        toExpectedDOD: toExpectedDOD
+          ? utclongDate(toExpectedDOD)
+          : utclongDate(fromExpectedDOD),
+      },
+      3: {
+        startDate: utclongDate(fromDate),
+        endDate: toDate ? utclongDate(toDate) : utclongDate(fromDate),
+      },
+    };
 
-              return item;
-            });
-            data.content = records;
-            return data?.data;
-          })
-        );
+    const pagerequestquery = {
+      page: pageRequest.page,
+      size: pageRequest.size,
+
+      // summary: true,
+      // active: true,
+      // providerId: providerId,
+      ...(searchType && querytype[searchType]),
+      providerId: providerId,
+
+    };
+
+    if (searchType) {
+      return claimservice.getClaimdata(pagerequestquery, providerId).pipe(
+        map((data) => {
+          let content = data?.data?.content;
+          let records = content.map((item) => {
+            item["admissionDate"] = new Date(
+              item.expectedDOA
+            ).toLocaleDateString();
+            item["dischargeDate"] = new Date(
+              item.expectedDOD
+            ).toLocaleDateString();
+            item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+            return item;
+          });
+          data.content = records;
+          return data?.data;
+        })
+      );
+    } else {
+      return isSearched
+        ? claimservice
+            .getFilteredClaimReim(
+              searchType ? pagerequestquery : pageRequest,
+              providerId
+            )
+            .pipe(
+              map((data) => {
+                let content = data?.data?.content;
+                let records = content.map((item) => {
+                  item["admissionDate"] = new Date(
+                    item.expectedDOA
+                  ).toLocaleDateString();
+                  item["dischargeDate"] = new Date(
+                    item.expectedDOD
+                  ).toLocaleDateString();
+                  item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+                  return item;
+                });
+                data.content = records;
+                return data?.data;
+              })
+            )
+        : claimservice
+            .getClaimReim(
+              searchType ? pagerequestquery : pageRequest,
+              providerId
+            )
+            .pipe(
+              map((data) => {
+                let content = data?.data?.content;
+                let records = content.map((item) => {
+                  item["admissionDate"] = new Date(
+                    item.expectedDOA
+                  ).toLocaleDateString();
+                  item["dischargeDate"] = new Date(
+                    item.expectedDOD
+                  ).toLocaleDateString();
+                  item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+                  return item;
+                });
+                data.content = records;
+                return data?.data;
+              })
+            );
+    }
   };
 
   const handleOpen = () => {
@@ -249,6 +331,35 @@ const CreditClaims = () => {
     navigate(`/submit-claim/${reim.id}?type=credit&mode=edit`);
   };
 
+  const preAuthDOASearch = (type) => {
+    setSearchModal(true);
+    setSearchType(1);
+  };
+
+  const preAuthDODSearch = (type) => {
+    setSearchModal(true);
+    setSearchType(2);
+  };
+  const preAuthCreationSearch = (type) => {
+    setSearchModal(true);
+    setSearchType(3);
+  };
+
+  const onSearch = () => {
+    setSearchModal(false);
+    setReloadTable(true);
+    setTimeout(() => {
+      setReloadTable(false);
+      // setSearchDischargeDate('');
+      // setSearchAdmissionDate('');
+      setFromExpectedDOA(null);
+      setToExpectedDOA(null);
+      setFromExpectedDOD(null);
+      setToExpectedDOD(null);
+      setFromDate(null);
+      setToDate(null);
+    }, [1000]);
+  };
   const configuration = {
     enableSelection: false,
     scrollHeight: "300px",
@@ -294,8 +405,11 @@ const CreditClaims = () => {
       enableGlobalSearch: true,
       searchText: "Search by Membership Number, Name, Policy Number and Status",
       //   onSelectionChange: handleSelectedRows,
-      //   selectionMenus: [{ icon: "", text: "Blacklist", disabled: selectionBlacklistMenuDisabled, onClick: openBlacklist }],
-      //   selectionMenuButtonText: "Action"
+      selectionMenus: [
+        { icon: "", text: "Admission Date", onClick: preAuthDOASearch },
+        { icon: "", text: "Discharge Date", onClick: preAuthDODSearch },
+        { icon: "", text: "Creation Date", onClick: preAuthCreationSearch },
+      ], //   selectionMenuButtonText: "Action"      //   selectionMenuButtonText: "Action"
     },
   };
 
@@ -509,8 +623,365 @@ const CreditClaims = () => {
         config={configuration}
         columnsDefination={columnsDefinations}
         // onEdit={openEditSection}
-        // reloadTable={reloadTable}
+        reloadTable={reloadTable}
       />
+      <Modal
+        open={searchModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box style={modalStyle}>
+          <Box>
+            <Box id="alert-dialog-slide-description">
+              {searchType == 1 && (
+                <>
+                  <Box display={"flex"} justifyContent={"space-between"}>
+                    <Box component="h3" marginBottom={"10px"}>
+                      Search By Date of Admission
+                    </Box>
+                    <CloseOutlined
+                      onClick={() => setSearchModal(false)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Box>
+                  <Box display={"flex"} marginBottom={"10px"}>
+                    <Box display={"flex"}>
+                      <Typography
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        From
+                      </Typography>
+                      &nbsp;
+                      <span style={{ display: "flex", alignItems: "center" }}>
+                        :
+                      </span>
+                      &nbsp;
+                      <Box style={{ marginBottom: "10px" }}>
+                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            views={["year", "month", "date"]}
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            autoOk={true}
+                            id="date-picker-inline"
+                            value={fromExpectedDOA}
+                            onChange={(date) => setFromExpectedDOA(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </MuiPickersUtilsProvider> */}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            margin="normal"
+                            id="date-picker-inline"
+                            // label="Enrolment Date"
+                            autoOk={true}
+                            value={fromExpectedDOA}
+                            onChange={(date) => setFromExpectedDOA(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </Box>
+                    </Box>
+                    <Box display={"flex"} marginLeft={"3%"}>
+                      <Typography
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        To
+                      </Typography>
+                      &nbsp;
+                      <span style={{ display: "flex", alignItems: "center" }}>
+                        :
+                      </span>
+                      &nbsp;
+                      <Box style={{ marginBottom: "10px" }}>
+                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            views={["year", "month", "date"]}
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            autoOk={true}
+                            id="date-picker-inline"
+                            value={toExpectedDOA}
+                            onChange={(date) => setToExpectedDOA(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </MuiPickersUtilsProvider> */}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            margin="normal"
+                            id="date-picker-inline"
+                            // label="Enrolment Date"
+                            autoOk={true}
+                            value={toExpectedDOA}
+                            onChange={(date) => setToExpectedDOA(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </Box>
+                    </Box>
+                  </Box>
+                </>
+              )}
+              {searchType == 2 && (
+                <>
+                  <Box display={"flex"} justifyContent={"space-between"}>
+                    <Box component="h3" marginBottom={"10px"}>
+                      Seach by Date of Discharge
+                    </Box>
+                    <CloseOutlined
+                      onClick={() => setSearchModal(false)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Box>
+                  <Box display={"flex"} marginBottom={"10px"}>
+                    <Box display={"flex"}>
+                      <Typography
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        From
+                      </Typography>
+                      &nbsp;
+                      <span style={{ display: "flex", alignItems: "center" }}>
+                        :
+                      </span>
+                      &nbsp;
+                      <Box style={{ marginBottom: "10px" }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            margin="normal"
+                            id="date-picker-inline"
+                            // label="Enrolment Date"
+                            autoOk={true}
+                            value={fromExpectedDOD}
+                            onChange={(date) => setFromExpectedDOD(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </LocalizationProvider>
+                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            views={["year", "month", "date"]}
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            autoOk={true}
+                            id="date-picker-inline"
+                            value={fromExpectedDOD}
+                            onChange={(date) => setFromExpectedDOD(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </MuiPickersUtilsProvider> */}
+                      </Box>
+                    </Box>
+                    <Box display={"flex"} marginLeft={"3%"}>
+                      <Typography
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        To
+                      </Typography>
+                      &nbsp;
+                      <span style={{ display: "flex", alignItems: "center" }}>
+                        :
+                      </span>
+                      &nbsp;
+                      <Box style={{ marginBottom: "10px" }}>
+                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            views={["year", "month", "date"]}
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            autoOk={true}
+                            id="date-picker-inline"
+                            value={toExpectedDOD}
+                            onChange={(date) => setToExpectedDOD(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </MuiPickersUtilsProvider> */}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            margin="normal"
+                            id="date-picker-inline"
+                            // label="Enrolment Date"
+                            autoOk={true}
+                            value={toExpectedDOD}
+                            onChange={(date) => setToExpectedDOD(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </Box>
+                    </Box>
+                  </Box>
+                </>
+              )}
+              {searchType == 3 && (
+                <>
+                  <Box display={"flex"} justifyContent={"space-between"}>
+                    <Box component="h3" marginBottom={"10px"}>
+                      Search By Creation Date
+                    </Box>
+                    <CloseOutlined
+                      onClick={() => setSearchModal(false)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Box>
+                  <Box display={"flex"} marginBottom={"10px"}>
+                    <Box display={"flex"}>
+                      <Typography
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        From
+                      </Typography>
+                      &nbsp;
+                      <span style={{ display: "flex", alignItems: "center" }}>
+                        :
+                      </span>
+                      &nbsp;
+                      <Box style={{ marginBottom: "10px" }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            margin="normal"
+                            id="date-picker-inline"
+                            // label="Enrolment Date"
+                            autoOk={true}
+                            value={fromDate}
+                            onChange={(date) => setFromDate(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </LocalizationProvider>
+                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            views={["year", "month", "date"]}
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            autoOk={true}
+                            id="date-picker-inline"
+                            value={fromDate}
+                            onChange={(date) => setFromDate(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </MuiPickersUtilsProvider> */}
+                      </Box>
+                    </Box>
+                    <Box display={"flex"} marginLeft={"3%"}>
+                      <Typography
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        To
+                      </Typography>
+                      &nbsp;
+                      <span style={{ display: "flex", alignItems: "center" }}>
+                        :
+                      </span>
+                      &nbsp;
+                      <Box style={{ marginBottom: "10px" }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            margin="normal"
+                            id="date-picker-inline"
+                            // label="Enrolment Date"
+                            autoOk={true}
+                            value={fromDate}
+                            onChange={(date) => setToDate(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </LocalizationProvider>
+                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            views={["year", "month", "date"]}
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            autoOk={true}
+                            id="date-picker-inline"
+                            value={toDate}
+                            onChange={(date) => setToDate(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change ing date",
+                            }}
+                          />
+                        </MuiPickersUtilsProvider> */}
+                      </Box>
+                    </Box>
+                  </Box>
+                </>
+              )}
+            </Box>
+          </Box>
+          <Box marginTop={"10%"}>
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: "#313c96",
+                color: "#fff",
+              }}
+              onClick={onSearch}
+            >
+              Search
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 };
