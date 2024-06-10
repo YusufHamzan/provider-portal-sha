@@ -21,9 +21,11 @@ export class CreditClaimService {
       .pipe(map((response: { data: any }) => response.data));
   }
 
-  getDashboardCountCreditClaims(id:any): Observable<any> {
+  getDashboardCountCreditClaims(id: any): Observable<any> {
     return http
-      .get<any>(`${this.QUERY_CONTEXT}/provider/reimbursements/credit-claim-count/${id}`)
+      .get<any>(
+        `${this.QUERY_CONTEXT}/provider/reimbursements/credit-claim-count/${id}`
+      )
       .pipe(map((response) => response));
   }
 
@@ -35,7 +37,17 @@ export class CreditClaimService {
       )
       .pipe(map((response) => response));
   }
-  
+
+  getClaimdata(pageRequest: any, providerId: number): Observable<any> {
+    return http
+      .get<Page<any>>(
+        `${this.QUERY_CONTEXT}/provider/reimbursements/claim-credit/date-filter`,
+        // provider/reimbursements/preauth-details/1233358561196470272?page=0&size=10&summary=true&active=true
+        { params: pageRequest }
+      )
+      .pipe(map((response) => response));
+  }
+
   getFilteredClaimReim(pageRequest: any, providerId: number): Observable<any> {
     return http
       .get<Page<any>>(
@@ -73,15 +85,26 @@ export class CreditClaimService {
       .pipe(map((response) => response.data));
   }
 
-  saveReimbursement(payload: Reimbursement, providerId:string): Observable<Map<string, any>> {
+  saveReimbursement(
+    payload: Reimbursement,
+    providerId: string
+  ): Observable<Map<string, any>> {
     return http
-      .post<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/reimburse/${providerId}`, payload)
+      .post<Map<string, any>>(
+        `${this.COMMAND_CONTEXT}/provider/reimburse/${providerId}`,
+        payload
+      )
       .pipe(map((response) => response.data));
   }
 
-  getReimbursementById(id: string, providerId:string): Observable<Reimbursement> {
+  getReimbursementById(
+    id: string,
+    providerId: string
+  ): Observable<Reimbursement> {
     return http
-      .get<Reimbursement>(`${this.QUERY_CONTEXT}/provider/reimbursements/${id}/${providerId}`)
+      .get<Reimbursement>(
+        `${this.QUERY_CONTEXT}/provider/reimbursements/${id}/${providerId}`
+      )
       .pipe(map((response) => response.data));
   }
 
@@ -89,12 +112,16 @@ export class CreditClaimService {
     payload: any,
     id: string,
     action: string,
-    providerId: string,
+    providerId: string
   ): Observable<Map<string, any>> {
     return http
-      .patch<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/reimburse/${id}/${providerId}`, payload, {
-        params: { action: action },
-      })
+      .patch<Map<string, any>>(
+        `${this.COMMAND_CONTEXT}/provider/reimburse/${id}/${providerId}`,
+        payload,
+        {
+          params: { action: action },
+        }
+      )
       .pipe(map((response) => response.data));
   }
 
@@ -107,12 +134,20 @@ export class CreditClaimService {
       .pipe(map((response) => response.data));
   }
 
-  addDoc(id: string, payload: FormData, providerId: string,): Observable<Map<string, any>> {
+  addDoc(
+    id: string,
+    payload: FormData,
+    providerId: string
+  ): Observable<Map<string, any>> {
     let headers = { "Content-Type": "multipart/form-data" };
     return http
-      .put<Map<string, any>>(`${this.COMMAND_CONTEXT}/provider/reimburse/${id}/docs/${providerId}`, payload, {
-        headers,
-      })
+      .put<Map<string, any>>(
+        `${this.COMMAND_CONTEXT}/provider/reimburse/${id}/docs/${providerId}`,
+        payload,
+        {
+          headers,
+        }
+      )
       .pipe(map((response) => response.data));
   }
 
