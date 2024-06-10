@@ -1701,7 +1701,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <DatePicker
                     margin="normal"
                     id="date-picker-inline"
-                    label="Expected DOA"
+                    label="Expected/Actual DOA"
                     autoOk={true}
                     value={dayjs(selectedDOA)}
                     onChange={handleDOA}
@@ -1732,7 +1732,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <DatePicker
                     margin="normal"
                     id="date-picker-inline"
-                    label="Expected DOD"
+                    label="Expected/Actual DOD"
                     autoOk={true}
                     value={dayjs(selectedDOD)}
                     onChange={handleDODDate}
