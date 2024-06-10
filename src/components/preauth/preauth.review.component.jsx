@@ -401,23 +401,41 @@ export default function PreAuthReview(props) {
     );
 
     let frk$ = forkJoin({
-      // providers: providerService.getProviders(),
+      providers: benefitService.getProviders(),
       bts: benefitService.getAllBenefit({ page: 0, size: 1000 }),
       preAuth: preAuthService.getPreAuthById(id, providerId),
       services: serviceAll$,
+      serviceType: serviceDiagnosis.getServiceTypes(),
     });
     frk$.subscribe((data) => {
-      // data.providers.content.forEach(proAll => {
-      //   data.preAuth.providers.forEach(pr => {
-      //     if (proAll.id === pr.providerId) {
-      //       pr['providerName'] = proAll.providerBasicDetails?.name;
-      //     }
-      //   });
-      // });
+      data.providers.content.forEach((proAll) => {
+        data.preAuth.providers.forEach((pr) => {
+          if (proAll.id === pr.providerId) {
+            pr["providerName"] = proAll.providerBasicDetails?.name;
+          }
+        });
+        data.preAuth.services.forEach((service) => {
+          if (service.providerId === proAll.id) {
+            service["provider"] = proAll.providerBasicDetails?.name;
+          }
+        });
+      });
       data.bts.content.forEach((benall) => {
         data.preAuth.benefitsWithCost.forEach((benefit) => {
           if (benefit.benefitId === benall.id) {
             benefit["benefitName"] = benall.name;
+          }
+        });
+        data.preAuth.services.forEach((service) => {
+          if (service.benifitId === benall.id) {
+            service["benefitName"] = benall?.name;
+          }
+        });
+      });
+      data.serviceType.content.forEach((serAll) => {
+        data.preAuth.services.forEach((service) => {
+          if (service.serviceId === serAll.id) {
+            service["service"] = serAll?.name;
           }
         });
       });
@@ -429,8 +447,8 @@ export default function PreAuthReview(props) {
       });
       serviceList.forEach((ser) => {
         data.preAuth.services.forEach((service) => {
-          if (service.serviceId === ser.id) {
-            service["serviceName"] = ser.name;
+          if (service.expenseHead === ser.id) {
+            service["expense"] = ser.name;
           }
         });
       });
@@ -1438,7 +1456,10 @@ export default function PreAuthReview(props) {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <StyledTableRow>
-                  <StyledTableCellHeader>Name</StyledTableCellHeader>
+                  <StyledTableCellHeader>Provider Name</StyledTableCellHeader>
+                  <StyledTableCellHeader>Benefit Name</StyledTableCellHeader>
+                  <StyledTableCellHeader>Service Type</StyledTableCellHeader>
+                  <StyledTableCellHeader>Service Name</StyledTableCellHeader>
                   <StyledTableCellHeader>Estimated cost</StyledTableCellHeader>
                   <StyledTableCellHeader></StyledTableCellHeader>
                 </StyledTableRow>
@@ -1446,60 +1467,84 @@ export default function PreAuthReview(props) {
               <TableBody>
                 {preAuthDetails?.preAuth.services[0].serviceId ? (
                   preAuthDetails?.preAuth.services?.map((row) => {
+                    let proId = localStorage.getItem("providerId");
                     let value =
                       preAuthDetails?.preAuth.preAuthStatus !=
                         "ENHANCEMENT_REQUESTED" && row?.approvedCost;
-                    return (
-                      <StyledTableRow
-                        key={row.name}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <StyledTableCellRow
-                          component="th"
-                          scope="row"
-                          style={valueStyle}
+                    if (proId === row.providerId) {
+                      return (
+                        <StyledTableRow
+                          key={row.name}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
                         >
-                          {row.serviceName}
-                        </StyledTableCellRow>
-                        <StyledTableCellRow style={valueStyle}>
-                          {row.estimatedCost}
-                        </StyledTableCellRow>
-                        <StyledTableCellRow style={valueStyle}>
-                          <InputText
-                            className="p-inputtext-sm"
-                            type="number"
-                            defaultValue={value}
-                            id={`approveServiceAmount-${row.serviceId}`}
-                            name={`approveServiceAmount-${row.serviceId}`}
-                            disabled={
-                              preAuthDetails?.preAuth.preAuthStatus ==
-                              "APPROVED"
-                            }
-                            onBlur={(e) => {
-                              const updatedService = serviceDetails.map(
-                                (item) => {
-                                  if (item.serviceId == row.serviceId) {
-                                    item.approvedCost = e.target.value;
+                          <StyledTableCellRow
+                            component="th"
+                            scope="row"
+                            style={valueStyle}
+                          >
+                            {row.provider}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow
+                            component="th"
+                            scope="row"
+                            style={valueStyle}
+                          >
+                            {row.benefitName}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow
+                            component="th"
+                            scope="row"
+                            style={valueStyle}
+                          >
+                            {row.service}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow
+                            component="th"
+                            scope="row"
+                            style={valueStyle}
+                          >
+                            {row.expense}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow style={valueStyle}>
+                            {row.estimatedCost}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow style={valueStyle}>
+                            <InputText
+                              className="p-inputtext-sm"
+                              type="number"
+                              defaultValue={value}
+                              id={`approveServiceAmount-${row.serviceId}`}
+                              name={`approveServiceAmount-${row.serviceId}`}
+                              disabled={
+                                preAuthDetails?.preAuth.preAuthStatus ==
+                                "APPROVED"
+                              }
+                              onBlur={(e) => {
+                                const updatedService = serviceDetails.map(
+                                  (item) => {
+                                    if (item.serviceId == row.serviceId) {
+                                      item.approvedCost = e.target.value;
+                                    }
+                                    return item;
                                   }
-                                  return item;
-                                }
-                              );
-                              setServiceDetails(updatedService);
-                              handleApproveServiceAmount(e, row);
-                            }}
-                            style={{
-                              background: "transparent",
-                              border: "none",
-                              borderBottom: "1px solid",
-                              height: "15px",
-                              borderRadius: "0",
-                            }}
-                          />
-                        </StyledTableCellRow>
-                      </StyledTableRow>
-                    );
+                                );
+                                setServiceDetails(updatedService);
+                                handleApproveServiceAmount(e, row);
+                              }}
+                              style={{
+                                background: "transparent",
+                                border: "none",
+                                borderBottom: "1px solid",
+                                height: "15px",
+                                borderRadius: "0",
+                              }}
+                            />
+                          </StyledTableCellRow>
+                        </StyledTableRow>
+                      );
+                    }
                   })
                 ) : (
                   <p style={{ color: "#3c3c3c", padding: "1%" }}>No data</p>
@@ -1612,9 +1657,15 @@ export default function PreAuthReview(props) {
     <Box>
       <Box display={"flex"} justifyContent={"space-between"}>
         <Box item xs={6} style={{ marginLeft: "10px" }}>
-          <span style={{ color: "#313c96", fontWeight: "bold" }}>{type === "preauth" && "Preauth: " }</span>
-          <span style={{ color: "#313c96", fontWeight: "bold" }}>{type === "claim" && "Claim: " }</span>
-          <span style={{ color: "#313c96", fontWeight: "bold" }}>{type === "creditClaim" && "Credit Claim: " }</span>
+          <span style={{ color: "#313c96", fontWeight: "bold" }}>
+            {type === "preauth" && "Preauth: "}
+          </span>
+          <span style={{ color: "#313c96", fontWeight: "bold" }}>
+            {type === "claim" && "Claim: "}
+          </span>
+          <span style={{ color: "#313c96", fontWeight: "bold" }}>
+            {type === "creditClaim" && "Credit Claim: "}
+          </span>
           {id}
         </Box>
         <Box item xs={6} style={{ marginRight: "10px" }}>
