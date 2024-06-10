@@ -44,6 +44,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import ClaimModal from "./claim.modal.component";
 
 const useStyles = makeStyles((theme) => ({
   input1: {
@@ -178,7 +179,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [selectSpecId, setSelectedSpecId] = React.useState("");
   const [serviceTypeList, setServiceTypeList] = React.useState();
   const [expenseHeadList, setExpenseHeadList] = React.useState();
-
+  const [showViewDetails, setShowViewDetails] = React.useState(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -419,6 +420,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           planScheme: res.content[0].planScheme,
           productName: res.content[0].productName,
         });
+        setShowViewDetails(true)
       }
     });
     setOpenClientModal(false);
@@ -775,6 +777,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             gender: res.content[0].gender,
             membershipNo: res.content[0].membershipNo,
             relations: res.content[0].relations,
+            contactNoOne: res.content[0].mobileNo,
             policyNumber: res.content[0].policyNumber,
             enrolentToDate: new Date(res.content[0].policyEndDate),
             enrolmentFromDate: new Date(res.content[0].policyStartDate),
@@ -782,6 +785,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             planScheme: res.content[0].planScheme,
             productName: res.content[0].productName,
           });
+          setShowViewDetails(true)
         }
       } else {
         setAlertMsg(`No Data found for ${id}`);
@@ -822,6 +826,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       planScheme: data.planScheme,
       productName: data.productName,
     });
+    setShowViewDetails(true)
     handleClosed();
   };
 
@@ -1102,8 +1107,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, [formik.values, diagnosisList]);
 
   const handleBenefitChangeInService = (e, index) => {
-    const isValAlreadyPresent = serviceDetailsList.some(item => item.benifitId === e.value);
-    
+    const isValAlreadyPresent = serviceDetailsList.some(
+      (item) => item.benifitId === e.value
+    );
+
     if (!isValAlreadyPresent) {
       const list = [...serviceDetailsList];
       // list[index].benifitId = e.value;
@@ -1112,7 +1119,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         list[index] = { ...list[index], benifitId: e.value }; // Ensure the object is updated immutably
         setServiceDetailsList(list);
       } else {
-        console.error('Index out of bounds:', index);
+        console.error("Index out of bounds:", index);
       }
     } else {
       setAlertMsg(`Provider already selected!!!`);
@@ -1122,7 +1129,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleChangeInService = (e, index) => {
     const { name, value } = e.target;
-    const isValAlreadyPresent = serviceDetailsList.some(item => item.providerId === value);
+    const isValAlreadyPresent = serviceDetailsList.some(
+      (item) => item.providerId === value
+    );
 
     if (!isValAlreadyPresent) {
       const list = [...serviceDetailsList];
@@ -1135,7 +1144,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
   const handleEstimateCostInService = (e, index) => {
     const { name, value } = e.target;
-    const isValAlreadyPresent = serviceDetailsList.some(item => item.providerId === value);
+    const isValAlreadyPresent = serviceDetailsList.some(
+      (item) => item.providerId === value
+    );
 
     if (!isValAlreadyPresent) {
       const list = [...serviceDetailsList];
@@ -1149,7 +1160,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleExpenseChangeInService = (e, index) => {
     const { name, value } = e.target;
-    const isValAlreadyPresent = serviceDetailsList.some(item => item.providerId === value);
+    const isValAlreadyPresent = serviceDetailsList.some(
+      (item) => item.providerId === value
+    );
 
     if (!isValAlreadyPresent) {
       const list = [...serviceDetailsList];
@@ -1160,14 +1173,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-
+  console.log("formik.values.contactNoOne", formik.values.contactNoOne);
   return (
     <>
-      {/* <ClaimModal
+      <ClaimModal
         claimModal={claimModal}
         handleCloseClaimModal={handleCloseClaimModal}
         memberBasic={memberBasic}
-      /> */}
+      />
       <Paper elevation="none">
         <Box p={3} my={2}>
           <Snackbar
@@ -1346,12 +1359,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     },
                   }}
                 />
-                <a
-                  style={{ color: "#4472C4", cursor: "pointer" }}
-                  onClick={viewUserDetails}
-                >
-                  View Details
-                </a>
+                {showViewDetails && (
+                  <a
+                    style={{ color: "#4472C4", cursor: "pointer" }}
+                    onClick={viewUserDetails}
+                  >
+                    View Details
+                  </a>
+                )}
               </Grid>
 
               <Grid item xs={12} sm={6} md={4}>
@@ -1566,8 +1581,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     <FormControl className={classes.formControl} fullWidth>
                       <Autocomplete
                         name="benefitId"
-                        defaultValue={x.benefitId && x.benefitId}
-                        value={x.benefitId && x.benefitId}
+                        // defaultValue={x.benefitId ? x.benefitId : ""}
+                        value={x.benefitId ? x.benefitId : null}
                         onChange={(e, val) => handleBenefitChange(i, val)}
                         id="checkboxes-tags-demo"
                         filterOptions={autocompleteFilterChange}
@@ -1788,7 +1803,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   //   renderOption={(option) => (
                   //     <React.Fragment>{option.diagnosisName}</React.Fragment>
                   //   )}
-                  value={selectedId && selectedId}
+                  value={selectedId ? selectedId : null}
                   className={classes.benifitAutoComplete}
                   onChange={(e, value) => doSelectValue(e, value)}
                   renderInput={(params) => (
@@ -1869,7 +1884,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   id="standard-basic"
                   name="contactNoTwo"
                   type="number"
-                  value={formik.values.contactNoTwo}
+                  value={memberBasic.contactNoTwo}
                   onChange={formik.handleChange}
                   label="Contact No. 2"
                 />
