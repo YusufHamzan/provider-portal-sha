@@ -111,7 +111,7 @@ const serviceDiagnosis = new ServiceTypeService();
 const preAuthService = new PreAuthService();
 const memberservice = new MemberService();
 
-let bts$ = benefitService.getAllBenefit({ page: 0, size: 1000 });
+let bts$ = benefitService.getAllBenefitWithChild({ page: 0, size: 1000 });
 let ps$ = providerService.getProviders();
 let ad$ = serviceDiagnosis.getServicesbyId("867854874246590464", {
   page: 0,
@@ -157,7 +157,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const navigate = useNavigate();
   const { id } = useParams();
   const classes = useStyles();
-  
+
   const providerId = localStorage.getItem("providerId");
   const [selectedDOD, setSelectedDOD] = React.useState(new Date());
   const [selectedDOA, setSelectedDOA] = React.useState(new Date());
@@ -176,6 +176,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState([]);
   const [selectSpecId, setSelectedSpecId] = React.useState("");
+  const [serviceTypeList, setServiceTypeList] = React.useState();
+  const [expenseHeadList, setExpenseHeadList] = React.useState();
 
   const formik = useFormik({
     initialValues: {
@@ -274,14 +276,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
   ]);
   const [serviceDetailsList, setServiceDetailsList] = React.useState([
     {
-      serviceId: "",
+      providerId: "",
       estimatedCost: 0,
+      benifitId: "",
+      serviceId: "",
+      expenseHead: "",
     },
   ]);
   const useObservable = (observable, setter) => {
     useEffect(() => {
       let subscription = observable.subscribe((result) => {
-        setter(result.content);
+        setter(result);
       });
       return () => subscription.unsubscribe();
     }, [observable, setter]);
@@ -328,6 +333,36 @@ export default function ClaimsPreAuthIPDComponent(props) {
       });
       return () => subscription.unsubscribe();
     }, [observable, setter]);
+  };
+
+  const getServiceTypes = () => {
+    let serviceTypeService$ = serviceDiagnosis.getServiceTypes();
+    serviceTypeService$.subscribe((response) => {
+      let temp = [];
+      response.content.forEach((el) => {
+        temp.push(el);
+      });
+      setServiceTypeList(temp);
+    });
+  };
+
+  React.useEffect(() => {
+    getServiceTypes();
+  }, []);
+
+  const getExpenseHead = (id) => {
+    let expenseHeadService$ = serviceDiagnosis.getExpenseHead(id);
+    expenseHeadService$.subscribe((response) => {
+      let temp = [];
+      response.content.forEach((el) => {
+        let obj = {
+          label: el?.name,
+          value: el?.id,
+        };
+        temp.push(obj);
+      });
+      setExpenseHeadList(temp);
+    });
   };
 
   useEffect(() => {
@@ -486,7 +521,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     const list = [...benefitsWithCost];
     list[index][name] = value;
     setBenefitsWithCost(list);
-    handleEstimateChangeProvider(e,index)
+    handleEstimateChangeProvider(e, index);
   };
 
   const handleRemoveClaimCost = (index) => {
@@ -496,7 +531,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     const listSelected = [...selectedBenefit];
     listSelected.splice(index, 1);
     setSelectedBenefit(listSelected);
-    handleRemoveProviderWithBenefit(index)
+    handleRemoveProviderWithBenefit(index);
   };
 
   const handleAddClaimCost = () => {
@@ -590,7 +625,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
 
     handleBenefitChangeInProvider(index, val);
-    
   };
 
   const handleBenefitChangeInProvider = (idx, val) => {
@@ -1067,6 +1101,66 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
   }, [formik.values, diagnosisList]);
 
+  const handleBenefitChangeInService = (e, index) => {
+    const isValAlreadyPresent = serviceDetailsList.some(item => item.benifitId === e.value);
+    
+    if (!isValAlreadyPresent) {
+      const list = [...serviceDetailsList];
+      // list[index].benifitId = e.value;
+      // setServiceDetailsList(list);
+      if (index >= 0 && index < list.length) {
+        list[index] = { ...list[index], benifitId: e.value }; // Ensure the object is updated immutably
+        setServiceDetailsList(list);
+      } else {
+        console.error('Index out of bounds:', index);
+      }
+    } else {
+      setAlertMsg(`Provider already selected!!!`);
+      setOpenSnack(true);
+    }
+  };
+
+  const handleChangeInService = (e, index) => {
+    const { name, value } = e.target;
+    const isValAlreadyPresent = serviceDetailsList.some(item => item.providerId === value);
+
+    if (!isValAlreadyPresent) {
+      const list = [...serviceDetailsList];
+      list[index][name] = value;
+      setServiceDetailsList(list);
+    } else {
+      setAlertMsg(`Provider already selected!!!`);
+      setOpenSnack(true);
+    }
+  };
+  const handleEstimateCostInService = (e, index) => {
+    const { name, value } = e.target;
+    const isValAlreadyPresent = serviceDetailsList.some(item => item.providerId === value);
+
+    if (!isValAlreadyPresent) {
+      const list = [...serviceDetailsList];
+      list[index][name] = value;
+      setServiceDetailsList(list);
+    } else {
+      setAlertMsg(`Provider already selected!!!`);
+      setOpenSnack(true);
+    }
+  };
+
+  const handleExpenseChangeInService = (e, index) => {
+    const { name, value } = e.target;
+    const isValAlreadyPresent = serviceDetailsList.some(item => item.providerId === value);
+
+    if (!isValAlreadyPresent) {
+      const list = [...serviceDetailsList];
+      list[index][name] = value;
+      setServiceDetailsList(list);
+    } else {
+      setAlertMsg(`Provider already selected!!!`);
+      setOpenSnack(true);
+    }
+  };
+
   return (
     <>
       {/* <ClaimModal
@@ -1082,7 +1176,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
             onClose={handleMsgErrorClose}
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
           >
-            <Alert onClose={handleMsgErrorClose} variant="filled" severity="error">
+            <Alert
+              onClose={handleMsgErrorClose}
+              variant="filled"
+              severity="error"
+            >
               {alertMsg}
             </Alert>
           </Snackbar>
@@ -1791,180 +1889,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
               </Grid>
             </Grid>
 
-            {/* <Grid itemxs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
-              <span style={{ color: "#4472C4", fontWeight: "bold" }}>
-                PROVIDER DETAILS
-              </span>
-            </Grid>
-
-            <Grid item xs={12} sm={6} md={4} style={{ marginBottom: "15px" }}>
-              <Divider />
-            </Grid>
-            {providerDetailsList.map((x, i) => {
-              return (
-                <Grid
-                  container
-                  spacing={3}
-                  key={i}
-                  style={{ marginBottom: "4px" }}
-                >
-                  <Grid item xs={12} sm={6} md={3}>
-                    <FormControl className={classes.formControl}>
-                      <InputLabel
-                        id="demo-simple-select-label"
-                        style={{ marginBottom: "0px" }}
-                      >
-                        Provider
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        variant="standard"
-                        name="providerId"
-                        value={x.providerId}
-                        onChange={(e) => handleInputChangeProvider(e, i)}
-                      >
-                        {providerList.map((ele) => {
-                          return (
-                            <MenuItem key={ele.id} value={ele.id}>
-                              {ele.providerBasicDetails.name}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={7}>
-                    {x?.benefit.map((b, idx) => (
-                      <Grid
-                        container
-                        spacing={3}
-                        key={idx}
-                        style={{ marginBottom: "20px" }}
-                      >
-                        <Grid item xs={12} sm={6} md={4}>
-                          <FormControl
-                            className={classes.formControl}
-                            fullWidth
-                          >
-                            <Autocomplete
-                              name="benefitId"
-                              defaultValue={b?.benefitId}
-                              value={b?.benefitId}
-                              onChange={(e, val) =>
-                                handleBenefitChangeInProvider(i, idx, val)
-                              }
-                              id="checkboxes-tags-demo"
-                              filterOptions={autocompleteFilterChange}
-                              options={selectedBenefit}
-                              getOptionLabel={(option) =>
-                                option.label ??
-                                benefitOptions.find(
-                                  (benefit) => benefit?.value == option
-                                )?.label
-                              }
-                              getOptionSelected={(option, value) =>
-                                option?.value === value
-                              }
-                              renderOption={(option, { selected }) => (
-                                <React.Fragment>{option?.label}</React.Fragment>
-                              )}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  label="Benefit Provider"
-                                  variant="standard"
-                                />
-                              )}
-                            />
-                          </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                          <TextField
-                            variant="standard"
-                            id="standard-basic"
-                            type="number"
-                            name="estimatedCost"
-                            value={b.estimatedCost}
-                            onChange={(e) =>
-                              handleEstimateChangeProvider(i, idx, e)
-                            }
-                            label="Estimated Cost"
-                          />
-                        </Grid>
-                        <Grid
-                          item
-                          xs={12}
-                          sm={6}
-                          md={2}
-                          style={{ display: "flex", alignItems: "center" }}
-                        >
-                          {x.benefit.length !== 1 && (
-                            <Button
-                              className={`mr10 ${classes.buttonSecondary}`}
-                              onClick={() =>
-                                handleRemoveProviderWithBenefit(i, idx)
-                              }
-                              variant="text"
-                              color="secondary"
-                              style={{ marginLeft: "5px", borderRadius: "50%" }}
-                            >
-                              <DeleteIcon />
-                            </Button>
-                          )}
-                          {selectedBenefit.length > x.benefit.length &&
-                            x.benefit.length - 1 === idx && (
-                              <Button
-                                variant="text"
-                                color="primary"
-                                className={classes.buttonPrimary}
-                                style={{
-                                  marginLeft: "5px",
-                                  borderRadius: "50%",
-                                }}
-                                onClick={() => handleAddProviderWithBenefit(i)}
-                              >
-                                <AddIcon />
-                              </Button>
-                            )}
-                        </Grid>
-                      </Grid>
-                    ))}
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={2}
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    {providerDetailsList.length !== 1 && (
-                      <Button
-                        className={`mr10 ${classes.buttonSecondary}`}
-                        onClick={() => handleRemoveProviderdetails(i)}
-                        variant="contained"
-                        color="secondary"
-                        style={{ marginLeft: "5px" }}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    )}
-                    {providerDetailsList.length - 1 === i && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.buttonPrimary}
-                        style={{ marginLeft: "5px" }}
-                        onClick={handleAddProviderdetails}
-                      >
-                        <AddIcon />
-                      </Button>
-                    )}
-                  </Grid>
-                </Grid>
-              );
-            })} */}
-
             <Grid itemxs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
               <span style={{ color: "#4472C4", fontWeight: "bold" }}>
                 SERVICE DETAILS
@@ -1977,44 +1901,114 @@ export default function ClaimsPreAuthIPDComponent(props) {
             {serviceDetailsList?.map((x, i) => {
               return (
                 <Grid container spacing={3} key={i}>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <FormControl className={classes.formControl}>
-                      <InputLabel
-                        id="demo-simple-select-label"
-                        style={{ marginBottom: "0px" }}
-                      >
-                        Service
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        name="serviceId"
-                        variant="standard"
-                        value={x.serviceId}
-                        onChange={(e) => handleInputChangeService(e, i)}
-                      >
-                        {serviceList?.map((ele) => {
-                          return (
-                            <MenuItem key={ele.id} value={ele.id}>
-                              {ele.name}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
+                  <Grid item xs={12} sm={12} md={12}>
+                    <Grid
+                      container
+                      spacing={3}
+                      style={{ marginBottom: "20px" }}
+                    >
+                      <Grid item xs={12} sm={6} md={3}>
+                        <FormControl className={classes.formControl} fullWidth>
+                          <Autocomplete
+                            name="benefitId"
+                            defaultValue={x?.benefitId}
+                            value={x?.benefitId}
+                            onChange={(e, val) =>
+                              handleBenefitChangeInService(val, i)
+                            }
+                            id="checkboxes-tags-demo"
+                            filterOptions={autocompleteFilterChange}
+                            options={selectedBenefit}
+                            getOptionLabel={(option) =>
+                              option.label ??
+                              benefitOptions.find(
+                                (benefit) => benefit?.value == option
+                              )?.label
+                            }
+                            getOptionSelected={(option, value) =>
+                              option?.value === value
+                            }
+                            // renderOption={(option, { selected }) => (
+                            //   <React.Fragment>{option?.label}</React.Fragment>
+                            // )}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Benefit Provider"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} sm={6} md={3}>
+                        <FormControl className={classes.formControl}>
+                          <InputLabel
+                            id="demo-simple-select-label"
+                            style={{ marginBottom: "0px" }}
+                          >
+                            Service Type
+                          </InputLabel>
+                          <Select
+                            label="Service Type"
+                            name="serviceId"
+                            value={x.serviceId}
+                            variant="standard"
+                            fullWidth
+                            onChange={(e) => {
+                              getExpenseHead(e.target.value);
+                              handleChangeInService(e, i);
+                            }}
+                          >
+                            {serviceTypeList?.map((ele) => {
+                              return (
+                                <MenuItem value={ele?.id}>
+                                  {ele?.displayName}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} sm={6} md={3}>
+                        <FormControl className={classes.formControl}>
+                          <InputLabel
+                            id="demo-simple-select-label"
+                            style={{ marginBottom: "0px" }}
+                          >
+                            Expense Head
+                          </InputLabel>
+                          <Select
+                            label="Expense Head"
+                            name="expenseHead"
+                            variant="standard"
+                            // fullWidth
+                            value={x.expenseHead}
+                            onChange={(e) => handleExpenseChangeInService(e, i)}
+                          >
+                            {expenseHeadList?.map((ele) => {
+                              return (
+                                <MenuItem value={ele?.value}>
+                                  {ele?.label}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} sm={6} md={3}>
+                        <TextField
+                          id="standard-basic"
+                          type="number"
+                          name="estimatedCost"
+                          variant="standard"
+                          value={x?.estimatedCost}
+                          onChange={(e) => handleEstimateCostInService(e, i)}
+                          label="Estimated Cost"
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      id="standard-basic"
-                      type="number"
-                      name="estimatedCost"
-                      value={x.estimatedCost}
-                      variant="standard"
-                      onChange={(e) => handleInputChangeService(e, i)}
-                      label="Estimated Cost"
-                    />
-                  </Grid>
-
                   <Grid
                     item
                     xs={12}
