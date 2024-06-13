@@ -630,7 +630,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.policyNumber}
+                  {memberData?.clientType}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
