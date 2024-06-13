@@ -590,7 +590,7 @@ export default function MemberEligibility() {
             <Grid xs={12} sm={6} md={4}>
             <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>
-                  name of the member
+                  Member Name
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
@@ -607,19 +607,12 @@ export default function MemberEligibility() {
                 </Typography>
               </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>membership no</Typography>
+                <Typography style={TypographyStyle1}>DOB</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.membershipNo}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Mobile No</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.mobileNo}
+                  {/* {memberData?.membershipNo} */}
+                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -630,8 +623,10 @@ export default function MemberEligibility() {
                   {memberData?.gender}
                 </Typography>
               </Box>
+             
+             
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>policy code</Typography>
+                <Typography style={TypographyStyle1}>Policy Type</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
@@ -639,8 +634,16 @@ export default function MemberEligibility() {
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>Contact No</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {memberData?.mobileNo}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>
-                  first enrollment date
+                  First Enrollment Date
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
@@ -662,35 +665,28 @@ export default function MemberEligibility() {
                 </Typography>
               </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Email</Typography>
+                <Typography style={TypographyStyle1}>Membership No.</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.email}
+                  {/* {memberData?.email} */}
+                  {memberData?.membershipNo}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>DOB</Typography>
+                <Typography style={TypographyStyle1}>Age</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")}
+                {memberData?.age}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>age</Typography>
+                <Typography style={TypographyStyle1}>Policy No.</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.age}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>type of policy</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.clientType}
+                {memberData?.policyNumber}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -700,6 +696,14 @@ export default function MemberEligibility() {
                 <Typography style={TypographyStyle2}>
                   {moment(memberData?.policyStartDate).format("DD/MM/YYYY")} -{" "}
                   {moment(memberData?.policyEndDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>Email</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                {memberData?.email}
                 </Typography>
               </Box>
             </Grid>
