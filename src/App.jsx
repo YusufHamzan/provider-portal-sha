@@ -7,11 +7,13 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import "primeicons/primeicons.css";
 import AppRoutes from "./Routes";
+import { useLocation } from "react-router-dom";
 
 // https://api.eoxegen.com/client-query-service/v1/clients/search-by-mobile/9874561230
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   const eventLogger = (event, error) => {};
 
@@ -60,6 +62,8 @@ function App() {
     >
       {isLoading ? (
         <LoadingComponent />
+      ) : location.pathname === "/signup" ? (
+        <AppRoutes />
       ) : (
         <Layout>
           <AppRoutes />
