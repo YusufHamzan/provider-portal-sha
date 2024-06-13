@@ -7,7 +7,7 @@ import { PageRequest, defaultPageRequest } from "../../query-params/page-request
 
 export class SpecializationService {
   readonly COMMAND_CONTEXT = `/master-data-service/v1/specializations`;
-  readonly QUERY_CONTEXT = `/master-data-service/v1/specializations`;
+  readonly QUERY_CONTEXT = `/master-data-service/v1/public/specializations`;
 
   getSpecialization(
     pageRequest: PageRequest = defaultPageRequest

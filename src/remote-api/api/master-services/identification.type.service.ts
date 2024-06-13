@@ -7,7 +7,7 @@ import { PageRequest, defaultPageRequest } from "../../query-params/page-request
 
 export class IdentificationTypeService {
   readonly COMMAND_CONTEXT = `/master-data-service/v1/identificationtypes`;
-  readonly QUERY_CONTEXT = `/master-data-service/v1/identificationtypes`;
+  readonly QUERY_CONTEXT = `/master-data-service/v1/public/identificationtypes`;
 
   getIdentificationTypes(
     pageRequest: PageRequest = defaultPageRequest

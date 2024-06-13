@@ -34,7 +34,7 @@ const validationSchema = yup.object({
     .required('Contact Number is required')
   ['min'](10, 'Must be exactly 10 digit')
   ['max'](10, 'Must be exactly 10 digit'),
-  email: yup.string('Enter your email').email('Enter a valid email'),
+  email: yup.string('Enter your email').email('Enter a valid email').required('Email is required'),
   abbreviation: yup.string('Enter abbreviation').required('Abbreviation is required'),
   taxPinNumber: yup.string().required('TAX ID is required').matches(panRegExp, "Tax ID/PAN is not valid"),
 });
@@ -610,7 +610,7 @@ export default function ProviderPersonalDetailsComponent(props) {
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
-                label="Email id"
+                label="Email id*"
               />
             </Grid>
             <Grid item xs={4}>

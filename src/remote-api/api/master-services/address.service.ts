@@ -4,8 +4,8 @@ import { http } from "../../http.client";
 
 export class AddressService {
   readonly COMMAND_CONTEXT = `master-data-service/v1/addressfieldconfigurations`;
-  readonly QUERY_CONTEXT = `master-data-service/v1/addressfieldconfigurations`;
-  readonly DEFAULT_QUERY = `master-data-service/v1`
+  readonly QUERY_CONTEXT = `master-data-service/v1/public/addressfieldconfigurations`;
+  readonly DEFAULT_QUERY = `master-data-service/v1/public`
 
 
   saveAddress(payload: any): Observable<Map<string, any>> {

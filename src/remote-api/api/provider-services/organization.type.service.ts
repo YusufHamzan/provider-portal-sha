@@ -7,7 +7,7 @@ import { PageRequest, defaultPageRequest } from "../../query-params/page-request
 
 export class OrganizationTypeService {
   readonly COMMAND_CONTEXT = `/master-data-service/v1/organizationtypes`;
-  readonly QUERY_CONTEXT = `/master-data-service/v1/organizationtypes`;
+  readonly QUERY_CONTEXT = `/master-data-service/v1/public/organizationtypes`;
 
   getOrganizationTypes(
     pageRequest: PageRequest = defaultPageRequest
