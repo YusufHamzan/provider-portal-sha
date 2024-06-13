@@ -29,6 +29,7 @@ const modalStyle = {
   transform: "translate(-50%, -50%)",
   width: 600,
   background: "#fff",
+  borderRadius: "21px",
   // border: '2px solid #000',
   boxShadow: 24,
   padding: "2% 3%",
@@ -638,7 +639,7 @@ const Claims = () => {
               {searchType == 1 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                    <Box component="h3" marginBottom={"10px"}>
+                    <Box component="h3" fontSize={"15px"} fontFamily={"sans-serif"}>
                       Search By Date of Admission
                     </Box>
                     <CloseOutlined
@@ -749,7 +750,7 @@ const Claims = () => {
               {searchType == 2 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                    <Box component="h3" marginBottom={"10px"}>
+                  <Box component="h3" fontSize={"15px"} fontFamily={"sans-serif"}>
                       Seach by Date of Discharge
                     </Box>
                     <CloseOutlined
@@ -860,7 +861,7 @@ const Claims = () => {
               {searchType == 3 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                    <Box component="h3" marginBottom={"10px"}>
+                     <Box component="h3" fontSize={"15px"} fontFamily={"sans-serif"}>
                       Search By Creation Date
                     </Box>
                     <CloseOutlined
@@ -970,12 +971,13 @@ const Claims = () => {
               )}
             </Box>
           </Box>
-          <Box marginTop={"10%"}>
+          <Box marginTop={"5%"}>
             <Button
               variant="contained"
               style={{
                 backgroundColor: "#313c96",
                 color: "#fff",
+                borderRadius: "12px",
               }}
               onClick={onSearch}
             >

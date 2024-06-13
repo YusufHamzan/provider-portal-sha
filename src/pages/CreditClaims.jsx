@@ -33,6 +33,7 @@ const modalStyle = {
   // border: '2px solid #000',
   boxShadow: 24,
   padding: "2% 3%",
+  borderRadius: "21px",
 };
 const utclongDate = (date) => {
   // console.log("date", dayjs(date).valueOf(), date)
@@ -68,7 +69,6 @@ const CreditClaims = () => {
   let token = window["getToken"] && window["getToken"]();
   const { name } = jwtDecode(token);
 
-  
   useEffect(() => {
     let subscription = benefitService
       .getAllBenefit({ page: 0, size: 100000 })
@@ -253,7 +253,6 @@ const CreditClaims = () => {
       // providerId: providerId,
       ...(searchType && querytype[searchType]),
       providerId: providerId,
-
     };
 
     if (searchType) {
@@ -636,7 +635,11 @@ const CreditClaims = () => {
               {searchType == 1 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                    <Box component="h3" marginBottom={"10px"}>
+                    <Box
+                      component="h3"
+                      fontSize={"15px"}
+                      fontFamily={"sans-serif"}
+                    >
                       Search By Date of Admission
                     </Box>
                     <CloseOutlined
@@ -728,7 +731,7 @@ const CreditClaims = () => {
                         </MuiPickersUtilsProvider> */}
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            margin="normal"
+                            // margin="normal"
                             id="date-picker-inline"
                             // label="Enrolment Date"
                             autoOk={true}
@@ -747,7 +750,11 @@ const CreditClaims = () => {
               {searchType == 2 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                    <Box component="h3" marginBottom={"10px"}>
+                    <Box
+                      component="h3"
+                      fontSize={"15px"}
+                      fontFamily={"sans-serif"}
+                    >
                       Seach by Date of Discharge
                     </Box>
                     <CloseOutlined
@@ -858,7 +865,11 @@ const CreditClaims = () => {
               {searchType == 3 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                    <Box component="h3" marginBottom={"10px"}>
+                    <Box
+                      component="h3"
+                      fontSize={"15px"}
+                      fontFamily={"sans-serif"}
+                    >
                       Search By Creation Date
                     </Box>
                     <CloseOutlined
@@ -968,12 +979,13 @@ const CreditClaims = () => {
               )}
             </Box>
           </Box>
-          <Box marginTop={"10%"}>
+          <Box marginTop={"5%"}>
             <Button
               variant="contained"
               style={{
                 backgroundColor: "#313c96",
                 color: "#fff",
+                borderRadius: "12px",
               }}
               onClick={onSearch}
             >
