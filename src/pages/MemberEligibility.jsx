@@ -649,7 +649,7 @@ export default function MemberEligibility() {
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
                   {memberData?.dateOfJoining &&
-                    moment(memberData?.dateOfJoining).format("DD/MM/YYYY")}
+                    moment(memberData?.dateOfJoining).format("DD/MM/YYYY") || "No Data"}
                 </Typography>
               </Box>
             </Grid>
