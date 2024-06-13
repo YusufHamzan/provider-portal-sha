@@ -139,7 +139,7 @@ export class PreAuthService {
   
   addDocAfterReviw(id: string, payload: any): Observable<Map<string, any>> {
     return http
-      .patch<Map<string, any>>(`${this.COMMAND_CONTEXT}/${id}?action=add-doc-submit`, payload)
+      .patch<Map<string, any>>(`${this.COMMAND_CONTEXT}/preauths/${id}?action=add-doc-submit`, payload)
       .pipe(map((response) => response.data));
   }
 

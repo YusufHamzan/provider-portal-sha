@@ -50,6 +50,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ProvidersService } from "../remote-api/api/provider-services/provider.services";
 import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { Observable, map } from "rxjs";
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 
 const memberService = new MemberService();
 const benefitService = new BenefitService();
@@ -586,14 +588,24 @@ export default function MemberEligibility() {
               </Grid>
             </Grid>
             <Grid xs={12} sm={6} md={4}>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+            <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>
+                  name of the member
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {memberData?.name}
+                </Typography>
+              </Box>
+              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>corporate name</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
                   {memberData?.corporate}
                 </Typography>
-              </Box>
+              </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>membership no</Typography>
                 &nbsp;
@@ -639,7 +651,7 @@ export default function MemberEligibility() {
               </Box>
             </Grid>
             <Grid xs={12} sm={6} md={4}>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>
                   name of the member
                 </Typography>
@@ -648,7 +660,7 @@ export default function MemberEligibility() {
                 <Typography style={TypographyStyle2}>
                   {memberData?.name}
                 </Typography>
-              </Box>
+              </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Email</Typography>
                 &nbsp;
@@ -678,7 +690,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.typeOfPolicy}
+                  {memberData?.clientType}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -694,11 +706,40 @@ export default function MemberEligibility() {
           </Grid>
 
           <Paper elevation="none" style={{ padding: 15, marginTop: "10px" }}>
-            <Eo2v2DataGrid
+            {/* <Eo2v2DataGrid
               $dataSource={dataSource$}
               config={configuration}
               columnsDefination={columnsDefinations}
-            />
+            /> */}
+            <Grid item xs={12}>
+            <TableContainer component={Paper}>
+              <Table size="small" aria-label="a dense table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Benefit</TableCell>
+                    <TableCell>Status</TableCell>
+                    {/* <TableCell>Waiting Period</TableCell>
+                    <TableCell>Max Limit(KSH)</TableCell>
+                    <TableCell>Consumed(KSH)</TableCell>
+                    <TableCell>Balance(KSH)</TableCell> */}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {tableData?.map &&
+                    tableData.map(item => (
+                      <TableRow key={item.id}>
+                        <TableCell>{item?.benefitName}</TableCell>
+                        <TableCell>{item?.balance > 0 ? <CheckOutlinedIcon style={{color:"green"}}/> : <ClearOutlinedIcon style={{color:"red"}} />}</TableCell>
+                        {/* <TableCell>{item?.waitingPeriod}</TableCell>
+                        <TableCell>{item?.maxLimit}</TableCell>
+                        <TableCell>{item?.consumed}</TableCell>
+                        <TableCell>{item?.balance}</TableCell> */}
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
           </Paper>
         </Paper>
       )}
