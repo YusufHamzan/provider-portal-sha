@@ -30,7 +30,6 @@ function App() {
     }
     const decode = jwtDecode(tokens.token);
     localStorage.setItem("token", tokens.token);
-    console.log("decode", decode)
     localStorage.setItem("providerId", decode.providerId);
 
     // TODO: Remove me
