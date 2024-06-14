@@ -54,22 +54,28 @@ function App() {
   };
 
   return (
-    <ReactKeycloakProvider
-      authClient={keycloak}
-      onEvent={eventLogger}
-      initOptions={{ onLoad: "login-required" }}
-      onTokens={tokenLogger}
-    >
-      {isLoading ? (
+    <>
+      {location.pathname === "/signup" || location.pathname === "/thank-you" ? (
+        <AppRoutes />
+      ) : (
+        <ReactKeycloakProvider
+          authClient={keycloak}
+          onEvent={eventLogger}
+          initOptions={{ onLoad: "login-required" }}
+          onTokens={tokenLogger}
+        >
+          {/* {isLoading ? (
         <LoadingComponent />
       ) : location.pathname === "/signup" || location.pathname === "/thank-you" ? (
         <AppRoutes />
-      ) : (
-        <Layout>
-          <AppRoutes />
-        </Layout>
+      ) : ( */}
+          <Layout>
+            <AppRoutes />
+          </Layout>
+          {/* )} */}
+        </ReactKeycloakProvider>
       )}
-    </ReactKeycloakProvider>
+    </>
   );
 }
 
