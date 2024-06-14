@@ -334,8 +334,6 @@ export default function MemberEligibility() {
     subscriber.next(tableData);
   });
 
-  console.log("dataaaaaaaatable", tableData);
-
   const dataSource$ = () => {
     return data$.pipe(
       map((data) => {
@@ -688,29 +686,62 @@ export default function MemberEligibility() {
                 </Button>
               </Grid>
             </Grid>
-            <Grid xs={12} sm={6} md={4}>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Member Name</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.name}
-                </Typography>
+            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                marginLeft="10%"
+                marginY="10px"
+              >
+                <Box display="flex" alignItems="center">
+                  <Typography style={TypographyStyle1}>Member Name</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.name}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography style={TypographyStyle1}>Status</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.active === true ? (
+                      <Button
+                        style={{
+                          background: "green",
+                          color: "#fff",
+                          padding: "0px",
+                          margin: "5px",
+                          height: "19px",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Active
+                      </Button>
+                    ) : (
+                      <Button
+                        style={{
+                          background: "red",
+                          color: "#fff",
+                          padding: "2px",
+                          margin: "0px",
+                          height: "18px",
+                        }}
+                      >
+                        InActive
+                      </Button>
+                    )}
+                  </Typography>
+                </Box>
               </Box>
-              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>corporate name</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.corporate}
-                </Typography>
-              </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>DOB</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {/* {memberData?.membershipNo} */}
                   {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")}
                 </Typography>
               </Box>
@@ -722,7 +753,6 @@ export default function MemberEligibility() {
                   {memberData?.gender}
                 </Typography>
               </Box>
-
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Policy Type</Typography>
                 &nbsp;
@@ -752,24 +782,23 @@ export default function MemberEligibility() {
                 </Typography>
               </Box>
             </Grid>
-            <Grid xs={12} sm={6} md={4}>
-              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>
-                  name of the member
-                </Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.name}
-                </Typography>
-              </Box> */}
+
+            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Membership No.</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {/* {memberData?.email} */}
                   {memberData?.membershipNo}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>National Id</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {/* {memberData?.email} */}
+                  {memberData?.identificationDocNumber}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -831,7 +860,18 @@ export default function MemberEligibility() {
                     {tableData?.map &&
                       tableData.map((item) => (
                         <TableRow key={item.id}>
-                          <TableCell>{item?.benefitName}</TableCell>
+                          <TableCell>
+                            {(item?.benefitName === "IN-PATIENT" &&
+                              "IN-PATIENT") ||
+                              (item?.benefitStructureId ===
+                                "1245370764554674176" &&
+                                "IN-PATIENT >  MATERNAL HEALTH") ||
+                              (item?.benefitName === "OUT-PATIENT" &&
+                                "OUT-PATIENT") ||
+                              (item?.benefitStructureId ===
+                                "1245640606146895872" &&
+                                " OUT-PATIENT >  MATERNAL HEALTH  ")}
+                          </TableCell>
                           <TableCell>
                             {item?.balance > 0 ? (
                               <CheckOutlinedIcon style={{ color: "green" }} />

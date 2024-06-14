@@ -354,6 +354,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       size: 1000,
       memberId: id,
       policyNumber: policyNo,
+      claimType: "IPD",
     });
     bts$.subscribe((result) => {
       setBenefits(result);

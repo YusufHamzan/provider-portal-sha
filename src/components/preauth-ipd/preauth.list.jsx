@@ -503,7 +503,7 @@ const PreAuthIPDListComponent = () => {
   };
 
   const handleOpen = () => {
-    navigate("/submit-preauth?mode=create");
+    navigate("/submit-preauth?mode=create&type=ipd");
   };
 
   const openDocumentsSection = (preAuth) => {

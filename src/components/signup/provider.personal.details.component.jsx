@@ -450,7 +450,7 @@ export default function ProviderPersonalDetailsComponent(props) {
             <Grid item xs={4}>
               <FormControl className={classes.formControl} required
                 error={formik.touched.type && Boolean(formik.errors.type)}
-                helperText={formik.touched.type && formik.errors.type}>
+                helperText={formik.touched.type && formik.errors.type} style={{width:"60%"}}>
                 <InputLabel id="demo-simple-select-label" style={{ marginBottom: '0px' }}>
                   Provider Type
                 </InputLabel>
@@ -458,6 +458,7 @@ export default function ProviderPersonalDetailsComponent(props) {
                   labelId="demo-simple-select-label"
                   name="type"
                   id="demo-simple-select"
+                  fullWidth
                   value={formik.values.type}
                   variant='standard'
                   onChange={formik.handleChange}
@@ -475,7 +476,7 @@ export default function ProviderPersonalDetailsComponent(props) {
               {query2.get('mode') === 'edit' ? (
                 <FormControl className={classes.formControl} required
                   error={formik.touched.orgTypeCd && Boolean(formik.errors.orgTypeCd)}
-                  helperText={formik.touched.orgTypeCd && formik.errors.orgTypeCd}>
+                  helperText={formik.touched.orgTypeCd && formik.errors.orgTypeCd} style={{width:"60%"}}>
                   <InputLabel id="demo-simple-select-label" style={{ marginBottom: '0px' }}>
                     Parent Provider
                   </InputLabel>
@@ -499,7 +500,7 @@ export default function ProviderPersonalDetailsComponent(props) {
               ) : (
                 <FormControl className={classes.formControl} required
                   error={formik.touched.orgTypeCd && Boolean(formik.errors.orgTypeCd)}
-                  helperText={formik.touched.orgTypeCd && formik.errors.orgTypeCd}>
+                  helperText={formik.touched.orgTypeCd && formik.errors.orgTypeCd} style={{width:"60%"}}>
                   <InputLabel id="demo-simple-select-label" style={{ marginBottom: '0px' }}>
                     Parent Provider
                   </InputLabel>

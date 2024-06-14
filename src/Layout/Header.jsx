@@ -20,8 +20,8 @@ import { Logout } from "@mui/icons-material";
 
 const Header = ({ open, handleDrawerOpen }) => {
   const { keycloak } = useKeycloak();
-  let token = window["getToken"] && window["getToken"]();
-  const { name } = jwtDecode(token);
+  // let token = window["getToken"] && window["getToken"]();
+  // const { name } = jwtDecode(token);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const openSelect = Boolean(anchorEl);
@@ -91,7 +91,7 @@ const Header = ({ open, handleDrawerOpen }) => {
               component="a"
               sx={{ flexGrow: 1, marginleft: 4 }}
             >
-              {name}
+              {/* {name} */}
             </Typography>
             <Box sx={{ marginLeft: "2%" }}>
               <Logout
