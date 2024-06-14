@@ -674,6 +674,15 @@ export default function MemberEligibility() {
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>National Id</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {/* {memberData?.email} */}
+                  {memberData?.identificationDocNumber}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Age</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
@@ -704,6 +713,14 @@ export default function MemberEligibility() {
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
                 {memberData?.email}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>Status</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                {memberData?.active === true ? <Button style={{background:"green",color:'#fff',padding:'0px',margin:"5px"}}>Active</Button> : <Button  style={{background:"red",color:'#fff',padding:'px',margin:"5px"}}>InActive</Button>}
                 </Typography>
               </Box>
             </Grid>
