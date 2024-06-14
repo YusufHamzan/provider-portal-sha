@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
   Box,
+  Button,
   Divider,
   FormControl,
   Grid,
@@ -18,7 +19,7 @@ import {
 import { ProvidersService } from "../../remote-api/api/provider-services";
 import { StateService } from "../../remote-api/api/master-services/state.service";
 import { CountryService } from "../../remote-api/api/master-services/country.service";
-import { Button } from "primereact/button";
+// import { Button } from "primereact/button";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -190,20 +191,20 @@ export default function ProviderOtherDetailsComponent(props) {
       },
     };
 
-    if (query2.get("mode") === "create") {
+    // if (query2.get("mode") === "create") {
       providerservice
         .editProvider(payloadThree, props.providerID, "3")
         .subscribe((res) => {
-          navigate(`/dashboard`);
+          navigate(`/thank-you`);
           // window.location.reload();
         });
-    }
-    if (query2.get("mode") === "edit") {
-      providerservice.editProvider(payloadThree, id, "3").subscribe((res) => {
-        navigate(`/dashboard`);
-        // window.location.reload();
-      });
-    }
+    // }
+    // if (query2.get("mode") === "edit") {
+    //   providerservice.editProvider(payloadThree, id, "3").subscribe((res) => {
+    //     navigate(`/dashboard`);
+    //     // window.location.reload();
+    //   });
+    // }
   };
 
   const getLicStates = (countryid) => {
@@ -691,7 +692,7 @@ export default function ProviderOtherDetailsComponent(props) {
                 Save and Finish
               </Button>
               <Button
-                variant="contained"
+                variant="text"
                 className="p-button-text"
                 onClick={props.handleClose}
               >

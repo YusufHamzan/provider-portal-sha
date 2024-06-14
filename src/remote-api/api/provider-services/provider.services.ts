@@ -9,7 +9,7 @@ import {
 } from '../../query-params';
 
 export class ProvidersService {
-	readonly COMMAND_CONTEXT = `/provider-command-service/v1/providers`;
+	readonly COMMAND_CONTEXT = `/provider-command-service/v1/public/providers`;
 	readonly QUERY_CONTEXT = `/provider-query-service/v1/providers`;
 
 	getProviders(pageRequest: any): Observable<Page<Provider>> {

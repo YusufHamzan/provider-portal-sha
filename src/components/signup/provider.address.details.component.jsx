@@ -273,20 +273,20 @@ export default function ProviderAddressDetailsComponent(props) {
         providerWeeklyHolidays: values.providerWeeklyHolidays
       },
     };
-    if (query2.get("mode") === "create") {
+    // if (query2.get("mode") === "create") {
       providerservice
         .editProvider(payloadTwo, props.providerID, "2")
         .subscribe((res) => {
 
           props.handleNext();
         });
-    }
-    if (query2.get("mode") === "edit") {
-      providerservice.editProvider(payloadTwo, id, "2").subscribe((res) => {
+    // }
+    // if (query2.get("mode") === "edit") {
+    //   providerservice.editProvider(payloadTwo, id, "2").subscribe((res) => {
 
-        props.handleNext();
-      });
-    }
+    //     props.handleNext();
+    //   });
+    // }
   };
 
   const getMinutes = (str) => {
