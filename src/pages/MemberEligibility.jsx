@@ -144,7 +144,7 @@ export default function MemberEligibility() {
   const [diagnosisList, setDiagnosisList] = React.useState([]);
   const [providerList, setProviderList] = React.useState([]);
   const classes = useStyles();
-  const [searchType, setSearchType] = React.useState("membership_no");
+  const [searchType, setSearchType] = React.useState("national_id");
   const [membershipNumber, setMembershipNumber] = React.useState();
   const [severity, setSeverity] = React.useState();
   const [openClientModal, setOpenClientModal] = React.useState(false);
@@ -270,6 +270,10 @@ export default function MemberEligibility() {
       pageRequest.value = id;
       pageRequest.key = "MEMBERSHIP_NO";
     }
+    if (searchType === "national_id") {
+      pageRequest.value = id;
+      pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
+    }
 
     memberService.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
@@ -371,6 +375,7 @@ export default function MemberEligibility() {
               onChange={handleChange}
               fullWidth
             >
+              <MenuItem value="national_id">National ID</MenuItem>
               <MenuItem value="membership_no">Membership No.</MenuItem>
               <MenuItem value="name">Member Name</MenuItem>
             </Select>
@@ -509,6 +514,102 @@ export default function MemberEligibility() {
               )}
             </Grid>
           )}
+          {searchType === "national_id" && (
+            <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
+              <TextField
+                id="standard-basic"
+                // value={formik.values.memberShipNo}
+                onChange={onMemberShipNumberChange}
+                variant="standard"
+                name="searchCode"
+                style={{ marginLeft: "10px", flex: "1" }}
+                label="National ID"
+              />
+
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setIsLoading(true);
+                  populateMemberFromSearch("name");
+                }}
+                className={classes.buttonPrimary}
+                color="primary"
+                type="button"
+                style={{
+                  marginLeft: "3%",
+                  borderRadius: "10px",
+                  fontSize: "12px",
+                  background: "#313c96",
+                }}
+              >
+                {isLoading ? (
+                  <CircularProgress
+                    sx={{ color: "white", width: "20px", height: "20px" }}
+                  />
+                ) : (
+                  "Search"
+                )}
+              </Button>
+
+              {/* Dialog component goes here */}
+              {openClientModal && (
+                <Dialog
+                  open={openClientModal}
+                  onClose={handleClosed}
+                  aria-labelledby="form-dialog-title"
+                  disableEnforceFocus
+                >
+                  <DialogTitle id="form-dialog-title">Members</DialogTitle>
+
+                  <DialogContent>
+                    {memberName?.res?.content &&
+                    memberName?.res?.content?.length > 0 ? (
+                      <TableContainer>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Membership No</TableCell>
+                              <TableCell>Name</TableCell>
+                              <TableCell>Mobile No</TableCell>
+                              <TableCell>Action</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {memberName?.res?.content?.map((item) => (
+                              <TableRow key={item.membershipNo}>
+                                <TableCell>{item.membershipNo}</TableCell>
+                                <TableCell>{item.name}</TableCell>
+                                <TableCell>{item.mobileNo}</TableCell>
+                                <TableCell>
+                                  <Button
+                                    onClick={() => handleSelect(item)}
+                                    className={classes.buttonPrimary}
+                                  >
+                                    Select
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    ) : (
+                      <p>No Data Found</p>
+                    )}
+                  </DialogContent>
+
+                  <DialogActions>
+                    <Button onClick={handleClosed} className="p-button-text">
+                      Cancel
+                    </Button>
+                    {/* <Button onClick={} color="primary">
+                        Submit
+                      </Button> */}
+                  </DialogActions>
+                </Dialog>
+              )}
+            </Grid>
+          )}
         </Grid>
       </Paper>
       {memberData && (
@@ -539,7 +640,6 @@ export default function MemberEligibility() {
                     />
                   )}
                 </Box>
-                
               </Grid>
               <Grid
                 item
@@ -586,7 +686,7 @@ export default function MemberEligibility() {
                 </Button>
               </Grid>
             </Grid>
-            <Grid xs={12} sm={6} md={4} style={{marginTop:"19px"}}>
+            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
               <Box
                 display="flex"
                 flexDirection="column"
@@ -683,7 +783,7 @@ export default function MemberEligibility() {
               </Box>
             </Grid>
 
-            <Grid xs={12} sm={6} md={4} style={{marginTop:"19px"}}>
+            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Membership No.</Typography>
                 &nbsp;
