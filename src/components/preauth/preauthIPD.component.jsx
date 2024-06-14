@@ -112,7 +112,7 @@ const serviceDiagnosis = new ServiceTypeService();
 const preAuthService = new PreAuthService();
 const memberservice = new MemberService();
 
-let bts$ = benefitService.getAllBenefitWithChild({ page: 0, size: 1000 });
+
 let ps$ = providerService.getProviders();
 let ad$ = serviceDiagnosis.getServicesbyId("867854874246590464", {
   page: 0,
@@ -284,14 +284,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
       expenseHead: "",
     },
   ]);
-  const useObservable = (observable, setter) => {
-    useEffect(() => {
-      let subscription = observable.subscribe((result) => {
-        setter(result);
-      });
-      return () => subscription.unsubscribe();
-    }, [observable, setter]);
-  };
+  // const useObservable = (observable, setter) => {
+  //   useEffect(() => {
+  //     let subscription = observable.subscribe((result) => {
+  //       setter(result);
+  //     });
+  //     return () => subscription.unsubscribe();
+  //   }, [observable, setter]);
+  // };
 
   const useObservable1 = (observable, setter) => {
     useEffect(() => {
@@ -347,6 +347,24 @@ export default function ClaimsPreAuthIPDComponent(props) {
     });
   };
 
+  const getBenefit =(id, policyNo)=>{
+    let bts$ = benefitService.getAllBenefitWithChild({ page: 0, size: 1000,memberId:id, policyNumber: policyNo });
+    bts$.subscribe((result)=>{
+      setBenefits(result)
+    })
+    //   let subscription = observable.subscribe((result) => {
+    //     let arr = [];
+    //     result.content.forEach((ele) => {
+    //       if (!ele.blackListed) {
+    //         arr.push(ele);
+    //       }
+    //     });
+    //     setter(arr);
+    //   });
+    //   return () => subscription.unsubscribe();
+    // }, [observable, setter]);
+  }
+
   React.useEffect(() => {
     getServiceTypes();
   }, []);
@@ -370,8 +388,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let temp = [];
     let X = benefits?.forEach((ele) => {
       let obj = {
-        label: ele.code + " | " + ele.name,
-        name: ele.code + " | " + ele.name,
+        label: ele.name,
+        name: ele.name,
         value: ele.id,
       };
       temp.push(obj);
@@ -379,7 +397,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setBenefitOptions(temp);
   }, [benefits]);
 
-  useObservable(bts$, setBenefits);
+  // useObservable(bts$, setBenefits);
   //useObservable(bts$, setOtherTypeList);
   useObservable1(ps$, setProviderList);
   useObservable3(ad$, setDiagnosisList);
@@ -776,6 +794,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             age: res.content[0].age,
             gender: res.content[0].gender,
             membershipNo: res.content[0].membershipNo,
+            memberId: res.content[0].memberId,
             relations: res.content[0].relations,
             contactNoOne: res.content[0].mobileNo,
             policyNumber: res.content[0].policyNumber,
@@ -786,6 +805,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             productName: res.content[0].productName,
           });
           setShowViewDetails(true)
+          getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         }
       } else {
         setAlertMsg(`No Data found for ${id}`);
@@ -818,6 +838,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       age: data.age,
       gender: data.gender,
       membershipNo: data.membershipNo,
+      memberId: data.memberId,
       relations: data.relations,
       policyNumber: data.policyNumber,
       enrolentToDate: new Date(data.policyEndDate),
@@ -827,6 +848,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       productName: data.productName,
     });
     setShowViewDetails(true)
+    getBenefit(data?.memberId, data?.policyNumber);
     handleClosed();
   };
 

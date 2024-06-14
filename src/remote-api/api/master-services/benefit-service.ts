@@ -8,7 +8,8 @@ export class BenefitService {
 
     readonly QUERY_CONTEXT = `master-data-service/v1/benefits`;
     readonly PROVIDER_QUERY_CONTEXT = `/provider-query-service/v1/providers`;
-    readonly BENEFIT_QUERY_CONTEXT = `benefit-structure-query-service/v1/benefitstructures/benefits`;
+    readonly BENEFIT_QUERY_CONTEXT = `benefit-structure-query-service/v1/benefitstructures/sha/master/benefits`;
+    // ?memberId=1248216841788071936&policyNumber=PN277084000
 
     getProviders(pageRequest: any): Observable<Page<any>> {
         return http
