@@ -106,7 +106,7 @@ const utclongDate = (date) => {
 const claimservice = new PreAuthService();
 const benefitService = new BenefitService();
 
-const PreAuthIPDListComponent = () => {
+const PreAuthOPDListComponent = () => {
   const navigate = useNavigate();
   const providerId = localStorage.getItem("providerId");
   const [benefits, setBenefits] = useState();
@@ -363,7 +363,7 @@ const PreAuthIPDListComponent = () => {
       size: 10,
       summary: true,
       active: true,
-      preAuthType: "IPD",
+      preAuthType: "OPD",
       sort: ["rowCreatedDate dsc"]
     }
   ) => {
@@ -377,13 +377,13 @@ const PreAuthIPDListComponent = () => {
       pageRequest["policyNumber"] = pageRequest.searchKey.toUpperCase();
       pageRequest["id"] = pageRequest.searchKey.toUpperCase();
       pageRequest["memberName"] = pageRequest.searchKey.toUpperCase();
-      (pageRequest["preAuthType"] = "IPD"),
+      (pageRequest["preAuthType"] = "OPD"),
         (pageRequest["providerId"] = providerId),
         delete pageRequest.searchKey;
     }
 
     if (!isSearched) {
-      pageRequest["preAuthType"] = "IPD";
+      pageRequest["preAuthType"] = "OPD";
       pageRequest["summary"] = true;
       pageRequest["active"] = true;
     }
@@ -413,7 +413,7 @@ const PreAuthIPDListComponent = () => {
       summary: true,
       active: true,
       sort: ["rowCreatedDate dsc"],
-      preAuthType:"IPD",
+      preAuthType:"OPD",
       providerId: providerId,
       ...(searchType && querytype[searchType]),
     };
@@ -503,7 +503,7 @@ const PreAuthIPDListComponent = () => {
   };
 
   const handleOpen = () => {
-    navigate("/submit-preauth?mode=create");
+    navigate("/submit-preauth?mode=create&type=opd");
   };
 
   const openDocumentsSection = (preAuth) => {
@@ -592,7 +592,7 @@ const PreAuthIPDListComponent = () => {
       addCreateButton: true,
       createBtnText: "Preauth",
       onCreateButtonClick: handleOpen,
-      text: "Pre-Auth - IPD",
+      text: "Pre-Auth - OPD",
       enableGlobalSearch: true,
       searchText:
         "Search by Claim No, Membership No, Name, Policy id or Status",
@@ -1218,4 +1218,4 @@ const PreAuthIPDListComponent = () => {
   );
 };
 
-export default PreAuthIPDListComponent;
+export default PreAuthOPDListComponent;

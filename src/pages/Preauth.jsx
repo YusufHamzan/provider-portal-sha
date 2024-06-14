@@ -1,5 +1,6 @@
 import { TabPanel, TabView } from "primereact/tabview";
-import PreAuthIPDListComponent from "../components/preauth/preauth.list";
+import PreAuthIPDListComponent from "../components/preauth-ipd/preauth.list";
+import PreAuthOPDListComponent from "../components/preauth-opd/preauth.list";
 
 const Preauth = () => {
   return (
@@ -9,7 +10,7 @@ const Preauth = () => {
         <PreAuthIPDListComponent />
       </TabPanel>
       <TabPanel leftIcon="pi pi-user-minus mr-2" header="OPD Pre-Auth">
-        {/* <PreAuthOPDListComponent /> */}
+        <PreAuthOPDListComponent />
       </TabPanel>
     </TabView>
   )

@@ -53,7 +53,7 @@ function useQuery1() {
   return new URLSearchParams(useLocation().search);
 }
 
-const ClaimsPreAuthDetails = () => {
+const ClaimsIPDPreAuthDetails = () => {
   const query1 = useQuery1();
   const { id } = useParams();
   const classes = useStyles();
@@ -264,4 +264,4 @@ const ClaimsPreAuthDetails = () => {
   );
 };
 
-export default ClaimsPreAuthDetails;
+export default ClaimsIPDPreAuthDetails;

@@ -348,7 +348,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const getBenefit =(id, policyNo)=>{
-    let bts$ = benefitService.getAllBenefitWithChild({ page: 0, size: 1000,memberId:id, policyNumber: policyNo });
+    let bts$ = benefitService.getAllBenefitWithChild({ page: 0, size: 1000,memberId:id, policyNumber: policyNo, claimType:"IPD"});
     bts$.subscribe((result)=>{
       setBenefits(result)
     })
