@@ -273,20 +273,20 @@ export default function ProviderAddressDetailsComponent(props) {
         providerWeeklyHolidays: values.providerWeeklyHolidays
       },
     };
-    if (query2.get("mode") === "create") {
+    // if (query2.get("mode") === "create") {
       providerservice
         .editProvider(payloadTwo, props.providerID, "2")
         .subscribe((res) => {
 
           props.handleNext();
         });
-    }
-    if (query2.get("mode") === "edit") {
-      providerservice.editProvider(payloadTwo, id, "2").subscribe((res) => {
+    // }
+    // if (query2.get("mode") === "edit") {
+    //   providerservice.editProvider(payloadTwo, id, "2").subscribe((res) => {
 
-        props.handleNext();
-      });
-    }
+    //     props.handleNext();
+    //   });
+    // }
   };
 
   const getMinutes = (str) => {
@@ -511,7 +511,6 @@ export default function ProviderAddressDetailsComponent(props) {
             const helperTextFnc = (parentField, field) => {
               return touched.hasOwnProperty(parentField) && touched[parentField][field] && (errors.hasOwnProperty(parentField) && errors[parentField][field]);
             }
-
             return (
               <form onSubmit={handleSubmit} noValidate>
                 {props.addressConfig && props.addressConfig.length !== 0 &&
@@ -606,6 +605,7 @@ export default function ProviderAddressDetailsComponent(props) {
                       <Grid item xs={4}>
                         {prop.addressConfigurationFieldMappings.map((field, j) => {
                           
+                  console.log("props", addressConfig)
                           return <div>
                             {field.type === 'dropdown' && !field.readOnly && (
                               <FormControl className={classes.formControl}>

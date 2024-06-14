@@ -282,7 +282,7 @@ export default function ProviderDetails(props) {
               <Typography className={classes.instructions}>
                 {getStepContent(activeStep)}
               </Typography>
-              {/* <div>
+              <div>
                 <Button
                   disabled={activeStep === 0}
                   onClick={handleBack}
@@ -310,7 +310,7 @@ export default function ProviderDetails(props) {
                 >
                   {activeStep === steps.length - 1 ? "Finish" : "Next"}
                 </Button>
-              </div> */}
+              </div>
             </div>
           )}
         </div>

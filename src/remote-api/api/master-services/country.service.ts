@@ -6,7 +6,7 @@ import { PageRequest, defaultPageRequest } from "../../query-params/page-request
 
 export class CountryService {
   readonly COMMAND_CONTEXT = `/master-data-service/v1/countries`;
-  readonly QUERY_CONTEXT = `/master-data-service/v1/countries`;
+  readonly QUERY_CONTEXT = `/master-data-service/v1/public/countries`;
 
   getCountryList(
     pageRequest: PageRequest = defaultPageRequest

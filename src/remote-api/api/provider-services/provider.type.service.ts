@@ -7,7 +7,7 @@ import { PageRequest, defaultPageRequest } from '../../query-params/page-request
 
 export class ProviderTypeService {
   readonly COMMAND_CONTEXT = `/master-data-service/v1/providertypes`;
-  readonly QUERY_CONTEXT = `/master-data-service/v1/providertypes`;
+  readonly QUERY_CONTEXT = `/master-data-service/v1/public/providertypes`;
   readonly QUERY_CONTEXT1 = `/master-data-service/v1/providerownertypes`;
   readonly QUERY_CATEGORY = `/master-data-service/v1/categories`;
   getProviderTypes(pageRequest: PageRequest = defaultPageRequest): Observable<Page<CleintType>> {

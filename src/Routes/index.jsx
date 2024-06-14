@@ -11,6 +11,7 @@ import PreauthView from "../pages/PreauthView"
 import SubmitClaim from '../pages/SubmitClaim';
 import CreditClaims from '../pages/CreditClaims';
 import Signup from '../pages/signup';
+import ThankYou from '../pages/thank-you';
 // import TotalPayableAmount from '../pages/TotalPayableAmount';
 
 export default function AppRoutes() {
@@ -18,6 +19,7 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/thank-you" element={<ThankYou />} />
       <Route path="/membereligibility" element={<MemberEligibility />} />
       <Route path="/preauths" element={<Preauth />} />
       <Route path="/claims" element={<Claims />} />

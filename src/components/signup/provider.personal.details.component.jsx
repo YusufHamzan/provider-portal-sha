@@ -8,8 +8,8 @@ import { ProvidersService } from '../../remote-api/api/provider-services';
 import { ProviderTypeService } from '../../remote-api/api/provider-services/provider.type.service';
 import { OrganizationTypeService } from '../../remote-api/api/provider-services/organization.type.service';
 import { SpecializationService } from '../../remote-api/api/provider-services/specialization.service';
-import { Alert, Autocomplete, Box, FormControl, FormHelperText, Grid, Input, InputLabel, MenuItem, Paper, Select, Snackbar, TextField } from '@mui/material';
-import { Button } from 'primereact/button';
+import { Alert, Autocomplete, Box, Button, Chip, FormControl, FormHelperText, Grid, Input, InputLabel, MenuItem, Paper, Select, Snackbar, TextField } from '@mui/material';
+// import { Button } from 'primereact/button';
 import { makeStyles } from '@mui/styles';
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -34,7 +34,7 @@ const validationSchema = yup.object({
     .required('Contact Number is required')
   ['min'](10, 'Must be exactly 10 digit')
   ['max'](10, 'Must be exactly 10 digit'),
-  email: yup.string('Enter your email').email('Enter a valid email'),
+  email: yup.string('Enter your email').email('Enter a valid email').required('Email is required'),
   abbreviation: yup.string('Enter abbreviation').required('Abbreviation is required'),
   taxPinNumber: yup.string().required('TAX ID is required').matches(panRegExp, "Tax ID/PAN is not valid"),
 });
@@ -158,6 +158,34 @@ export default function ProviderPersonalDetailsComponent(props) {
   }, [props.identificationTypes]);
 
   const handleSubmit = () => {
+    if(!formik.values.type){
+      setOpen(true);
+      return;
+    }
+    if(!formik.values.orgTypeCd){
+      setOpen(true);
+      return;
+    }
+    if(!formik.values.name){
+      setOpen(true);
+      return;
+    }
+    if(!formik.values.email){
+      setOpen(true);
+      return;
+    }
+    if(!formik.values.contact){
+      setOpen(true);
+      return;
+    }
+    if(!formik.values.taxPinNumber){
+      setOpen(true);
+      return;
+    }
+    if(!formik.values.abbreviation){
+      setOpen(true);
+      return;
+    }
     if (
       formik.values.orgTypeCd === 'OT117246' &&
       (formik.values.parentProviderId === '' || formik.values.parentProviderId === null)
@@ -212,31 +240,32 @@ export default function ProviderPersonalDetailsComponent(props) {
     ) {
       payloadOne['providerBasicDetails']['identifications'] = identificationList;
     }
-
+    
     if (identificationList.length > 1) {
       payloadOne['providerBasicDetails']['identifications'] = identificationList;
     }
-
+    
     if (formik.values.specializations.length !== 0) {
       payloadOne['providerBasicDetails']['specializations'] = formik.values.specializations;
     }
-
+    
     if (formik.values.orgTypeCd === 'OT117246') {
       payloadOne['providerBasicDetails']['parentProviderId'] = formik.values.parentProviderId;
     }
+    console.log("here", formik.values.orgTypeCd )
 
-    if (query2.get('mode') === 'create') {
+    // if (query2.get('mode') === 'create') {
       providerservice.saveProvider(payloadOne).subscribe(res => {
         props.setProviderID(res.id);
         props.handleNext();
       });
-    }
-    if (query2.get('mode') === 'edit') {
-      payloadOne['providerBasicDetails']['code'] = formik.values.code;
-      providerservice.editProvider(payloadOne, id, '1').subscribe(res => {
-        props.handleNext();
-      });
-    }
+    // }
+    // if (query2.get('mode') === 'edit') {
+    //   payloadOne['providerBasicDetails']['code'] = formik.values.code;
+    //   providerservice.editProvider(payloadOne, id, '1').subscribe(res => {
+    //     props.handleNext();
+    //   });
+    // }
   };
 
   const handleSelectedSpecs = event => {
@@ -406,8 +435,8 @@ export default function ProviderPersonalDetailsComponent(props) {
   return (
     <Paper elevation='none'>
       <Box p={3} my={2}>
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleSnackClose}>
-          <Alert onClose={handleSnackClose} severity="error">
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleSnackClose}  anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+          <Alert onClose={handleSnackClose} severity="error" variant='filled'>
             Please fill up all required fields marked with *
           </Alert>
         </Snackbar>
@@ -610,7 +639,7 @@ export default function ProviderPersonalDetailsComponent(props) {
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
-                label="Email id"
+                label="Email id*"
               />
             </Grid>
             <Grid item xs={4}>
@@ -738,7 +767,7 @@ export default function ProviderPersonalDetailsComponent(props) {
                     style={{ display: 'none' }}
                   />
                   <label htmlFor={'contained-button-file' + i.toString()} style={{ width: '50%', marginBottom: 0 }}>
-                    <Button variant="contained" color="primary" component="span">
+                    <Button variant="contained" type='button' color="primary" component="span">
                       <PublishIcon />
                     </Button>
                   </label>
@@ -773,10 +802,10 @@ export default function ProviderPersonalDetailsComponent(props) {
 
           <Grid container spacing={3}>
             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Button variant="contained" color="primary" style={{ marginRight: '5px' }} type="submit">
+              <Button variant="contained" color="primary" style={{ marginRight: '5px' }} type="submit" onClick={handleSubmit}>
                 Save and Next
               </Button>
-              <Button variant="contained" className='p-button-text' onClick={handleClose}>
+              <Button variant="text" className='p-button-text' onClick={handleClose}>
                 Cancel
               </Button>
             </Grid>
