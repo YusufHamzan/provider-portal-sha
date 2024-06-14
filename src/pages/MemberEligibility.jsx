@@ -50,8 +50,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ProvidersService } from "../remote-api/api/provider-services/provider.services";
 import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { Observable, map } from "rxjs";
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
 const memberService = new MemberService();
 const benefitService = new BenefitService();
@@ -297,7 +297,7 @@ export default function MemberEligibility() {
         }
       } else {
         setAlertMsg(`No Data found for ${id}`);
-        setSeverity("error")
+        setSeverity("error");
         setOpenSnack(true);
       }
       setIsLoading(false);
@@ -310,10 +310,10 @@ export default function MemberEligibility() {
 
     providerService.verifyImage(memberData?.id, formData).subscribe((res) => {
       if (res?.faceMatched) {
-        setSeverity("success")
+        setSeverity("success");
         setAlertMsg(`Face matched`);
       } else {
-        setSeverity("error")
+        setSeverity("error");
         setAlertMsg(`Face does not match`);
       }
       setOpenSnack(true);
@@ -588,10 +588,8 @@ export default function MemberEligibility() {
               </Grid>
             </Grid>
             <Grid xs={12} sm={6} md={4}>
-            <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>
-                  Member Name
-                </Typography>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>Member Name</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
@@ -623,8 +621,7 @@ export default function MemberEligibility() {
                   {memberData?.gender}
                 </Typography>
               </Box>
-             
-             
+
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Policy Type</Typography>
                 &nbsp;
@@ -648,8 +645,9 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.dateOfJoining &&
-                    moment(memberData?.dateOfJoining).format("DD/MM/YYYY") || "No Data"}
+                  {(memberData?.dateOfJoining &&
+                    moment(memberData?.dateOfJoining).format("DD/MM/YYYY")) ||
+                    "No Data"}
                 </Typography>
               </Box>
             </Grid>
@@ -687,7 +685,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {memberData?.age}
+                  {memberData?.age}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -695,7 +693,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {memberData?.policyNumber}
+                  {memberData?.policyNumber}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -712,7 +710,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {memberData?.email}
+                  {memberData?.email}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -720,7 +718,29 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {memberData?.active === true ? <Button style={{background:"green",color:'#fff',padding:'0px',margin:"5px"}}>Active</Button> : <Button  style={{background:"red",color:'#fff',padding:'px',margin:"5px"}}>InActive</Button>}
+                  {memberData?.active === true ? (
+                    <Button
+                      style={{
+                        background: "green",
+                        color: "#fff",
+                        padding: "0px",
+                        margin: "5px",
+                      }}
+                    >
+                      Active
+                    </Button>
+                  ) : (
+                    <Button
+                      style={{
+                        background: "red",
+                        color: "#fff",
+                        padding: "10px",
+                        margin: "5px",
+                      }}
+                    >
+                      InActive
+                    </Button>
+                  )}
                 </Typography>
               </Box>
             </Grid>
@@ -733,34 +753,40 @@ export default function MemberEligibility() {
               columnsDefination={columnsDefinations}
             /> */}
             <Grid item xs={12}>
-            <TableContainer component={Paper}>
-              <Table size="small" aria-label="a dense table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Benefit</TableCell>
-                    <TableCell>Status</TableCell>
-                    {/* <TableCell>Waiting Period</TableCell>
+              <TableContainer component={Paper}>
+                <Table size="small" aria-label="a dense table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Benefit</TableCell>
+                      <TableCell>Status</TableCell>
+                      {/* <TableCell>Waiting Period</TableCell>
                     <TableCell>Max Limit(KSH)</TableCell>
                     <TableCell>Consumed(KSH)</TableCell>
                     <TableCell>Balance(KSH)</TableCell> */}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {tableData?.map &&
-                    tableData.map(item => (
-                      <TableRow key={item.id}>
-                        <TableCell>{item?.benefitName}</TableCell>
-                        <TableCell>{item?.balance > 0 ? <CheckOutlinedIcon style={{color:"green"}}/> : <ClearOutlinedIcon style={{color:"red"}} />}</TableCell>
-                        {/* <TableCell>{item?.waitingPeriod}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {tableData?.map &&
+                      tableData.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell>{item?.benefitName}</TableCell>
+                          <TableCell>
+                            {item?.balance > 0 ? (
+                              <CheckOutlinedIcon style={{ color: "green" }} />
+                            ) : (
+                              <ClearOutlinedIcon style={{ color: "red" }} />
+                            )}
+                          </TableCell>
+                          {/* <TableCell>{item?.waitingPeriod}</TableCell>
                         <TableCell>{item?.maxLimit}</TableCell>
                         <TableCell>{item?.consumed}</TableCell>
                         <TableCell>{item?.balance}</TableCell> */}
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
           </Paper>
         </Paper>
       )}
