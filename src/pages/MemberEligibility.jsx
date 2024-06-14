@@ -330,8 +330,6 @@ export default function MemberEligibility() {
     subscriber.next(tableData);
   });
 
-  console.log("dataaaaaaaatable", tableData);
-
   const dataSource$ = () => {
     return data$.pipe(
       map((data) => {
@@ -769,7 +767,14 @@ export default function MemberEligibility() {
                     {tableData?.map &&
                       tableData.map((item) => (
                         <TableRow key={item.id}>
-                          <TableCell>{item?.benefitName}</TableCell>
+                          <TableCell>
+                            {(item?.benefitName === "IN-PATIENT" && "IN-PATIENT") ||
+                              (item?.benefitName === "MATERNAL HEALTH" &&
+                                " MATERNAL HEALTH (IN-PATIENT)") ||
+                              (item?.benefitName === "OUT-PATIENT" && "OUT-PATIENT") ||
+                              (item?.benefitName === "MATERNAL HEALTH " &&
+                                " MATERNAL HEALTH (OUT-PATIENT)")}
+                          </TableCell>
                           <TableCell>
                             {item?.balance > 0 ? (
                               <CheckOutlinedIcon style={{ color: "green" }} />
