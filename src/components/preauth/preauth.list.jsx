@@ -364,7 +364,7 @@ const PreAuthIPDListComponent = () => {
       summary: true,
       active: true,
       preAuthType: "IPD",
-      sort: ["rowCreatedDate dsc"]
+      sort: ["rowCreatedDate dsc"],
     }
   ) => {
     // pageRequest.sort = ["rowCreatedDate dsc"];
@@ -413,7 +413,7 @@ const PreAuthIPDListComponent = () => {
       summary: true,
       active: true,
       sort: ["rowCreatedDate dsc"],
-      preAuthType:"IPD",
+      preAuthType: "IPD",
       providerId: providerId,
       ...(searchType && querytype[searchType]),
     };

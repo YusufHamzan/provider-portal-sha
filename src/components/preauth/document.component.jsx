@@ -197,8 +197,8 @@ export default function ClaimsDocumentComponent(props) {
           .addDoc(preID, formData, providerId)
           .subscribe((response) => {
             preAuthService
-            .getPreAuthById(preID, providerId)
-            .subscribe((response) => {
+              .getPreAuthById(preID, providerId)
+              .subscribe((response) => {
                 setPreAuthDetails(response);
               });
             list[index]["documentName"] = response.id;

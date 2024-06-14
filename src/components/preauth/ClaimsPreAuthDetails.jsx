@@ -64,7 +64,7 @@ const ClaimsPreAuthDetails = () => {
   const steps = getSteps();
 
   React.useEffect(() => {
-    if (query1.get('addDoc')) setActiveStep(1);
+    if (query1.get("addDoc")) setActiveStep(1);
   }, []);
 
   const isStepOptional = (step) => {
@@ -133,8 +133,6 @@ const ClaimsPreAuthDetails = () => {
         return "Unknown step";
     }
   };
-
-
 
   return (
     <>

@@ -50,8 +50,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ProvidersService } from "../remote-api/api/provider-services/provider.services";
 import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { Observable, map } from "rxjs";
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
 const memberService = new MemberService();
 const benefitService = new BenefitService();
@@ -144,7 +144,7 @@ export default function MemberEligibility() {
   const [diagnosisList, setDiagnosisList] = React.useState([]);
   const [providerList, setProviderList] = React.useState([]);
   const classes = useStyles();
-  const [searchType, setSearchType] = React.useState("membership_no");
+  const [searchType, setSearchType] = React.useState("national_id");
   const [membershipNumber, setMembershipNumber] = React.useState();
   const [severity, setSeverity] = React.useState();
   const [openClientModal, setOpenClientModal] = React.useState(false);
@@ -270,6 +270,10 @@ export default function MemberEligibility() {
       pageRequest.value = id;
       pageRequest.key = "MEMBERSHIP_NO";
     }
+    if (searchType === "national_id") {
+      pageRequest.value = id;
+      pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
+    }
 
     memberService.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
@@ -297,7 +301,7 @@ export default function MemberEligibility() {
         }
       } else {
         setAlertMsg(`No Data found for ${id}`);
-        setSeverity("error")
+        setSeverity("error");
         setOpenSnack(true);
       }
       setIsLoading(false);
@@ -310,10 +314,10 @@ export default function MemberEligibility() {
 
     providerService.verifyImage(memberData?.id, formData).subscribe((res) => {
       if (res?.faceMatched) {
-        setSeverity("success")
+        setSeverity("success");
         setAlertMsg(`Face matched`);
       } else {
-        setSeverity("error")
+        setSeverity("error");
         setAlertMsg(`Face does not match`);
       }
       setOpenSnack(true);
@@ -373,6 +377,7 @@ export default function MemberEligibility() {
               onChange={handleChange}
               fullWidth
             >
+              <MenuItem value="national_id">National ID</MenuItem>
               <MenuItem value="membership_no">Membership No.</MenuItem>
               <MenuItem value="name">Member Name</MenuItem>
             </Select>
@@ -425,6 +430,102 @@ export default function MemberEligibility() {
                 name="searchCode"
                 style={{ marginLeft: "10px", flex: "1" }}
                 label="Member Name"
+              />
+
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setIsLoading(true);
+                  populateMemberFromSearch("name");
+                }}
+                className={classes.buttonPrimary}
+                color="primary"
+                type="button"
+                style={{
+                  marginLeft: "3%",
+                  borderRadius: "10px",
+                  fontSize: "12px",
+                  background: "#313c96",
+                }}
+              >
+                {isLoading ? (
+                  <CircularProgress
+                    sx={{ color: "white", width: "20px", height: "20px" }}
+                  />
+                ) : (
+                  "Search"
+                )}
+              </Button>
+
+              {/* Dialog component goes here */}
+              {openClientModal && (
+                <Dialog
+                  open={openClientModal}
+                  onClose={handleClosed}
+                  aria-labelledby="form-dialog-title"
+                  disableEnforceFocus
+                >
+                  <DialogTitle id="form-dialog-title">Members</DialogTitle>
+
+                  <DialogContent>
+                    {memberName?.res?.content &&
+                    memberName?.res?.content?.length > 0 ? (
+                      <TableContainer>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Membership No</TableCell>
+                              <TableCell>Name</TableCell>
+                              <TableCell>Mobile No</TableCell>
+                              <TableCell>Action</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {memberName?.res?.content?.map((item) => (
+                              <TableRow key={item.membershipNo}>
+                                <TableCell>{item.membershipNo}</TableCell>
+                                <TableCell>{item.name}</TableCell>
+                                <TableCell>{item.mobileNo}</TableCell>
+                                <TableCell>
+                                  <Button
+                                    onClick={() => handleSelect(item)}
+                                    className={classes.buttonPrimary}
+                                  >
+                                    Select
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    ) : (
+                      <p>No Data Found</p>
+                    )}
+                  </DialogContent>
+
+                  <DialogActions>
+                    <Button onClick={handleClosed} className="p-button-text">
+                      Cancel
+                    </Button>
+                    {/* <Button onClick={} color="primary">
+                        Submit
+                      </Button> */}
+                  </DialogActions>
+                </Dialog>
+              )}
+            </Grid>
+          )}
+          {searchType === "national_id" && (
+            <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
+              <TextField
+                id="standard-basic"
+                // value={formik.values.memberShipNo}
+                onChange={onMemberShipNumberChange}
+                variant="standard"
+                name="searchCode"
+                style={{ marginLeft: "10px", flex: "1" }}
+                label="National ID"
               />
 
               <Button
@@ -588,10 +689,8 @@ export default function MemberEligibility() {
               </Grid>
             </Grid>
             <Grid xs={12} sm={6} md={4}>
-            <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>
-                  Member Name
-                </Typography>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>Member Name</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
@@ -623,8 +722,7 @@ export default function MemberEligibility() {
                   {memberData?.gender}
                 </Typography>
               </Box>
-             
-             
+
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Policy Type</Typography>
                 &nbsp;
@@ -648,8 +746,9 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.dateOfJoining &&
-                    moment(memberData?.dateOfJoining).format("DD/MM/YYYY") || "No Data"}
+                  {(memberData?.dateOfJoining &&
+                    moment(memberData?.dateOfJoining).format("DD/MM/YYYY")) ||
+                    "No Data"}
                 </Typography>
               </Box>
             </Grid>
@@ -678,7 +777,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {memberData?.age}
+                  {memberData?.age}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -686,7 +785,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {memberData?.policyNumber}
+                  {memberData?.policyNumber}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -703,7 +802,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {memberData?.email}
+                  {memberData?.email}
                 </Typography>
               </Box>
             </Grid>
@@ -716,34 +815,40 @@ export default function MemberEligibility() {
               columnsDefination={columnsDefinations}
             /> */}
             <Grid item xs={12}>
-            <TableContainer component={Paper}>
-              <Table size="small" aria-label="a dense table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Benefit</TableCell>
-                    <TableCell>Status</TableCell>
-                    {/* <TableCell>Waiting Period</TableCell>
+              <TableContainer component={Paper}>
+                <Table size="small" aria-label="a dense table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Benefit</TableCell>
+                      <TableCell>Status</TableCell>
+                      {/* <TableCell>Waiting Period</TableCell>
                     <TableCell>Max Limit(KSH)</TableCell>
                     <TableCell>Consumed(KSH)</TableCell>
                     <TableCell>Balance(KSH)</TableCell> */}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {tableData?.map &&
-                    tableData.map(item => (
-                      <TableRow key={item.id}>
-                        <TableCell>{item?.benefitName}</TableCell>
-                        <TableCell>{item?.balance > 0 ? <CheckOutlinedIcon style={{color:"green"}}/> : <ClearOutlinedIcon style={{color:"red"}} />}</TableCell>
-                        {/* <TableCell>{item?.waitingPeriod}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {tableData?.map &&
+                      tableData.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell>{item?.benefitName}</TableCell>
+                          <TableCell>
+                            {item?.balance > 0 ? (
+                              <CheckOutlinedIcon style={{ color: "green" }} />
+                            ) : (
+                              <ClearOutlinedIcon style={{ color: "red" }} />
+                            )}
+                          </TableCell>
+                          {/* <TableCell>{item?.waitingPeriod}</TableCell>
                         <TableCell>{item?.maxLimit}</TableCell>
                         <TableCell>{item?.consumed}</TableCell>
                         <TableCell>{item?.balance}</TableCell> */}
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
           </Paper>
         </Paper>
       )}

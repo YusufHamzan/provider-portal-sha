@@ -16,6 +16,7 @@ import {
   Autocomplete,
   Box,
   Checkbox,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -112,7 +113,6 @@ const serviceDiagnosis = new ServiceTypeService();
 const preAuthService = new PreAuthService();
 const memberservice = new MemberService();
 
-
 let ps$ = providerService.getProviders();
 let ad$ = serviceDiagnosis.getServicesbyId("867854874246590464", {
   page: 0,
@@ -165,6 +165,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const [providerList, setProviderList] = React.useState([]);
   const [serviceList, setServiceList] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [diagnosisList, setDiagnosisList] = React.useState([]);
   const [benefits, setBenefits] = React.useState([]);
   const [benefitOptions, setBenefitOptions] = React.useState([]);
@@ -173,7 +174,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [claimModal, setClaimModal] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState("");
   const [openSnack, setOpenSnack] = React.useState(false);
-  const [searchType, setSearchType] = React.useState("membership_no");
+  const [searchType, setSearchType] = React.useState("national_id");
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState([]);
   const [selectSpecId, setSelectedSpecId] = React.useState("");
@@ -347,11 +348,16 @@ export default function ClaimsPreAuthIPDComponent(props) {
     });
   };
 
-  const getBenefit =(id, policyNo)=>{
-    let bts$ = benefitService.getAllBenefitWithChild({ page: 0, size: 1000,memberId:id, policyNumber: policyNo });
-    bts$.subscribe((result)=>{
-      setBenefits(result)
-    })
+  const getBenefit = (id, policyNo) => {
+    let bts$ = benefitService.getAllBenefitWithChild({
+      page: 0,
+      size: 1000,
+      memberId: id,
+      policyNumber: policyNo,
+    });
+    bts$.subscribe((result) => {
+      setBenefits(result);
+    });
     //   let subscription = observable.subscribe((result) => {
     //     let arr = [];
     //     result.content.forEach((ele) => {
@@ -363,7 +369,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   });
     //   return () => subscription.unsubscribe();
     // }, [observable, setter]);
-  }
+  };
 
   React.useEffect(() => {
     getServiceTypes();
@@ -438,7 +444,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           planScheme: res.content[0].planScheme,
           productName: res.content[0].productName,
         });
-        setShowViewDetails(true)
+        setShowViewDetails(true);
       }
     });
     setOpenClientModal(false);
@@ -779,6 +785,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.value = id;
       pageRequest.key = "MEMBERSHIP_NO";
     }
+    if (searchType === "national_id") {
+      pageRequest.value = id;
+      pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
+    }
 
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
@@ -804,13 +814,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
             planScheme: res.content[0].planScheme,
             productName: res.content[0].productName,
           });
-          setShowViewDetails(true)
+          setShowViewDetails(true);
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         }
       } else {
         setAlertMsg(`No Data found for ${id}`);
         setOpenSnack(true);
       }
+      setIsLoading(false);
     });
     // if(searchType === "MEMBERSHIP_NO"){
     //    memberservice.getMember(pageRequest11).subscribe(res => {
@@ -847,7 +858,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       planScheme: data.planScheme,
       productName: data.productName,
     });
-    setShowViewDetails(true)
+    setShowViewDetails(true);
     getBenefit(data?.memberId, data?.policyNumber);
     handleClosed();
   };
@@ -1236,10 +1247,45 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   onChange={handleChange}
                   fullWidth
                 >
+                  <MenuItem value="national_id">National ID</MenuItem>
                   <MenuItem value="membership_no">Membership No.</MenuItem>
                   <MenuItem value="name">Member Name</MenuItem>
                 </Select>
               </Grid>
+
+              {searchType === "national_id" && (
+                <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
+                  <TextField
+                    id="standard-basic"
+                    variant="standard"
+                    value={formik.values.memberShipNo}
+                    onChange={onMemberShipNumberChange}
+                    name="searchCode"
+                    label="National ID"
+                    style={{ flex: "1", marginRight: "5px" }}
+                  />
+
+                  <Button
+                    className={`responsiveButton ${classes.buttonPrimary}`}
+                    variant="contained"
+                    onClick={() => {
+                      setIsLoading(true);
+                      populateMemberFromSearch("number");
+                    }}
+                    color="#313c96"
+                    type="button"
+                    style={{ borderRadius: "10px" }}
+                  >
+                    {isLoading ? (
+                      <CircularProgress
+                        sx={{ color: "white", width: "20px", height: "20px" }}
+                      />
+                    ) : (
+                      "Search"
+                    )}
+                  </Button>
+                </Grid>
+              )}
 
               {searchType === "membership_no" && (
                 <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
@@ -1256,12 +1302,21 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <Button
                     className={`responsiveButton ${classes.buttonPrimary}`}
                     variant="contained"
-                    onClick={() => populateMemberFromSearch("number")}
+                    onClick={() => {
+                      setIsLoading(true);
+                      populateMemberFromSearch("number");
+                    }}
                     color="#313c96"
                     type="button"
                     style={{ borderRadius: "10px" }}
                   >
-                    Search
+                    {isLoading ? (
+                      <CircularProgress
+                        sx={{ color: "white", width: "20px", height: "20px" }}
+                      />
+                    ) : (
+                      "Search"
+                    )}
                   </Button>
                 </Grid>
               )}
@@ -1280,13 +1335,22 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                   <Button
                     variant="contained"
-                    onClick={() => populateMemberFromSearch("name")}
+                    onClick={() => {
+                      setIsLoading(true);
+                      populateMemberFromSearch("name");
+                    }}
                     className={classes.buttonPrimary}
                     color="primary"
                     type="button"
                     style={{ marginLeft: "3%", borderRadius: "10px" }}
                   >
-                    Search
+                    {isLoading ? (
+                      <CircularProgress
+                        sx={{ color: "white", width: "20px", height: "20px" }}
+                      />
+                    ) : (
+                      "Search"
+                    )}
                   </Button>
 
                   {/* Dialog component goes here */}
