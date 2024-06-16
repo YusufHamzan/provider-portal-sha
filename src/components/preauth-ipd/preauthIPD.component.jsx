@@ -374,14 +374,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   return () => subscription.unsubscribe();
     // }, [observable, setter]);
   };
-  
+
   const getIntervemntions = (data) => {
     let bts$ = benefitService.getBenefitInterventions(data.benefitStructureId);
     bts$.subscribe((result) => {
-      let temp = []
+      let temp = [];
       result.benifitMasterIntervention.forEach((el) => {
         let obj = {
-          label: el.code +'|'+ el.name,
+          label: el.code + "|" + el.name,
           value: el?.code,
         };
         temp.push(obj);
@@ -427,7 +427,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         label: ele.name,
         name: ele.name,
         value: ele.id,
-        benefitStructureId: ele.benefitStructureId
+        benefitStructureId: ele.benefitStructureId,
       };
       temp.push(obj);
     });
@@ -1237,7 +1237,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-  
+
   return (
     <>
       <ClaimModal
@@ -2005,6 +2005,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Grid>
 
             {serviceDetailsList?.map((x, i) => {
+              console.log("asasas", x);
               return (
                 <Grid container spacing={3} key={i}>
                   <Grid item xs={12} sm={12} md={12}>
@@ -2019,10 +2020,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             name="benefitId"
                             defaultValue={x?.benefitId}
                             value={x?.benefitId}
-                            onChange={(e, val) =>{
-                              setIntervention([])
-                              getIntervemntions(val)
-                              handleBenefitChangeInService(val, i)
+                            onChange={(e, val) => {
+                              setIntervention([]);
+                              getIntervemntions(val);
+                              handleBenefitChangeInService(val, i);
                             }}
                             id="checkboxes-tags-demo"
                             filterOptions={autocompleteFilterChange}
@@ -2043,7 +2044,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                label="Benefit Provider"
+                                label="Benefit"
                                 variant="standard"
                               />
                             )}
@@ -2051,7 +2052,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         </FormControl>
                       </Grid>
                       <Grid item xs={12} sm={6} md={4}>
-                        <FormControl className={classes.formControl} style={{width:"100%"}}>
+                        <FormControl
+                          className={classes.formControl}
+                          style={{ width: "100%" }}
+                        >
                           <InputLabel
                             id="demo-simple-select-label"
                             style={{ marginBottom: "0px" }}
@@ -2070,7 +2074,43 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         </FormControl>
                       </Grid>
                       <Grid item xs={12} sm={6} md={4}>
-                        <FormControl className={classes.formControl} style={{width:"100%"}}>
+                        <FormControl className={classes.formControl} fullWidth>
+                          <Autocomplete
+                            name="intervention"
+                            defaultValue={
+                              x.intervention ? x.intervention : undefined
+                            }
+                            value={x.intervention ? x.intervention : undefined}
+                            onChange={(e, val) => {
+                              getExpenseHead(e.target.value);
+                              handleChangeInService(e, i);
+                            }}
+                            id="checkboxes-tags-demo"
+                            filterOptions={autocompleteFilterChange}
+                            options={benefitOptions}
+                            // options={selectedBenefit}
+                            getOptionLabel={(option) =>
+                              option.label ??
+                              intervention.find(
+                                (benefit) => benefit?.value == option
+                              )?.label
+                            }
+                            getOptionSelected={(option, value) =>
+                              option?.value === value
+                            }
+                            // renderOption={(option, { selected }) => (
+                            //   <React.Fragment>{option?.label}</React.Fragment>
+                            // )}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Intervention"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </FormControl>
+                        {/* <FormControl className={classes.formControl} style={{width:"100%"}}>
                           <InputLabel
                             id="demo-simple-select-label"
                             style={{ marginBottom: "0px" }}
@@ -2096,7 +2136,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                               );
                             })}
                           </Select>
-                        </FormControl>
+                        </FormControl> */}
                       </Grid>
                       <Grid
                         item
