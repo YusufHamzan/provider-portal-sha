@@ -192,12 +192,12 @@ export default function ProviderOtherDetailsComponent(props) {
     };
 
     // if (query2.get("mode") === "create") {
-      providerservice
-        .editProvider(payloadThree, props.providerID, "3")
-        .subscribe((res) => {
-          navigate(`/thank-you`);
-          // window.location.reload();
-        });
+    providerservice
+      .editProvider(payloadThree, props.providerID, "3")
+      .subscribe((res) => {
+        navigate(`/thank-you`);
+        // window.location.reload();
+      });
     // }
     // if (query2.get("mode") === "edit") {
     //   providerservice.editProvider(payloadThree, id, "3").subscribe((res) => {
@@ -444,7 +444,10 @@ export default function ProviderOtherDetailsComponent(props) {
               />
             </Grid>
             <Grid item xs={4}>
-              <FormControl className={classes.formControl}>
+              <FormControl
+                className={classes.formControl}
+                style={{ width: "60%" }}
+              >
                 <InputLabel
                   id="demo-simple-select-label"
                   style={{ marginBottom: "0px" }}
@@ -468,7 +471,10 @@ export default function ProviderOtherDetailsComponent(props) {
               </FormControl>
             </Grid>
             <Grid item xs={4}>
-              <FormControl className={classes.formControl}>
+              <FormControl
+                className={classes.formControl}
+                style={{ width: "60%" }}
+              >
                 <InputLabel
                   id="demo-simple-select-label"
                   style={{ marginBottom: "0px" }}
@@ -542,7 +548,10 @@ export default function ProviderOtherDetailsComponent(props) {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={4}>
-              <FormControl className={classes.formControl}>
+              <FormControl
+                className={classes.formControl}
+                style={{ width: "60%" }}
+              >
                 <InputLabel
                   id="demo-simple-select-label"
                   style={{ marginBottom: "0px" }}
@@ -566,7 +575,10 @@ export default function ProviderOtherDetailsComponent(props) {
               </FormControl>
             </Grid>
             <Grid item xs={4}>
-              <FormControl className={classes.formControl}>
+              <FormControl
+                className={classes.formControl}
+                style={{ width: "60%" }}
+              >
                 <InputLabel
                   id="demo-simple-select-label"
                   style={{ marginBottom: "0px" }}
@@ -623,7 +635,7 @@ export default function ProviderOtherDetailsComponent(props) {
 
           <Grid container spacing={3} style={{ marginBottom: "20px" }}>
             <Grid item xs={4}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   margin="normal"
                   id="date-picker-inline"
@@ -637,7 +649,7 @@ export default function ProviderOtherDetailsComponent(props) {
                   }}
                 />
               </LocalizationProvider>
-              </Grid>
+            </Grid>
             <Grid item xs={2}>
               <span>Upload Contract</span>
               <div
