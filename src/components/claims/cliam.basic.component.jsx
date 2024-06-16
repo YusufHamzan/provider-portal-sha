@@ -17,6 +17,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -147,6 +148,7 @@ export default function ClaimsBasicComponent(props) {
   const [selectedInvoiceItemIndex, setSelectedInvoiceItemIndex] =
     React.useState(0);
   const [alertMsg, alert] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const [openSnack, setOpenSnack] = React.useState(false);
   const [uploadSuccess, setUploadSuccess] = React.useState(false);
   const [benefitOptions, setBenefitOptions] = React.useState([]);
@@ -246,7 +248,7 @@ export default function ClaimsBasicComponent(props) {
     planScheme: "",
     productName: "",
   });
-  const [searchType, setSearchType] = React.useState("MEMBERSHIP_NO");
+  const [searchType, setSearchType] = React.useState("national_id");
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState("");
   const [selectSpecId, setSelectedSpecId] = React.useState("");
@@ -686,6 +688,10 @@ export default function ClaimsBasicComponent(props) {
       pageRequest.value = id;
       pageRequest.key = "MEMBERSHIP_NO";
     }
+    if (searchType === "national_id") {
+      pageRequest.value = id;
+      pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
+    }
 
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
@@ -713,6 +719,7 @@ export default function ClaimsBasicComponent(props) {
         alert(`No Data found for ${id}`);
         setOpenSnack(true);
       }
+      setIsLoading(false);
     });
   };
 
@@ -722,7 +729,7 @@ export default function ClaimsBasicComponent(props) {
       setOpenSnack(true);
       return;
     }
-    
+
     if (formik.values.contactNoOne.toString().length !== 10) {
       alert("Contact One must be of 10 digits");
       setOpenSnack(true);
@@ -736,13 +743,13 @@ export default function ClaimsBasicComponent(props) {
       setOpenSnack(true);
       return;
     }
-    
+
     benefitsWithCost.forEach((ele) => {
       if (ele.benefitId !== "OTHER") {
         ele.otherType = "";
       }
     });
-    
+
     benefitsWithCost.forEach((ctc) => {
       ctc.estimatedCost = Number(ctc.estimatedCost);
     });
@@ -763,49 +770,49 @@ export default function ClaimsBasicComponent(props) {
     };
     let arr = [];
     formik.values.diagnosis &&
-    formik.values.diagnosis.forEach((di) => {
-      arr.push(di.id.toString());
-    });
+      formik.values.diagnosis.forEach((di) => {
+        arr.push(di.id.toString());
+      });
     payload["diagnosis"] = arr;
-    
+
     if (props.preauthData !== "" && props.preauthData) {
       payload["source"] = "PRE_AUTH";
       payload["reimbursementSourceId"] = props.preauthData.id;
     }
-    
+
     let claimreimid = localStorage.getItem("claimreimid")
-    ? localStorage.getItem("claimreimid")
-    : "";
+      ? localStorage.getItem("claimreimid")
+      : "";
     if (query.get("mode") === "edit") {
       if (claimreimid || id) {
         if (claimreimid) {
           reimbursementService
-          .editReimbursement(payload, claimreimid, 1)
-          .subscribe((res) => {
-            props.handleNext();
-          });
+            .editReimbursement(payload, claimreimid, 1)
+            .subscribe((res) => {
+              props.handleNext();
+            });
         }
         if (id) {
           reimbursementService
-          .editReimbursement(payload, id, 1)
-          .subscribe((res) => {
-            props.handleNext();
-          });
+            .editReimbursement(payload, id, 1)
+            .subscribe((res) => {
+              props.handleNext();
+            });
         }
       }
     }
     if (query.get("mode") === "create") {
       // if (!claimreimid && !id) {
-        // if (query.get("preId")) {
-        //   let claimreimid = `r-${query.get("preId")}`;
-        //   localStorage.setItem("claimreimid", claimreimid);
-        // }
-        reimbursementService
-          .saveReimbursement(payload, providerId)
-          .subscribe((res) => {
-            localStorage.setItem("claimreimid", res.id);
-            props.handleNext();
-          });
+      // if (query.get("preId")) {
+      //   let claimreimid = `r-${query.get("preId")}`;
+      //   localStorage.setItem("claimreimid", claimreimid);
+      // }
+      reimbursementService
+        .saveReimbursement(payload, providerId)
+        .subscribe((res) => {
+          localStorage.setItem("claimreimid", res.id);
+          props.handleNext();
+        });
       // }
     }
   };
@@ -1666,789 +1673,499 @@ export default function ClaimsBasicComponent(props) {
           </Grid>
         ) : (
           <>
-          <Snackbar
-            open={openSnack}
-            autoHideDuration={4000}
-            onClose={handleMsgErrorClose}
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          >
-            <Alert onClose={handleMsgErrorClose} variant="filled" severity="error">
-              {alertMsg}
-            </Alert>
-          </Snackbar>
-          <div>
-            <form onSubmit={formik.handleSubmit}>
-              <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  style={{ display: "flex", alignItems: "flex-end" }}
-                >
-                  <Select
-                    label="Select"
-                    variant="standard"
-                    value={searchType}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="MEMBERSHIP_NO">Membership No.</MenuItem>
-                    <MenuItem value="NAME">Member Name</MenuItem>
-                  </Select>
-                </Grid>
-
-                {searchType === "MEMBERSHIP_NO" && (
-                  <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
-                    <TextField
-                      id="standard-basic"
-                      value={formik.values.memberShipNo}
-                      onChange={onMemberShipNumberChange}
-                      name="searchCode"
-                      label="Membership Code"
-                      variant="standard"
-                      style={{ flex: "1", marginRight: "5px" }}
-                    />
-
-                    <Button
-                      className="responsiveButton"
-                      variant="contained"
-                      onClick={() => populateMemberFromSearch("number")}
-                      color="primary"
-                      type="button"
-                      style={{ borderRadius: "10px" }}
-                    >
-                      Search
-                    </Button>
-                  </Grid>
-                )}
-
-                {searchType === "NAME" && (
-                  <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
-                    <TextField
-                      id="standard-basic"
-                      value={formik.values.memberShipNo}
-                      variant="standard"
-                      onChange={onMemberShipNumberChange}
-                      name="searchCode"
-                      style={{ marginLeft: "10px", flex: "1" }} // Adjust margin and flex as needed
-                      label="Member Name"
-                    />
-
-                    <Button
-                      variant="contained"
-                      onClick={() => populateMemberFromSearch("name")}
-                      color="primary"
-                      type="button"
-                      style={{ marginLeft: "3%", borderRadius: "10px" }}
-                    >
-                      Search
-                    </Button>
-
-                    {/* Dialog component goes here */}
-                    {openClientModal && (
-                      <Dialog
-                        open={openClientModal}
-                        onClose={handleClosed}
-                        aria-labelledby="form-dialog-title"
-                        disableEnforceFocus
-                      >
-                        <DialogTitle id="form-dialog-title">
-                          Members
-                        </DialogTitle>
-
-                        <DialogContent>
-                          {memberName?.res?.content &&
-                          memberName?.res?.content?.length > 0 ? (
-                            <TableContainer>
-                              <Table>
-                                <TableHead>
-                                  <TableRow>
-                                    <TableCell>Membership No</TableCell>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Mobile No</TableCell>
-                                    <TableCell>Action</TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {memberName.res.content.map((item) => (
-                                    <TableRow key={item.membershipNo}>
-                                      <TableCell>{item.membershipNo}</TableCell>
-                                      <TableCell>{item.name}</TableCell>
-                                      <TableCell>{item.mobileNo}</TableCell>
-                                      <TableCell>
-                                        <Button
-                                          onClick={() => handleSelect(item)}
-                                          style={{
-                                            background: "#313c96",
-                                            color: "#f1f1f1",
-                                          }}
-                                        >
-                                          Select
-                                        </Button>
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </TableContainer>
-                          ) : (
-                            <p>No Data Found</p>
-                          )}
-                        </DialogContent>
-
-                        <DialogActions>
-                          <Button
-                            onClick={handleClosed}
-                            color="primary"
-                            variant="text"
-                            className="p-button-text"
-                          >
-                            Cancel
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    )}
-                  </Grid>
-                )}
-              </Grid>
-              <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-                <Grid item xs={12}>
-                  <span style={{ color: "#4472C4", fontWeight: "bold" }}>
-                    BASIC DETAILS
-                  </span>
-                </Grid>
-
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  style={{ display: "flex", flexDirection: "column" }}
-                >
-                  <TextField
-                    id="standard-basic"
-                    name="memberName"
-                    variant="standard"
-                    value={memberBasic.name}
-                    disabled
-                    label="Name"
-                    InputProps={{
-                      classes: {
-                        root: classes.inputRoot,
-                        disabled: classes.disabled,
-                      },
-                    }}
-                  />
-                  <a
-                    style={{ color: "#4472C4", cursor: "pointer" }}
-                    onClick={viewUserDetails}
-                  >
-                    View Details
-                  </a>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    id="standard-basic"
-                    name="policyNumber"
-                    variant="standard"
-                    disabled
-                    value={memberBasic.policyNumber}
-                    label="Policy Number"
-                    InputProps={{
-                      classes: {
-                        root: classes.inputRoot,
-                        disabled: classes.disabled,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    id="standard-multiline-flexible"
-                    name="membershipNo"
-                    variant="standard"
-                    value={memberBasic.membershipNo}
-                    label="Membership No"
-                    readonly
-                    disabled
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  style={{ display: "flex", flexDirection: "column" }}
-                >
-                  <TextField
-                    id="standard-basic"
-                    name="age"
-                    type="number"
-                    variant="standard"
-                    value={memberBasic.age}
-                    disabled
-                    label="Age"
-                    InputProps={{
-                      classes: {
-                        root: classes.inputRoot,
-                        disabled: classes.disabled,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    id="standard-basic"
-                    name="relation"
-                    value={memberBasic.relation}
-                    variant="standard"
-                    disabled
-                    label="Relation"
-                    InputProps={{
-                      classes: {
-                        root: classes.inputRoot,
-                        disabled: classes.disabled,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="Enrolment Date"
-                      autoOk={true}
-                      disabled
-                      value={dayjs(memberBasic.enrolmentDate)}
-                      KeyboardButtonProps={{
-                        "aria-label": "change ing date",
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-              </Grid>
-              <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  style={{ display: "flex", flexDirection: "column" }}
-                >
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="Enrolment From Date"
-                      autoOk={true}
-                      disabled
-                      value={dayjs(memberBasic.enrolmentFromDate)}
-                      KeyboardButtonProps={{
-                        "aria-label": "change ing date",
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="Enrolment To Date"
-                      autoOk={true}
-                      disabled
-                      value={dayjs(memberBasic.enrolentToDate)}
-                      KeyboardButtonProps={{
-                        "aria-label": "change ing date",
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                style={{ marginTop: "20px", marginBottom: "15px" }}
+            <Snackbar
+              open={openSnack}
+              autoHideDuration={4000}
+              onClose={handleMsgErrorClose}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              <Alert
+                onClose={handleMsgErrorClose}
+                variant="filled"
+                severity="error"
               >
-                <Divider />
-              </Grid>
-              {benefitsWithCost?.map((x, i) => {
-                return (
+                {alertMsg}
+              </Alert>
+            </Snackbar>
+            <div>
+              <form onSubmit={formik.handleSubmit}>
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
                   <Grid
-                    container
-                    spacing={3}
-                    key={i}
-                    style={{ marginBottom: "20px" }}
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    style={{ display: "flex", alignItems: "flex-end" }}
                   >
-                    <Grid item xs={4}>
-                      <FormControl className={classes.formControl}>
-                        <Autocomplete
-                          name="benefitId"
-                          defaultValue={x.benefitId}
-                          value={x.benefitId}
-                          onChange={handleBenefitChange}
-                          id="checkboxes-tags-demo"
-                          filterOptions={autocompleteFilterChange}
-                          options={benefitOptions}
-                          getOptionLabel={(option) =>
-                            option?.label ??
-                            benefitOptions?.find(
-                              (benefit) => benefit?.value == option
-                            )?.label
-                          }
-                          getOptionSelected={(option, value) =>
-                            option?.value === value
-                          }
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Benefit id"
-                              variant="standard"
-                            />
-                          )}
-                        />
-                      </FormControl>
-                    </Grid>
-                    {x.benefitId === "OTHER" && (
-                      <Grid item xs={4}>
-                        <FormControl className={classes.formControl}>
-                          <InputLabel
-                            id="demo-simple-select-label"
-                            style={{ marginBottom: "0px" }}
-                          >
-                            Other
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            variant="standard"
-                            name="other"
-                            disabled={disableAllFields ? true : false}
-                            value={x.otherType}
-                            onChange={(e) =>
-                              handleInputChangeBenefitWithCost(e, i)
-                            }
-                          >
-                            {otherTypeList.map((ele) => {
-                              return (
-                                <MenuItem key={ele.code} value={ele.code}>
-                                  {ele.name}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    )}
-                    <Grid item xs={12} sm={6} md={4}>
-                      <TextField
-                        id="standard-basic"
-                        type="number"
-                        name="estimatedCost"
-                        variant="standard"
-                        disabled={disableAllFields ? true : false}
-                        value={x.estimatedCost}
-                        onChange={(e) => handleInputChangeBenefitWithCost(e, i)}
-                        label="Estimated Cost"
-                      />
-                    </Grid>
+                    <Select
+                      label="Select"
+                      variant="standard"
+                      value={searchType}
+                      onChange={handleChange}
+                      fullWidth
+                    >
+                      <MenuItem value="national_id">National ID</MenuItem>
+                      <MenuItem value="MEMBERSHIP_NO">Membership No.</MenuItem>
+                      <MenuItem value="NAME">Member Name</MenuItem>
+                    </Select>
+                  </Grid>
 
+                  {searchType === "national_id" && (
                     <Grid
                       item
-                      xs={2}
-                      style={{ display: "flex", alignItems: "center" }}
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      style={{ display: "flex" }}
                     >
-                      {benefitsWithCost.length !== 1 && (
-                        <Button
-                          className={`mr10 p-button-danger ${classes.buttonDanger}`}
-                          onClick={() => handleRemoveClaimCost(i)}
-                          variant="contained"
-                          disabled={disableAllFields ? true : false}
-                          style={{
-                            marginLeft: "5px",
-                            background: "#dc3545",
-                            color: "#f1f1f1",
-                          }}
+                      <TextField
+                        id="standard-basic"
+                        value={formik.values.memberShipNo}
+                        onChange={onMemberShipNumberChange}
+                        name="searchCode"
+                        label="Membership Code"
+                        variant="standard"
+                        style={{ flex: "1", marginRight: "5px" }}
+                      />
+
+                      <Button
+                        className="responsiveButton"
+                        variant="contained"
+                        onClick={() => {
+                          setIsLoading(true);
+                          populateMemberFromSearch("number");
+                        }}
+                        color="primary"
+                        type="button"
+                        style={{ borderRadius: "10px" }}
+                      >
+                        {isLoading ? (
+                          <CircularProgress
+                            sx={{
+                              color: "white",
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                        ) : (
+                          "Search"
+                        )}
+                      </Button>
+                    </Grid>
+                  )}
+
+                  {searchType === "MEMBERSHIP_NO" && (
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      style={{ display: "flex" }}
+                    >
+                      <TextField
+                        id="standard-basic"
+                        value={formik.values.memberShipNo}
+                        onChange={onMemberShipNumberChange}
+                        name="searchCode"
+                        label="Membership Code"
+                        variant="standard"
+                        style={{ flex: "1", marginRight: "5px" }}
+                      />
+
+                      <Button
+                        className="responsiveButton"
+                        variant="contained"
+                        onClick={() => {
+                          setIsLoading(true);
+                          populateMemberFromSearch("number");
+                        }}
+                        color="primary"
+                        type="button"
+                        style={{ borderRadius: "10px" }}
+                      >
+                        {isLoading ? (
+                          <CircularProgress
+                            sx={{
+                              color: "white",
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                        ) : (
+                          "Search"
+                        )}
+                      </Button>
+                    </Grid>
+                  )}
+
+                  {searchType === "NAME" && (
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      style={{ display: "flex" }}
+                    >
+                      <TextField
+                        id="standard-basic"
+                        value={formik.values.memberShipNo}
+                        variant="standard"
+                        onChange={onMemberShipNumberChange}
+                        name="searchCode"
+                        style={{ marginLeft: "10px", flex: "1" }} // Adjust margin and flex as needed
+                        label="Member Name"
+                      />
+
+                      <Button
+                        variant="contained"
+                        onClick={() => {
+                          setIsLoading(true);
+                          populateMemberFromSearch("name");
+                        }}
+                        color="primary"
+                        type="button"
+                        style={{ marginLeft: "3%", borderRadius: "10px" }}
+                      >
+                        {isLoading ? (
+                          <CircularProgress
+                            sx={{
+                              color: "white",
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                        ) : (
+                          "Search"
+                        )}
+                      </Button>
+
+                      {/* Dialog component goes here */}
+                      {openClientModal && (
+                        <Dialog
+                          open={openClientModal}
+                          onClose={handleClosed}
+                          aria-labelledby="form-dialog-title"
+                          disableEnforceFocus
                         >
-                          <DeleteIcon />
-                        </Button>
-                      )}
-                      {benefitsWithCost.length - 1 === i && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          disabled={disableAllFields ? true : false}
-                          style={{ marginLeft: "5px" }}
-                          onClick={handleAddClaimCost}
-                        >
-                          <AddIcon />
-                        </Button>
+                          <DialogTitle id="form-dialog-title">
+                            Members
+                          </DialogTitle>
+
+                          <DialogContent>
+                            {memberName?.res?.content &&
+                            memberName?.res?.content?.length > 0 ? (
+                              <TableContainer>
+                                <Table>
+                                  <TableHead>
+                                    <TableRow>
+                                      <TableCell>Membership No</TableCell>
+                                      <TableCell>Name</TableCell>
+                                      <TableCell>Mobile No</TableCell>
+                                      <TableCell>Action</TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {memberName.res.content.map((item) => (
+                                      <TableRow key={item.membershipNo}>
+                                        <TableCell>
+                                          {item.membershipNo}
+                                        </TableCell>
+                                        <TableCell>{item.name}</TableCell>
+                                        <TableCell>{item.mobileNo}</TableCell>
+                                        <TableCell>
+                                          <Button
+                                            onClick={() => handleSelect(item)}
+                                            style={{
+                                              background: "#313c96",
+                                              color: "#f1f1f1",
+                                            }}
+                                          >
+                                            Select
+                                          </Button>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            ) : (
+                              <p>No Data Found</p>
+                            )}
+                          </DialogContent>
+
+                          <DialogActions>
+                            <Button
+                              onClick={handleClosed}
+                              color="primary"
+                              variant="text"
+                              className="p-button-text"
+                            >
+                              Cancel
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
                       )}
                     </Grid>
+                  )}
+                </Grid>
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid item xs={12}>
+                    <span style={{ color: "#4472C4", fontWeight: "bold" }}>
+                      BASIC DETAILS
+                    </span>
                   </Grid>
-                );
-              })}
 
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                style={{ marginTop: "20px", marginBottom: "15px" }}
-              >
-                <Divider />
-              </Grid>
-              <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    style={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <TextField
+                      id="standard-basic"
+                      name="memberName"
+                      variant="standard"
+                      value={memberBasic.name}
+                      disabled
+                      label="Name"
+                      InputProps={{
+                        classes: {
+                          root: classes.inputRoot,
+                          disabled: classes.disabled,
+                        },
+                      }}
+                    />
+                    <a
+                      style={{ color: "#4472C4", cursor: "pointer" }}
+                      onClick={viewUserDetails}
+                    >
+                      View Details
+                    </a>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                      id="standard-basic"
+                      name="policyNumber"
+                      variant="standard"
+                      disabled
+                      value={memberBasic.policyNumber}
+                      label="Policy Number"
+                      InputProps={{
+                        classes: {
+                          root: classes.inputRoot,
+                          disabled: classes.disabled,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                      id="standard-multiline-flexible"
+                      name="membershipNo"
+                      variant="standard"
+                      value={memberBasic.membershipNo}
+                      label="Membership No"
+                      readonly
+                      disabled
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    style={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <TextField
+                      id="standard-basic"
+                      name="age"
+                      type="number"
+                      variant="standard"
+                      value={memberBasic.age}
+                      disabled
+                      label="Age"
+                      InputProps={{
+                        classes: {
+                          root: classes.inputRoot,
+                          disabled: classes.disabled,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                      id="standard-basic"
+                      name="relation"
+                      value={memberBasic.relation}
+                      variant="standard"
+                      disabled
+                      label="Relation"
+                      InputProps={{
+                        classes: {
+                          root: classes.inputRoot,
+                          disabled: classes.disabled,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Enrolment Date"
+                        autoOk={true}
+                        disabled
+                        value={dayjs(memberBasic.enrolmentDate)}
+                        KeyboardButtonProps={{
+                          "aria-label": "change ing date",
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    style={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Enrolment From Date"
+                        autoOk={true}
+                        disabled
+                        value={dayjs(memberBasic.enrolmentFromDate)}
+                        KeyboardButtonProps={{
+                          "aria-label": "change ing date",
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Enrolment To Date"
+                        autoOk={true}
+                        disabled
+                        value={dayjs(memberBasic.enrolentToDate)}
+                        KeyboardButtonProps={{
+                          "aria-label": "change ing date",
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                </Grid>
                 <Grid
                   item
                   xs={12}
-                  sm={6}
-                  md={4}
-                  style={{ display: "flex", alignItems: "center" }}
+                  style={{ marginTop: "20px", marginBottom: "15px" }}
                 >
-                  <FormControl className={classes.formControl}>
-                    <InputLabel
-                      id="demo-simple-select-label"
-                      style={{ marginBottom: "0px" }}
+                  <Divider />
+                </Grid>
+                {benefitsWithCost?.map((x, i) => {
+                  return (
+                    <Grid
+                      container
+                      spacing={3}
+                      key={i}
+                      style={{ marginBottom: "20px" }}
                     >
-                      Treatment Department
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      variant="standard"
-                      name="treatmentDepartment"
-                      value={formik.treatmentDepartment}
-                      onChange={formik.handleChange}
-                    >
-                      <MenuItem value="OPD">OPD</MenuItem>
-                      <MenuItem value="IPD">IPD</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="Receive Date"
-                      autoOk={true}
-                      disabled={disableAllFields ? true : false}
-                      value={dayjs(selectedReceiveDate)}
-                      onChange={handleReceiveDate}
-                      KeyboardButtonProps={{
-                        "aria-label": "change ing date",
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="Service Date"
-                      autoOk={true}
-                      disabled={disableAllFields ? true : false}
-                      value={dayjs(selectedServiceDate)}
-                      onChange={handleServiceDate}
-                      KeyboardButtonProps={{
-                        "aria-label": "change ing date",
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-              </Grid>
-
-              <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-                <Grid item xs={12} sm={6} md={3}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="DOA"
-                      autoOk={true}
-                      disabled={disableAllFields ? true : false}
-                      value={dayjs(selectedDOA)}
-                      onChange={handleDOA}
-                      KeyboardButtonProps={{
-                        "aria-label": "change ing date",
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="DOA"
-                      autoOk={true}
-                      disabled={disableAllFields ? true : false}
-                      value={dayjs(selectedDOD)}
-                      onChange={handleDODDate}
-                      KeyboardButtonProps={{
-                        "aria-label": "change ing date",
-                      }}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                  <Autocomplete
-                    name="primaryDigonesisId"
-                    value={selectedId}
-                    onChange={(e, value) => doSelectValue(e, value)}
-                    id="checkboxes-tags-demo"
-                    filterOptions={autocompleteFilterChange}
-                    options={diagnosisList}
-                    getOptionLabel={(option) => option.diagnosisName}
-                    getOptionSelected={(option, value) => option.id === value}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Primary Diagnosis"
-                        variant="standard"
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Autocomplete
-                    className={classes.benifitAutoComplete}
-                    multiple
-                    value={formik.values.diagnosis}
-                    onChange={handleDiagnosisChange}
-                    id="checkboxes-tags-demo"
-                    filterOptions={autocompleteFilterChange}
-                    options={diagnosisList}
-                    disableCloseOnSelect
-                    disabled={disableAllFields ? true : false}
-                    getOptionLabel={(option) => option.diagnosisName}
-                    getOptionSelected={(option, value) =>
-                      option.id === value.id
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Other Diagnoses"
-                        placeholder="Select Diagnosis"
-                        variant="standard"
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    id="standard-basic"
-                    name="contactNoOne"
-                    type="number"
-                    value={formik.values.contactNoOne}
-                    disabled={disableAllFields ? true : false}
-                    onChange={formik.handleChange}
-                    variant="standard"
-                    label="Contact No. 1"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    id="standard-basic"
-                    name="contactNoTwo"
-                    type="number"
-                    variant="standard"
-                    value={formik.values.contactNoTwo}
-                    disabled={disableAllFields ? true : false}
-                    onChange={formik.handleChange}
-                    label="Contact No. 2"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={formik.values.daycare}
-                        onChange={(e) => handleFieldChecked(e)}
-                        name="daycare"
-                        color="primary"
-                      />
-                    }
-                    label="Daycare"
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12} style={{ marginBottom: "15px" }}>
-                <Divider />
-              </Grid>
-
-              <Grid item xs={12} style={{ marginTop: "20px" }}>
-                <span style={{ color: "#4472C4", fontWeight: "bold" }}>
-                  INVOICE DETAILS
-                </span>
-              </Grid>
-              <Grid item xs={12} style={{ marginBottom: "15px" }}>
-                <Divider />
-              </Grid>
-
-              {invoiceDetailsList.map((x, i) => {
-                return (
-                  <>
-                    <Grid container spacing={3} key={i}>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <TextField
-                          id="standard-basic"
-                          type="number"
-                          name="invoiceAmount"
-                          variant="standard"
-                          value={x.invoiceAmount}
-                          disabled={disableAllFields ? true : false}
-                          onChange={(e) => handleInputChangeService(e, i)}
-                          label="Invoice Amount"
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <TextField
-                          id="standard-basic"
-                          name="invoiceNo"
-                          variant="standard"
-                          value={x.invoiceNo}
-                          onChange={(e) => handleInputChangeService(e, i)}
-                          label="Invoice number"
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            margin="normal"
-                            id="date-picker-inline"
-                            label="Invoice Date"
-                            autoOk={true}
-                            value={dayjs(x.invoiceDateVal)}
-                            onChange={(date) => {
-                              handleInvoiceDate(date, i);
-                            }}
-                            KeyboardButtonProps={{
-                              "aria-label": "change ing date",
-                            }}
+                      <Grid item xs={4}>
+                        <FormControl className={classes.formControl}>
+                          <Autocomplete
+                            name="benefitId"
+                            defaultValue={x.benefitId}
+                            value={x.benefitId}
+                            onChange={handleBenefitChange}
+                            id="checkboxes-tags-demo"
+                            filterOptions={autocompleteFilterChange}
+                            options={benefitOptions}
+                            getOptionLabel={(option) =>
+                              option?.label ??
+                              benefitOptions?.find(
+                                (benefit) => benefit?.value == option
+                              )?.label
+                            }
+                            getOptionSelected={(option, value) =>
+                              option?.value === value
+                            }
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Benefit id"
+                                variant="standard"
+                              />
+                            )}
                           />
-                        </LocalizationProvider>
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <FormControl className={classes.formControl}>
-                          <InputLabel
-                            id="demo-simple-select-label"
-                            style={{ marginBottom: "0px" }}
-                          >
-                            Currency
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            name="currency"
-                            variant="standard"
-                            value={x.currency}
-                            onChange={(e) => handleInputChangeService(e, i)}
-                          >
-                            {currencyList.map((ele) => {
-                              return (
-                                <MenuItem key={ele.id} value={ele.code}>
-                                  {ele.name}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
                         </FormControl>
                       </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
+                      {x.benefitId === "OTHER" && (
+                        <Grid item xs={4}>
+                          <FormControl className={classes.formControl}>
+                            <InputLabel
+                              id="demo-simple-select-label"
+                              style={{ marginBottom: "0px" }}
+                            >
+                              Other
+                            </InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              variant="standard"
+                              name="other"
+                              disabled={disableAllFields ? true : false}
+                              value={x.otherType}
+                              onChange={(e) =>
+                                handleInputChangeBenefitWithCost(e, i)
+                              }
+                            >
+                              {otherTypeList.map((ele) => {
+                                return (
+                                  <MenuItem key={ele.code} value={ele.code}>
+                                    {ele.name}
+                                  </MenuItem>
+                                );
+                              })}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                      )}
+                      <Grid item xs={12} sm={6} md={4}>
                         <TextField
                           id="standard-basic"
                           type="number"
+                          name="estimatedCost"
                           variant="standard"
-                          name="exchangeRate"
-                          value={x.exchangeRate}
-                          onChange={(e) => handleInputChangeService(e, i)}
-                          label="Exchange Rate"
+                          disabled={disableAllFields ? true : false}
+                          value={x.estimatedCost}
+                          onChange={(e) =>
+                            handleInputChangeBenefitWithCost(e, i)
+                          }
+                          label="Estimated Cost"
                         />
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <TextField
-                          id="standard-basic"
-                          name="invoiceAmountKSH"
-                          variant="standard"
-                          value={x.invoiceAmountKSH}
-                          disabled
-                          onChange={(e) => handleInputChangeService(e, i)}
-                          label="Invoice Amount(KSH)"
-                        />
-                      </Grid>
-
-                      <Grid item xs={12} sm={6} md={3}>
-                        <TextField
-                          id="standard-basic"
-                          name="transactionNo"
-                          variant="standard"
-                          value={x.transactionNo}
-                          onChange={(e) => handleInputChangeService(e, i)}
-                          label="Transaction No"
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <FormControl className={classes.formControl}>
-                          <InputLabel
-                            id="demo-simple-select-label"
-                            style={{ marginBottom: "0px" }}
-                          >
-                            Payee
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            name="payee"
-                            value={x.payee}
-                            variant="standard"
-                            onChange={(e) => handleInputChangeService(e, i)}
-                          >
-                            <MenuItem value="Provider">Provider</MenuItem>
-                            <MenuItem value="Member">Member</MenuItem>
-                            <MenuItem value="Intermediaries">
-                              Intermediaries
-                            </MenuItem>
-                            <MenuItem value="Corporate">Corporate</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          style={{ marginLeft: "5px", marginTop: "10px" }}
-                          onClick={() => handleAddInvoiceItems(i)}
-                        >
-                          Add Invoice items
-                        </Button>
                       </Grid>
 
                       <Grid
                         item
-                        xs={12}
-                        sm={6}
-                        md={3}
+                        xs={2}
                         style={{ display: "flex", alignItems: "center" }}
                       >
-                        {invoiceDetailsList.length !== 1 && (
+                        {benefitsWithCost.length !== 1 && (
                           <Button
                             className={`mr10 p-button-danger ${classes.buttonDanger}`}
-                            onClick={() => handleRemoveServicedetails(i)}
+                            onClick={() => handleRemoveClaimCost(i)}
                             variant="contained"
-                            // color="secondary"
                             disabled={disableAllFields ? true : false}
                             style={{
                               marginLeft: "5px",
@@ -2459,47 +2176,428 @@ export default function ClaimsBasicComponent(props) {
                             <DeleteIcon />
                           </Button>
                         )}
-                        {invoiceDetailsList.length - 1 === i && (
+                        {benefitsWithCost.length - 1 === i && (
                           <Button
                             variant="contained"
                             color="primary"
-                            style={{ marginLeft: "5px" }}
                             disabled={disableAllFields ? true : false}
-                            onClick={handleAddServicedetails}
+                            style={{ marginLeft: "5px" }}
+                            onClick={handleAddClaimCost}
                           >
                             <AddIcon />
                           </Button>
                         )}
                       </Grid>
                     </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      style={{ marginBottom: "15px", marginTop: "10px" }}
-                    >
-                      <Divider />
-                    </Grid>
-                  </>
-                );
-              })}
+                  );
+                })}
 
-              {query.get("mode") !== "viewOnly" && (
-                <Grid item xs={12} className={classes.actionContainer}>
-                  <Button variant="contained" color="primary" type="submit">
-                    Save and Next
-                  </Button>
-                  <Button
-                    className={`p-button-text ${classes.saveBtn}`}
-                    style={{ marginLeft: "10px" }}
-                    variant="text"
-                    onClick={handleClose}
-                  >
-                    Cancel
-                  </Button>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  style={{ marginTop: "20px", marginBottom: "15px" }}
+                >
+                  <Divider />
                 </Grid>
-              )}
-            </form>
-          </div>
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    <FormControl className={classes.formControl}>
+                      <InputLabel
+                        id="demo-simple-select-label"
+                        style={{ marginBottom: "0px" }}
+                      >
+                        Treatment Department
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        variant="standard"
+                        name="treatmentDepartment"
+                        value={formik.treatmentDepartment}
+                        onChange={formik.handleChange}
+                      >
+                        <MenuItem value="OPD">OPD</MenuItem>
+                        <MenuItem value="IPD">IPD</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Receive Date"
+                        autoOk={true}
+                        disabled={disableAllFields ? true : false}
+                        value={dayjs(selectedReceiveDate)}
+                        onChange={handleReceiveDate}
+                        KeyboardButtonProps={{
+                          "aria-label": "change ing date",
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Service Date"
+                        autoOk={true}
+                        disabled={disableAllFields ? true : false}
+                        value={dayjs(selectedServiceDate)}
+                        onChange={handleServiceDate}
+                        KeyboardButtonProps={{
+                          "aria-label": "change ing date",
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="DOA"
+                        autoOk={true}
+                        disabled={disableAllFields ? true : false}
+                        value={dayjs(selectedDOA)}
+                        onChange={handleDOA}
+                        KeyboardButtonProps={{
+                          "aria-label": "change ing date",
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="DOA"
+                        autoOk={true}
+                        disabled={disableAllFields ? true : false}
+                        value={dayjs(selectedDOD)}
+                        onChange={handleDODDate}
+                        KeyboardButtonProps={{
+                          "aria-label": "change ing date",
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Autocomplete
+                      name="primaryDigonesisId"
+                      value={selectedId}
+                      onChange={(e, value) => doSelectValue(e, value)}
+                      id="checkboxes-tags-demo"
+                      filterOptions={autocompleteFilterChange}
+                      options={diagnosisList}
+                      getOptionLabel={(option) => option.diagnosisName}
+                      getOptionSelected={(option, value) => option.id === value}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Primary Diagnosis"
+                          variant="standard"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Autocomplete
+                      className={classes.benifitAutoComplete}
+                      multiple
+                      value={formik.values.diagnosis}
+                      onChange={handleDiagnosisChange}
+                      id="checkboxes-tags-demo"
+                      filterOptions={autocompleteFilterChange}
+                      options={diagnosisList}
+                      disableCloseOnSelect
+                      disabled={disableAllFields ? true : false}
+                      getOptionLabel={(option) => option.diagnosisName}
+                      getOptionSelected={(option, value) =>
+                        option.id === value.id
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Other Diagnoses"
+                          placeholder="Select Diagnosis"
+                          variant="standard"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                      id="standard-basic"
+                      name="contactNoOne"
+                      type="number"
+                      value={formik.values.contactNoOne}
+                      disabled={disableAllFields ? true : false}
+                      onChange={formik.handleChange}
+                      variant="standard"
+                      label="Contact No. 1"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                      id="standard-basic"
+                      name="contactNoTwo"
+                      type="number"
+                      variant="standard"
+                      value={formik.values.contactNoTwo}
+                      disabled={disableAllFields ? true : false}
+                      onChange={formik.handleChange}
+                      label="Contact No. 2"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={formik.values.daycare}
+                          onChange={(e) => handleFieldChecked(e)}
+                          name="daycare"
+                          color="primary"
+                        />
+                      }
+                      label="Daycare"
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid item xs={12} style={{ marginBottom: "15px" }}>
+                  <Divider />
+                </Grid>
+
+                <Grid item xs={12} style={{ marginTop: "20px" }}>
+                  <span style={{ color: "#4472C4", fontWeight: "bold" }}>
+                    INVOICE DETAILS
+                  </span>
+                </Grid>
+                <Grid item xs={12} style={{ marginBottom: "15px" }}>
+                  <Divider />
+                </Grid>
+
+                {invoiceDetailsList.map((x, i) => {
+                  return (
+                    <>
+                      <Grid container spacing={3} key={i}>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <TextField
+                            id="standard-basic"
+                            type="number"
+                            name="invoiceAmount"
+                            variant="standard"
+                            value={x.invoiceAmount}
+                            disabled={disableAllFields ? true : false}
+                            onChange={(e) => handleInputChangeService(e, i)}
+                            label="Invoice Amount"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <TextField
+                            id="standard-basic"
+                            name="invoiceNo"
+                            variant="standard"
+                            value={x.invoiceNo}
+                            onChange={(e) => handleInputChangeService(e, i)}
+                            label="Invoice number"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                              margin="normal"
+                              id="date-picker-inline"
+                              label="Invoice Date"
+                              autoOk={true}
+                              value={dayjs(x.invoiceDateVal)}
+                              onChange={(date) => {
+                                handleInvoiceDate(date, i);
+                              }}
+                              KeyboardButtonProps={{
+                                "aria-label": "change ing date",
+                              }}
+                            />
+                          </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <FormControl className={classes.formControl}>
+                            <InputLabel
+                              id="demo-simple-select-label"
+                              style={{ marginBottom: "0px" }}
+                            >
+                              Currency
+                            </InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              name="currency"
+                              variant="standard"
+                              value={x.currency}
+                              onChange={(e) => handleInputChangeService(e, i)}
+                            >
+                              {currencyList.map((ele) => {
+                                return (
+                                  <MenuItem key={ele.id} value={ele.code}>
+                                    {ele.name}
+                                  </MenuItem>
+                                );
+                              })}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <TextField
+                            id="standard-basic"
+                            type="number"
+                            variant="standard"
+                            name="exchangeRate"
+                            value={x.exchangeRate}
+                            onChange={(e) => handleInputChangeService(e, i)}
+                            label="Exchange Rate"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <TextField
+                            id="standard-basic"
+                            name="invoiceAmountKSH"
+                            variant="standard"
+                            value={x.invoiceAmountKSH}
+                            disabled
+                            onChange={(e) => handleInputChangeService(e, i)}
+                            label="Invoice Amount(KSH)"
+                          />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                          <TextField
+                            id="standard-basic"
+                            name="transactionNo"
+                            variant="standard"
+                            value={x.transactionNo}
+                            onChange={(e) => handleInputChangeService(e, i)}
+                            label="Transaction No"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <FormControl className={classes.formControl}>
+                            <InputLabel
+                              id="demo-simple-select-label"
+                              style={{ marginBottom: "0px" }}
+                            >
+                              Payee
+                            </InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              name="payee"
+                              value={x.payee}
+                              variant="standard"
+                              onChange={(e) => handleInputChangeService(e, i)}
+                            >
+                              <MenuItem value="Provider">Provider</MenuItem>
+                              <MenuItem value="Member">Member</MenuItem>
+                              <MenuItem value="Intermediaries">
+                                Intermediaries
+                              </MenuItem>
+                              <MenuItem value="Corporate">Corporate</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ marginLeft: "5px", marginTop: "10px" }}
+                            onClick={() => handleAddInvoiceItems(i)}
+                          >
+                            Add Invoice items
+                          </Button>
+                        </Grid>
+
+                        <Grid
+                          item
+                          xs={12}
+                          sm={6}
+                          md={3}
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          {invoiceDetailsList.length !== 1 && (
+                            <Button
+                              className={`mr10 p-button-danger ${classes.buttonDanger}`}
+                              onClick={() => handleRemoveServicedetails(i)}
+                              variant="contained"
+                              // color="secondary"
+                              disabled={disableAllFields ? true : false}
+                              style={{
+                                marginLeft: "5px",
+                                background: "#dc3545",
+                                color: "#f1f1f1",
+                              }}
+                            >
+                              <DeleteIcon />
+                            </Button>
+                          )}
+                          {invoiceDetailsList.length - 1 === i && (
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              style={{ marginLeft: "5px" }}
+                              disabled={disableAllFields ? true : false}
+                              onClick={handleAddServicedetails}
+                            >
+                              <AddIcon />
+                            </Button>
+                          )}
+                        </Grid>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={12}
+                        style={{ marginBottom: "15px", marginTop: "10px" }}
+                      >
+                        <Divider />
+                      </Grid>
+                    </>
+                  );
+                })}
+
+                {query.get("mode") !== "viewOnly" && (
+                  <Grid item xs={12} className={classes.actionContainer}>
+                    <Button variant="contained" color="primary" type="submit">
+                      Save and Next
+                    </Button>
+                    <Button
+                      className={`p-button-text ${classes.saveBtn}`}
+                      style={{ marginLeft: "10px" }}
+                      variant="text"
+                      onClick={handleClose}
+                    >
+                      Cancel
+                    </Button>
+                  </Grid>
+                )}
+              </form>
+            </div>
           </>
         )}
       </Box>
