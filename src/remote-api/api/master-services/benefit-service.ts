@@ -8,7 +8,7 @@ export class BenefitService {
 
     readonly QUERY_CONTEXT = `master-data-service/v1/benefits`;
     readonly PROVIDER_QUERY_CONTEXT = `/provider-query-service/v1/providers`;
-    readonly BENEFIT_QUERY_CONTEXT = `benefit-structure-query-service/v1/benefitstructures/sha/master/benefits`;
+    readonly BENEFIT_QUERY_CONTEXT = `benefit-structure-query-service/v1/benefitstructures`;
     // ?memberId=1248216841788071936&policyNumber=PN277084000
 
     getProviders(pageRequest: any): Observable<Page<any>> {
@@ -25,7 +25,12 @@ export class BenefitService {
     }
     getAllBenefitWithChild(pageRequest: PageRequest = defaultPageRequest): Observable<Page<any>> {
         return http
-          .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }`, { params: pageRequest })
+          .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }/sha/master/benefits`, { params: pageRequest })
+          .pipe(map(response => response.data));
+      }
+    getBenefitInterventions(id: string): Observable<Page<any>> {
+        return http
+          .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }/benifit-intervention/${id}`)
           .pipe(map(response => response.data));
       }
 

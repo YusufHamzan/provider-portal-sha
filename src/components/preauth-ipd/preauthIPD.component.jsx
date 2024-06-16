@@ -112,7 +112,6 @@ const serviceDiagnosis = new ServiceTypeService();
 const preAuthService = new PreAuthService();
 const memberservice = new MemberService();
 
-
 let ps$ = providerService.getProviders();
 let ad$ = serviceDiagnosis.getServicesbyId("867854874246590464", {
   page: 0,
@@ -166,6 +165,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [providerList, setProviderList] = React.useState([]);
   const [serviceList, setServiceList] = React.useState([]);
   const [diagnosisList, setDiagnosisList] = React.useState([]);
+  const [intervention, setIntervention] = React.useState([]);
   const [benefits, setBenefits] = React.useState([]);
   const [benefitOptions, setBenefitOptions] = React.useState([]);
   const [selectedBenefit, setSelectedBenefit] = React.useState([]);
@@ -281,6 +281,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
       estimatedCost: 0,
       benifitId: "",
       serviceId: "",
+      codeStandard: "SHA",
+      intervention: "",
       expenseHead: "",
     },
   ]);
@@ -347,11 +349,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
     });
   };
 
-  const getBenefit =(id, policyNo)=>{
-    let bts$ = benefitService.getAllBenefitWithChild({ page: 0, size: 1000,memberId:id, policyNumber: policyNo, claimType:"IPD"});
-    bts$.subscribe((result)=>{
-      setBenefits(result)
-    })
+  const getBenefit = (id, policyNo) => {
+    let bts$ = benefitService.getAllBenefitWithChild({
+      page: 0,
+      size: 1000,
+      memberId: id,
+      policyNumber: policyNo,
+      claimType: "IPD",
+    });
+    bts$.subscribe((result) => {
+      setBenefits(result);
+    });
     //   let subscription = observable.subscribe((result) => {
     //     let arr = [];
     //     result.content.forEach((ele) => {
@@ -363,7 +371,33 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   });
     //   return () => subscription.unsubscribe();
     // }, [observable, setter]);
-  }
+  };
+  
+  const getIntervemntions = (data) => {
+    let bts$ = benefitService.getBenefitInterventions(data.benefitStructureId);
+    bts$.subscribe((result) => {
+      let temp = []
+      result.benifitMasterIntervention.forEach((el) => {
+        let obj = {
+          label: el.code +'|'+ el.name,
+          value: el?.code,
+        };
+        temp.push(obj);
+      });
+      setIntervention(temp);
+    });
+    //   let subscription = observable.subscribe((result) => {
+    //     let arr = [];
+    //     result.content.forEach((ele) => {
+    //       if (!ele.blackListed) {
+    //         arr.push(ele);
+    //       }
+    //     });
+    //     setter(arr);
+    //   });
+    //   return () => subscription.unsubscribe();
+    // }, [observable, setter]);
+  };
 
   React.useEffect(() => {
     getServiceTypes();
@@ -391,6 +425,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         label: ele.name,
         name: ele.name,
         value: ele.id,
+        benefitStructureId: ele.benefitStructureId
       };
       temp.push(obj);
     });
@@ -438,7 +473,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           planScheme: res.content[0].planScheme,
           productName: res.content[0].productName,
         });
-        setShowViewDetails(true)
+        setShowViewDetails(true);
       }
     });
     setOpenClientModal(false);
@@ -804,7 +839,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             planScheme: res.content[0].planScheme,
             productName: res.content[0].productName,
           });
-          setShowViewDetails(true)
+          setShowViewDetails(true);
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         }
       } else {
@@ -847,7 +882,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       planScheme: data.planScheme,
       productName: data.productName,
     });
-    setShowViewDetails(true)
+    setShowViewDetails(true);
     getBenefit(data?.memberId, data?.policyNumber);
     handleClosed();
   };
@@ -1195,7 +1230,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-  console.log("formik.values.contactNoOne", formik.values.contactNoOne);
+  
   return (
     <>
       <ClaimModal
@@ -1581,7 +1616,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
               </Grid>
             </Grid>
 
-            <Grid
+            {/* <Grid
               item
               xs={12}
               sm={6}
@@ -1589,9 +1624,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
               style={{ marginTop: "20px", marginBottom: "15px" }}
             >
               <Divider />
-            </Grid>
+            </Grid> */}
 
-            {benefitsWithCost?.map((x, i) => {
+            {/* {benefitsWithCost?.map((x, i) => {
               return (
                 <Grid
                   container
@@ -1705,7 +1740,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   </Grid>
                 </Grid>
               );
-            })}
+            })} */}
 
             <Grid
               item
@@ -1781,7 +1816,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 </MuiPickersUtilsProvider> */}
               </Grid>
 
-              <Grid
+              {/* <Grid
                 item
                 xs={12}
                 sm={3}
@@ -1791,32 +1826,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   marginBottom: "8px",
                 }}
               >
-                {/* <Autocomplete
-                  className={classes.benifitAutoComplete}
-                  value={formik.values.diagnosis}
-                  onChange={handlePrimaryDiagnosisChange}
-                  id="checkboxes-tags-demo"
-                  filterOptions={autocompleteFilterChange}
-                  options={diagnosisList}
-                  disableCloseOnSelect
-                  getOptionLabel={option => option.diagnosisName}
-                  getOptionSelected={(option, value) => option.id === value.id}
-                  renderOption={(option, { selected }) => {
-                    const selectedOpt = (option.id === 'selectall' && allSelected) || selected;
-                    return (
-                      <React.Fragment>
-                        <Checkbox
-                          icon={icon}
-                          checkedIcon={checkedIcon}
-                          style={{ marginRight: 8, color: '#626bda' }}
-                          checked={selectedOpt}
-                        />
-                        {option.diagnosisName}
-                      </React.Fragment>
-                    );
-                  }}
-                  renderInput={params => <TextField {...params} label="Primary Diagnosis" placeholder="Select Diagnosis" />}
-                /> */}
                 <Autocomplete
                   id="checkboxes-tags-demo"
                   options={diagnosisList}
@@ -1884,7 +1893,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     />
                   )}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
 
             <Grid container spacing={3} style={{ marginBottom: "20px" }}>
@@ -1944,18 +1953,21 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       spacing={3}
                       style={{ marginBottom: "20px" }}
                     >
-                      <Grid item xs={12} sm={6} md={3}>
+                      <Grid item xs={12} sm={6} md={4}>
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
                             defaultValue={x?.benefitId}
                             value={x?.benefitId}
-                            onChange={(e, val) =>
+                            onChange={(e, val) =>{
+                              setIntervention([])
+                              getIntervemntions(val)
                               handleBenefitChangeInService(val, i)
-                            }
+                            }}
                             id="checkboxes-tags-demo"
                             filterOptions={autocompleteFilterChange}
-                            options={selectedBenefit}
+                            options={benefitOptions}
+                            // options={selectedBenefit}
                             getOptionLabel={(option) =>
                               option.label ??
                               benefitOptions.find(
@@ -1978,18 +1990,37 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           />
                         </FormControl>
                       </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <FormControl className={classes.formControl}>
+                      <Grid item xs={12} sm={6} md={4}>
+                        <FormControl className={classes.formControl} style={{width:"100%"}}>
                           <InputLabel
                             id="demo-simple-select-label"
                             style={{ marginBottom: "0px" }}
                           >
-                            Service Type
+                            Code Standard
                           </InputLabel>
                           <Select
-                            label="Service Type"
-                            name="serviceId"
-                            value={x.serviceId}
+                            label="Code Standard"
+                            name="codeStandard"
+                            value={x.codeStandard}
+                            variant="standard"
+                            fullWidth
+                          >
+                            <MenuItem value="SHA">SHA</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} sm={6} md={4}>
+                        <FormControl className={classes.formControl} style={{width:"100%"}}>
+                          <InputLabel
+                            id="demo-simple-select-label"
+                            style={{ marginBottom: "0px" }}
+                          >
+                            Intervention
+                          </InputLabel>
+                          <Select
+                            label="Intervention"
+                            name="intervention"
+                            value={x.intervention}
                             variant="standard"
                             fullWidth
                             onChange={(e) => {
@@ -1997,33 +2028,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                               handleChangeInService(e, i);
                             }}
                           >
-                            {serviceTypeList?.map((ele) => {
-                              return (
-                                <MenuItem value={ele?.id}>
-                                  {ele?.displayName}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <FormControl className={classes.formControl}>
-                          <InputLabel
-                            id="demo-simple-select-label"
-                            style={{ marginBottom: "0px" }}
-                          >
-                            Expense Head
-                          </InputLabel>
-                          <Select
-                            label="Expense Head"
-                            name="expenseHead"
-                            variant="standard"
-                            // fullWidth
-                            value={x.expenseHead}
-                            onChange={(e) => handleExpenseChangeInService(e, i)}
-                          >
-                            {expenseHeadList?.map((ele) => {
+                            {intervention?.map((ele) => {
                               return (
                                 <MenuItem value={ele?.value}>
                                   {ele?.label}
@@ -2033,7 +2038,37 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           </Select>
                         </FormControl>
                       </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
+                      <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-end",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        <Autocomplete
+                          id="checkboxes-tags-demo"
+                          options={diagnosisList}
+                          style={{ width: "100%" }}
+                          getOptionLabel={(option) => option.diagnosisName}
+                          //   renderOption={(option) => (
+                          //     <React.Fragment>{option.diagnosisName}</React.Fragment>
+                          //   )}
+                          value={selectedId?.length ? selectedId : undefined}
+                          className={classes.benifitAutoComplete}
+                          onChange={(e, value) => doSelectValue(e, value)}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Primary Diagnosis"
+                              variant="standard"
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6} md={4}>
                         <TextField
                           id="standard-basic"
                           type="number"
