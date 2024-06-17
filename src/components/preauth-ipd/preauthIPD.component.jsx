@@ -752,7 +752,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setSelectedDOA(new Date(res.expectedDOA));
       setProviderDetailsList(res.providers);
       setBenefitsWithCost(res.benefitsWithCost);
-      setServiceDetailsList(res.services);
+      setServiceDetailsList(res.benefitsWithCost);
       getMemberDetails(res.memberShipNo, res.policyNumber);
       if (res.diagnosis && res.diagnosis.length !== 0) {
         setDiagnosisdata(res.diagnosis);
@@ -2023,8 +2023,8 @@ console.log("service", serviceDetailsList)
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
-                            defaultValue={x?.benefitId}
-                            value={x?.benefitId}
+                            defaultValue={x?.benefitId ?x?.benefitId : undefined}
+                            value={x?.benefitId ? x?.benefitId : undefined}
                             onChange={(e, val) => {
                               setIntervention([]);
                               getIntervemntions(val);
@@ -2156,7 +2156,7 @@ console.log("service", serviceDetailsList)
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                label="Intervention"
+                                label={i === 0 ? "Primary Diagnosis" : "Diagnosis"}
                                 variant="standard"
                               />
                             )}
