@@ -167,7 +167,7 @@ const ClaimsIPDPreAuthDetails = () => {
         activeIndex={activeIndex}
         onTabChange={(e) => setActiveIndex(e.index)}
       >
-        <TabPanel leftIcon="pi pi-user mr-2" header="Pre-Auth Details">
+        <TabPanel leftIcon="pi pi-user mr-2" header="IPD Pre-Auth Details">
           <div className={classes.root}>
             {/* {query1.get('auth') === 'IPD' && ( */}
             <Paper elevation="none">
@@ -253,7 +253,7 @@ const ClaimsIPDPreAuthDetails = () => {
         </TabPanel>
         <TabPanel
           leftIcon="pi pi-user-minus mr-2"
-          header="Pre-Auth Audit Trail"
+          header="IPD Pre-Auth Audit Trail"
         >
           <PreAuthTimelineComponent />
         </TabPanel>

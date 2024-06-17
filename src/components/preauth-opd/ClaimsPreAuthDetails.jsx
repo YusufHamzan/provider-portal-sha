@@ -64,7 +64,7 @@ const ClaimsOPDPreAuthDetails = () => {
   const steps = getSteps();
 
   React.useEffect(() => {
-    if (query1.get('addDoc')) setActiveStep(1);
+    if (query1.get("addDoc")) setActiveStep(1);
   }, []);
 
   const isStepOptional = (step) => {
@@ -134,8 +134,6 @@ const ClaimsOPDPreAuthDetails = () => {
     }
   };
 
-
-
   return (
     <>
       {id ? (
@@ -169,7 +167,7 @@ const ClaimsOPDPreAuthDetails = () => {
         activeIndex={activeIndex}
         onTabChange={(e) => setActiveIndex(e.index)}
       >
-        <TabPanel leftIcon="pi pi-user mr-2" header="Pre-Auth Details">
+        <TabPanel leftIcon="pi pi-user mr-2" header="OPD Pre-Auth Details">
           <div className={classes.root}>
             {/* {query1.get('auth') === 'IPD' && ( */}
             <Paper elevation="none">
@@ -255,7 +253,7 @@ const ClaimsOPDPreAuthDetails = () => {
         </TabPanel>
         <TabPanel
           leftIcon="pi pi-user-minus mr-2"
-          header="Pre-Auth Audit Trail"
+          header="OPD Pre-Auth Audit Trail"
         >
           <PreAuthTimelineComponent />
         </TabPanel>

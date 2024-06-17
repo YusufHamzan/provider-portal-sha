@@ -136,9 +136,9 @@ export default function ProviderPersonalDetailsComponent(props) {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       setSubmit(true);
-      if (!isAltContactError) {
-        handleSubmit();
-      }
+      // if (!isAltContactError) {
+      //   handleSubmit();
+      // }
     },
   });
   const [contactList, setContactList] = React.useState([
@@ -293,12 +293,11 @@ export default function ProviderPersonalDetailsComponent(props) {
       payloadOne["providerBasicDetails"]["parentProviderId"] =
         formik.values.parentProviderId;
     }
-    console.log("here", formik.values.orgTypeCd);
 
     // if (query2.get('mode') === 'create') {
     providerservice.saveProvider(payloadOne).subscribe((res) => {
       props.setProviderID(res.id);
-      props.handleNext();
+      props.handleNext(1);
     });
     // }
     // if (query2.get('mode') === 'edit') {

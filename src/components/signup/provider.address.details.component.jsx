@@ -411,7 +411,7 @@ export default function ProviderAddressDetailsComponent(props) {
     providerservice
       .editProvider(payloadTwo, props.providerID, "2")
       .subscribe((res) => {
-        props.handleNext();
+        props.handleNext(2);
       });
     // }
     // if (query2.get("mode") === "edit") {
