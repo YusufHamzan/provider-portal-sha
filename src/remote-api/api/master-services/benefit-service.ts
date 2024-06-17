@@ -33,6 +33,11 @@ export class BenefitService {
           .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }/benifit-intervention/${id}`)
           .pipe(map(response => response.data));
       }
+    getServicesfromInterventions(id: string): Observable<Page<any>> {
+        return http
+          .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }/benifit-intervention-digonesis/${id}`)
+          .pipe(map(response => response.data));
+      }
 
     getBenefitParameterDetails(benefitCode: string): Observable<Page<any>> {
         return http

@@ -379,10 +379,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let bts$ = benefitService.getBenefitInterventions(data.benefitStructureId);
     bts$.subscribe((result) => {
       let temp = [];
+      console.log(result)
+      // temp.push(result)
       result.benifitMasterIntervention.forEach((el) => {
         let obj = {
           label: el.code + "|" + el.name,
-          value: el?.code,
+          value: el?.interventionId,
         };
         temp.push(obj);
       });
@@ -405,18 +407,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
     getServiceTypes();
   }, []);
 
-  const getExpenseHead = (id) => {
-    let expenseHeadService$ = serviceDiagnosis.getExpenseHead(id);
-    expenseHeadService$.subscribe((response) => {
+  const getServices = (data) => {
+    console.log(data)
+    let bts$ = benefitService.getServicesfromInterventions(data.interventionId);
+    bts$.subscribe((response) => {
       let temp = [];
-      response.content.forEach((el) => {
+      console.log(response)
+      response.benifitMasterIntervention.forEach((el) => {
         let obj = {
           label: el?.name,
-          value: el?.id,
+          value: el?.serviceId,
         };
         temp.push(obj);
       });
-      setExpenseHeadList(temp);
+      setServiceList(temp);
     });
   };
 
@@ -438,7 +442,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   //useObservable(bts$, setOtherTypeList);
   useObservable1(ps$, setProviderList);
   useObservable3(ad$, setDiagnosisList);
-  useObservable2(serviceAll$, setServiceList);
+  // useObservable2(serviceAll$, setServiceList);
 
   const handleClose = () => {
     localStorage.removeItem("preauthid");
@@ -1237,7 +1241,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-
+console.log("interventions", intervention)
   return (
     <>
       <ClaimModal
@@ -2005,7 +2009,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Grid>
 
             {serviceDetailsList?.map((x, i) => {
-              console.log("asasas", x);
               return (
                 <Grid container spacing={3} key={i}>
                   <Grid item xs={12} sm={12} md={12}>
@@ -2082,22 +2085,23 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             }
                             value={x.intervention ? x.intervention : undefined}
                             onChange={(e, val) => {
-                              getExpenseHead(e.target.value);
+                              getServices(val);
                               handleChangeInService(e, i);
                             }}
                             id="checkboxes-tags-demo"
-                            filterOptions={autocompleteFilterChange}
-                            options={benefitOptions}
+                            // filterOptions={autocompleteFilterChange}
+                            options={intervention}
                             // options={selectedBenefit}
                             getOptionLabel={(option) =>
-                              option.label ??
-                              intervention.find(
-                                (benefit) => benefit?.value == option
-                              )?.label
+                              option.name
+                              //  ??
+                              // intervention.find(
+                              //   (benefit) => benefit?.interventionId == option
+                              // )?.name
                             }
-                            getOptionSelected={(option, value) =>
-                              option?.value === value
-                            }
+                            // getOptionSelected={(option, value) =>
+                            //   option?.interventionId === value
+                            // }
                             // renderOption={(option, { selected }) => (
                             //   <React.Fragment>{option?.label}</React.Fragment>
                             // )}
@@ -2110,33 +2114,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             )}
                           />
                         </FormControl>
-                        {/* <FormControl className={classes.formControl} style={{width:"100%"}}>
-                          <InputLabel
-                            id="demo-simple-select-label"
-                            style={{ marginBottom: "0px" }}
-                          >
-                            Intervention
-                          </InputLabel>
-                          <Select
-                            label="Intervention"
-                            name="intervention"
-                            value={x.intervention}
-                            variant="standard"
-                            fullWidth
-                            onChange={(e) => {
-                              getExpenseHead(e.target.value);
-                              handleChangeInService(e, i);
-                            }}
-                          >
-                            {intervention?.map((ele) => {
-                              return (
-                                <MenuItem value={ele?.value}>
-                                  {ele?.label}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </FormControl> */}
                       </Grid>
                       <Grid
                         item
@@ -2150,9 +2127,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       >
                         <Autocomplete
                           id="checkboxes-tags-demo"
-                          options={diagnosisList}
+                          options={serviceList}
                           style={{ width: "100%" }}
-                          getOptionLabel={(option) => option.diagnosisName}
+                          getOptionLabel={(option) => option.label}
                           //   renderOption={(option) => (
                           //     <React.Fragment>{option.diagnosisName}</React.Fragment>
                           //   )}
