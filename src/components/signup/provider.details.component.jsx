@@ -1,5 +1,11 @@
-
-import { Grid, Paper, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography,
+} from "@mui/material";
 import ProviderAddressDetailsComponent from "./provider.address.details.component";
 import ProviderOtherDetailsComponent from "./provider.other.details.component";
 import ProviderPersonalDetailsComponent from "./provider.personal.details.component";
@@ -92,28 +98,30 @@ export default function ProviderDetails(props) {
 
   useEffect(() => {
     let subscription = addr$.subscribe((result) => {
-      if(result.length > 0){
+      if (result.length > 0) {
         result.forEach((prop, i) => {
           prop.addressConfigurationFieldMappings.forEach((field, j) => {
             // let fname = "field"+i+j;
             // field['fieldName'] = fname;
-            field['value'] = "";
-            if (field.sourceId !== null && field.sourceId !== '') {
-              field['sourceList'] = [];
+            field["value"] = "";
+            if (field.sourceId !== null && field.sourceId !== "") {
+              field["sourceList"] = [];
             }
-            if (field.type === 'dropdown' && field.sourceId === null) {
-              if (field.addressConfigurationFieldCustomValueMappings.length !== 0) {
-                field['sourceList'] = field.addressConfigurationFieldCustomValueMappings;
+            if (field.type === "dropdown" && field.sourceId === null) {
+              if (
+                field.addressConfigurationFieldCustomValueMappings.length !== 0
+              ) {
+                field["sourceList"] =
+                  field.addressConfigurationFieldCustomValueMappings;
               }
               // if(field.addressConfigurationFieldCustomValueMappings.length === 0 || field.addressConfigurationFieldCustomValueMappings === null){
               //   field['sourceList'] = [];
               // }
             }
-          })
-        })
+          });
+        });
         setAddressConfig(result);
       }
-      
     });
     return () => subscription.unsubscribe();
   }, [addr$, setAddressConfig]);
@@ -130,21 +138,15 @@ export default function ProviderDetails(props) {
     return skipped.has(step);
   };
 
-  const handleNext = () => {
-    if (activeStep === 0) {
-      //API call 1st step
-    }
-    if (activeStep === 1) {
-      //API call 2nd step
-    }
-
+  const handleNext = (param) => {
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    console.log(activeStep);
+    setActiveStep(param);
     setSkipped(newSkipped);
   };
 
@@ -236,7 +238,7 @@ export default function ProviderDetails(props) {
       ) : null}
 
       <div className={classes.root}>
-        <Paper elevation='none'>
+        <Paper elevation="none">
           <Stepper
             activeStep={activeStep}
             style={{ backgroundColor: "transparent" }}
