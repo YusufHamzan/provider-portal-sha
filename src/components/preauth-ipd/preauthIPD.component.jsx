@@ -381,7 +381,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       let temp = [];
       console.log(result)
       // temp.push(result)
-      result.benifitMasterIntervention.forEach((el) => {
+      result.forEach((el) => {
         let obj = {
           label: el.code + "|" + el.name,
           value: el?.interventionId,
@@ -409,7 +409,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const getServices = (data) => {
     console.log(data)
-    let bts$ = benefitService.getServicesfromInterventions(data.interventionId);
+    let bts$ = benefitService.getServicesfromInterventions(data.value);
     bts$.subscribe((response) => {
       let temp = [];
       console.log(response)
@@ -2093,11 +2093,11 @@ console.log("interventions", intervention)
                             options={intervention}
                             // options={selectedBenefit}
                             getOptionLabel={(option) =>
-                              option.name
-                              //  ??
-                              // intervention.find(
-                              //   (benefit) => benefit?.interventionId == option
-                              // )?.name
+                              option.label
+                               ??
+                              intervention.find(
+                                (benefit) => benefit?.value == option
+                              )?.label
                             }
                             // getOptionSelected={(option, value) =>
                             //   option?.interventionId === value
