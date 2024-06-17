@@ -279,13 +279,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
   ]);
   const [serviceDetailsList, setServiceDetailsList] = React.useState([
     {
-      providerId: "",
+      providerId: localStorage.getItem("providerId"),
       estimatedCost: 0,
-      benifitId: "",
-      serviceId: "",
+      benefitId: "",
       codeStandard: "SHA",
-      intervention: "",
-      expenseHead: "",
+      interventionCode: "",
+      diagnosis: "",
     },
   ]);
   // const useObservable = (observable, setter) => {
@@ -379,12 +378,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let bts$ = benefitService.getBenefitInterventions(data.benefitStructureId);
     bts$.subscribe((result) => {
       let temp = [];
-      console.log(result)
+      console.log(result);
       // temp.push(result)
       result.forEach((el) => {
         let obj = {
           label: el.code + "|" + el.name,
           value: el?.interventionId,
+          code: el?.code
         };
         temp.push(obj);
       });
@@ -408,11 +408,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, []);
 
   const getServices = (data) => {
-    console.log(data)
+    console.log(data);
     let bts$ = benefitService.getServicesfromInterventions(data.value);
     bts$.subscribe((response) => {
       let temp = [];
-      console.log(response)
+      console.log(response);
       response.benifitMasterIntervention.forEach((el) => {
         let obj = {
           label: el?.name,
@@ -619,7 +619,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const handleAddServicedetails = () => {
     setServiceDetailsList([
       ...serviceDetailsList,
-      { serviceId: "", estimatedCost: 0 },
+      {
+        providerId: localStorage.getItem("providerId"),
+        estimatedCost: 0,
+        benefitId: "",
+        codeStandard: "SHA",
+        interventionCode: "",
+        diagnosis: "",
+      },
     ]);
   };
 
@@ -909,76 +916,76 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleSubmit = () => {
-    if (benefitsWithCost[0].benefitId) {
+    if (serviceDetailsList[0].benefitId) {
     } else {
       setAlertMsg("Please add Benefit!!!");
       setOpenSnack(true);
       return;
     }
 
-    if (providerDetailsList[0].benefit[0].benefitId) {
-    } else {
-      setAlertMsg("Please add provider!!!");
-      setOpenSnack(true);
-      return;
-    }
+    // if (providerDetailsList[0].benefit[0].benefitId) {
+    // } else {
+    //   setAlertMsg("Please add provider!!!");
+    //   setOpenSnack(true);
+    //   return;
+    // }
 
-    providerDetailsList.forEach((pd) => {
-      pd.benefit.forEach((el) => {
-        el.estimatedCost = Number(el.estimatedCost);
-      });
-    });
+    // providerDetailsList.forEach((pd) => {
+    //   pd.benefit.forEach((el) => {
+    //     el.estimatedCost = Number(el.estimatedCost);
+    //   });
+    // });
     serviceDetailsList.forEach((sd) => {
       sd.estimatedCost = Number(sd.estimatedCost);
     });
-    benefitsWithCost.forEach((ctc) => {
-      ctc.estimatedCost = Number(ctc.estimatedCost);
-    });
+    // benefitsWithCost.forEach((ctc) => {
+    //   ctc.estimatedCost = Number(ctc.estimatedCost);
+    // });
 
-    const isEveryBInA = providerDetailsList.every((bItem) => {
-      return bItem.benefit.every((bSubItem) => {
-        return benefitsWithCost.some(
-          (aItem) => aItem.benefitId === bSubItem.benefitId
-        );
-      });
-    });
+    // const isEveryBInA = providerDetailsList.every((bItem) => {
+    //   return bItem.benefit.every((bSubItem) => {
+    //     return benefitsWithCost.some(
+    //       (aItem) => aItem.benefitId === bSubItem.benefitId
+    //     );
+    //   });
+    // });
 
-    if (!isEveryBInA) {
-      setAlertMsg("Your Benefit list and Provider's benefit does not match!!!");
-      setOpenSnack(true);
-      return;
-    } else {
-      benefitsWithCost.forEach((ele) => {
-        let benefitName;
-        benefitOptions.forEach((el) => {
-          if (el.value === ele.benefitId) {
-            benefitName = el.name;
-          }
-        });
+    // if (!isEveryBInA) {
+    //   setAlertMsg("Your Benefit list and Provider's benefit does not match!!!");
+    //   setOpenSnack(true);
+    //   return;
+    // } else {
+    //   benefitsWithCost.forEach((ele) => {
+    //     let benefitName;
+    //     benefitOptions.forEach((el) => {
+    //       if (el.value === ele.benefitId) {
+    //         benefitName = el.name;
+    //       }
+    //     });
 
-        let tempSum = 0;
-        providerDetailsList?.forEach((el) => {
-          el?.benefit?.map((item) => {
-            if (item.benefitId === ele.benefitId) {
-              tempSum += item.estimatedCost;
-            }
-          });
-          if (tempSum > ele.estimatedCost) {
-            setAlertMsg(
-              `${benefitName}'s estimated less than provider's distribution!!!`
-            );
-            setOpenSnack(true);
-            return;
-          }
-        });
-      });
-    }
+    //     let tempSum = 0;
+    //     providerDetailsList?.forEach((el) => {
+    //       el?.benefit?.map((item) => {
+    //         if (item.benefitId === ele.benefitId) {
+    //           tempSum += item.estimatedCost;
+    //         }
+    //       });
+    //       if (tempSum > ele.estimatedCost) {
+    //         setAlertMsg(
+    //           `${benefitName}'s estimated less than provider's distribution!!!`
+    //         );
+    //         setOpenSnack(true);
+    //         return;
+    //       }
+    //     });
+    //   });
+    // }
 
-    benefitsWithCost.forEach((ele) => {
-      if (ele.benefitId !== "OTHER") {
-        ele.otherType = "";
-      }
-    });
+    // benefitsWithCost.forEach((ele) => {
+    //   if (ele.benefitId !== "OTHER") {
+    //     ele.otherType = "";
+    //   }
+    // });
 
     if (new Date(selectedDOA).getTime() > new Date(selectedDOD).getTime()) {
       setAlertMsg("Admission date must be lower than Discharge date");
@@ -1005,20 +1012,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
       memberShipNo: memberBasic.membershipNo,
       expectedDOA: new Date(selectedDOA).getTime(),
       expectedDOD: new Date(selectedDOD).getTime(),
-      primaryDigonesisId: selectSpecId,
+      primaryDigonesisId: serviceDetailsList[0]?.diagnosis,
       contactNoOne: formik.values.contactNoOne.toString(),
       contactNoTwo: formik.values.contactNoTwo.toString(),
       referalTicketRequired: formik.values.referalTicketRequired,
-      benefitsWithCost: benefitsWithCost,
-      providers: providerDetailsList,
-      services: serviceDetailsList,
+      benefitsWithCost: serviceDetailsList,
+      // providers: providerDetailsList,
+      // services: serviceDetailsList,
       preAuthType: "IPD",
     };
     let arr = [];
-    formik.values.diagnosis.forEach((di) => {
-      arr.push(di.id.toString());
-    });
-    payload["diagnosis"] = arr;
+    // formik.values.diagnosis.forEach((di) => {
+    //   arr.push(di.id.toString());
+    // });
+    // payload["diagnosis"] = arr;
     // let preauthid = localStorage.getItem("preauthid")
     //   ? localStorage.getItem("preauthid")
     //   : "";
@@ -1176,15 +1183,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleBenefitChangeInService = (e, index) => {
     const isValAlreadyPresent = serviceDetailsList.some(
-      (item) => item.benifitId === e.value
+      (item) => item.benefitId === e.value
     );
 
     if (!isValAlreadyPresent) {
       const list = [...serviceDetailsList];
-      // list[index].benifitId = e.value;
+      // list[index].benefitId = e.value;
       // setServiceDetailsList(list);
       if (index >= 0 && index < list.length) {
-        list[index] = { ...list[index], benifitId: e.value }; // Ensure the object is updated immutably
+        list[index] = { ...list[index], benefitId: e.value }; // Ensure the object is updated immutably
         setServiceDetailsList(list);
       } else {
         console.error("Index out of bounds:", index);
@@ -1195,20 +1202,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
   };
 
-  const handleChangeInService = (e, index) => {
-    const { name, value } = e.target;
-    const isValAlreadyPresent = serviceDetailsList.some(
-      (item) => item.providerId === value
-    );
-
-    if (!isValAlreadyPresent) {
+  const handleChangeIntervention = (e, index) => {
       const list = [...serviceDetailsList];
-      list[index][name] = value;
+      list[index].interventionCode = e.code;
       setServiceDetailsList(list);
-    } else {
-      setAlertMsg(`Provider already selected!!!`);
-      setOpenSnack(true);
-    }
+  };
+  const handleChangeDiagnosis = (e, index) => {
+      const list = [...serviceDetailsList];
+      list[index].diagnosis = e.value;
+      setServiceDetailsList(list);
   };
   const handleEstimateCostInService = (e, index) => {
     const { name, value } = e.target;
@@ -1241,7 +1243,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-
+console.log("service", serviceDetailsList)
   return (
     <>
       <ClaimModal
@@ -2081,20 +2083,19 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           <Autocomplete
                             name="intervention"
                             defaultValue={
-                              x.intervention ? x.intervention : undefined
+                              x.interventionCode ? x.interventionCode : undefined
                             }
-                            value={x.intervention ? x.intervention : undefined}
+                            value={x.interventionCode ? x.interventionCode : undefined}
                             onChange={(e, val) => {
                               getServices(val);
-                              handleChangeInService(e, i);
+                              handleChangeIntervention(val, i);
                             }}
                             id="checkboxes-tags-demo"
                             // filterOptions={autocompleteFilterChange}
                             options={intervention}
                             // options={selectedBenefit}
                             getOptionLabel={(option) =>
-                              option.label
-                               ??
+                              option.label ??
                               intervention.find(
                                 (benefit) => benefit?.value == option
                               )?.label
@@ -2125,7 +2126,43 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           marginBottom: "8px",
                         }}
                       >
-                        <Autocomplete
+                        <FormControl className={classes.formControl} fullWidth>
+                          <Autocomplete
+                            name="diagnosis"
+                            defaultValue={
+                              x.diagnosis ? x.diagnosis : undefined
+                            }
+                            value={x.diagnosis ? x.diagnosis : undefined}
+                            onChange={(e, val) => {
+                              // getServices(val);
+                              handleChangeDiagnosis(val, i);
+                            }}
+                            id="checkboxes-tags-demo"
+                            // filterOptions={autocompleteFilterChange}
+                            options={serviceList}
+                            // options={selectedBenefit}
+                            getOptionLabel={(option) =>
+                              option.label ??
+                              intervention.find(
+                                (benefit) => benefit?.value == option
+                              )?.label
+                            }
+                            // getOptionSelected={(option, value) =>
+                            //   option?.interventionId === value
+                            // }
+                            // renderOption={(option, { selected }) => (
+                            //   <React.Fragment>{option?.label}</React.Fragment>
+                            // )}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Intervention"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </FormControl>
+                        {/* <Autocomplete
                           id="checkboxes-tags-demo"
                           options={serviceList}
                           style={{ width: "100%" }}
@@ -2133,17 +2170,22 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           //   renderOption={(option) => (
                           //     <React.Fragment>{option.diagnosisName}</React.Fragment>
                           //   )}
-                          value={selectedId?.length ? selectedId : undefined}
+                          // value={selectedId?.length ? selectedId : undefined}
+                          value={x.diagnosis ? x.diagnosis : undefined}
+                          defaultValue={x.diagnosis ? x.diagnosis : undefined}
                           className={classes.benifitAutoComplete}
-                          onChange={(e, value) => doSelectValue(e, value)}
+                          onChange={(e, value) => handleChangeDiagnosis(val, i)}
+                          // onChange={(e, value) => doSelectValue(e, value)}
                           renderInput={(params) => (
                             <TextField
                               {...params}
-                              label={i === 0 ? "Primary Diagnosis" : "Diagnosis"}
+                              label={
+                                i === 0 ? "Primary Diagnosis" : "Diagnosis"
+                              }
                               variant="standard"
                             />
                           )}
-                        />
+                        /> */}
                       </Grid>
                       <Grid item xs={12} sm={6} md={4}>
                         <TextField
