@@ -1241,7 +1241,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-console.log("interventions", intervention)
+
   return (
     <>
       <ClaimModal
@@ -2139,7 +2139,7 @@ console.log("interventions", intervention)
                           renderInput={(params) => (
                             <TextField
                               {...params}
-                              label="Primary Diagnosis"
+                              label={i === 0 ? "Primary Diagnosis" : "Diagnosis"}
                               variant="standard"
                             />
                           )}
