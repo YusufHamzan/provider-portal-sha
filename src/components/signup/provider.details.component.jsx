@@ -307,7 +307,7 @@ export default function ProviderDetails(props) {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleNext}
+                  onClick={() => handleNext((activeStep + 1) % 3)}
                   className={classes.button}
                 >
                   {activeStep === steps.length - 1 ? "Finish" : "Next"}
