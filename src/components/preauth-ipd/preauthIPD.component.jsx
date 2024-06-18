@@ -993,14 +993,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
       return;
     }
 
-    if (formik.values.contactNoOne.toString().length !== 10) {
-      setAlertMsg("Contact One must be of 10 digits");
+    if (formik.values.contactNoOne.toString().length > 10 && formik.values.contactNoOne.toString().length < 15) {
+      setAlertMsg("Provide right conact details");
+      // setAlertMsg("Contact One must be of 10 digits");
       setOpenSnack(true);
       return;
     }
     if (
       formik.values.contactNoTwo &&
-      formik.values.contactNoTwo.toString().length !== 10
+      formik.values.contactNoTwo.toString().length > 10 && formik.values.contactNoTwo.toString().length < 10
     ) {
       setAlertMsg("Contact Two must be of 10 digits");
       setOpenSnack(true);
@@ -2019,7 +2020,7 @@ console.log("service", serviceDetailsList)
                       spacing={3}
                       style={{ marginBottom: "20px" }}
                     >
-                      <Grid item xs={12} sm={6} md={4}>
+                      <Grid item xs={12} sm={6} md={2}>
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
@@ -2056,7 +2057,7 @@ console.log("service", serviceDetailsList)
                           />
                         </FormControl>
                       </Grid>
-                      <Grid item xs={12} sm={6} md={4}>
+                      <Grid item xs={12} sm={6} md={1}>
                         <FormControl
                           className={classes.formControl}
                           style={{ width: "100%" }}
@@ -2065,7 +2066,7 @@ console.log("service", serviceDetailsList)
                             id="demo-simple-select-label"
                             style={{ marginBottom: "0px" }}
                           >
-                            Code Standard
+                            Standard
                           </InputLabel>
                           <Select
                             label="Code Standard"
@@ -2078,7 +2079,7 @@ console.log("service", serviceDetailsList)
                           </Select>
                         </FormControl>
                       </Grid>
-                      <Grid item xs={12} sm={6} md={4}>
+                      <Grid item xs={12} sm={6} md={3}>
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="intervention"
@@ -2119,7 +2120,7 @@ console.log("service", serviceDetailsList)
                       <Grid
                         item
                         xs={12}
-                        sm={4}
+                        sm={3}
                         style={{
                           display: "flex",
                           alignItems: "flex-end",
@@ -2187,7 +2188,7 @@ console.log("service", serviceDetailsList)
                           )}
                         /> */}
                       </Grid>
-                      <Grid item xs={12} sm={6} md={4}>
+                      <Grid item xs={12} sm={6} md={2}>
                         <TextField
                           id="standard-basic"
                           type="number"
