@@ -1170,6 +1170,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, [formik.values, diagnosisList]);
 
   const handleBenefitChangeInService = (e, index) => {
+    console.log("asasas", e)
     // const isValAlreadyPresent = serviceDetailsList.some(
     //   (item) => item.benefitId === e.value
     // );
@@ -1189,7 +1190,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     // }
 
     const list = [...serviceDetailsList];
-      list[index].benefitId = e.value ? e.value : '';
+      list[index].benefitId = e.benefitStructureId ? e.benefitStructureId : '';
       setServiceDetailsList(list);
   };
 
@@ -2015,8 +2016,8 @@ console.log("service", serviceDetailsList)
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
-                            defaultValue={x?.benefitId ?x?.benefitId : undefined}
-                            value={x?.benefitId ? x?.benefitId : undefined}
+                            defaultValue={x?.benefitStructureId ?x?.benefitStructureId : undefined}
+                            value={x?.benefitStructureId ? x?.benefitStructureId : undefined}
                             onChange={(e, val) => {
                               setIntervention([]);
                               getIntervemntions(val);
