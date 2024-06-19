@@ -861,7 +861,7 @@ export default function MemberEligibility() {
                       tableData.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell>
-                            {item?.benefitNames}
+                            {item?.benefitName}
                             {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
