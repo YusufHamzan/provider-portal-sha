@@ -373,7 +373,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         let obj = {
           label: el.code + "|" + el.name,
           value: el?.interventionId,
-          code: el?.code
+          code: el?.code,
         };
         temp.push(obj);
       });
@@ -397,12 +397,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, []);
 
   const getServices = (data) => {
-    let bts$ = benefitService.getServicesfromInterventions(data.value, benefitId);
+    let bts$ = benefitService.getServicesfromInterventions(
+      data.value,
+      benefitId
+    );
     bts$.subscribe((response) => {
       let temp = [];
       response.forEach((el) => {
         let obj = {
-          label: el?.code | el?.name,
+          label: el?.code + "|" + el?.name,
           value: el?.code,
         };
         temp.push(obj);
@@ -980,7 +983,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
       return;
     }
 
-    if (formik.values.contactNoOne.toString().length > 10 && formik.values.contactNoOne.toString().length < 15) {
+    if (
+      formik.values.contactNoOne.toString().length > 10 &&
+      formik.values.contactNoOne.toString().length < 15
+    ) {
       setAlertMsg("Provide right conact details");
       // setAlertMsg("Contact One must be of 10 digits");
       setOpenSnack(true);
@@ -988,7 +994,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
     if (
       formik.values.contactNoTwo &&
-      formik.values.contactNoTwo.toString().length > 10 && formik.values.contactNoTwo.toString().length < 10
+      formik.values.contactNoTwo.toString().length > 10 &&
+      formik.values.contactNoTwo.toString().length < 10
     ) {
       setAlertMsg("Contact Two must be of 10 digits");
       setOpenSnack(true);
@@ -1170,7 +1177,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, [formik.values, diagnosisList]);
 
   const handleBenefitChangeInService = (e, index) => {
-    console.log("asasas", e)
+    console.log("asasas", e);
     // const isValAlreadyPresent = serviceDetailsList.some(
     //   (item) => item.benefitId === e.value
     // );
@@ -1190,20 +1197,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
     // }
 
     const list = [...serviceDetailsList];
-      list[index].benefitId = e.benefitStructureId ? e.benefitStructureId : '';
-      setServiceDetailsList(list);
+    list[index].benefitId = e.benefitStructureId ? e.benefitStructureId : "";
+    setServiceDetailsList(list);
   };
 
   const handleChangeIntervention = (e, index) => {
-    console.log(e)
-      const list = [...serviceDetailsList];
-      list[index].interventionCode = e.value ? e.value : '';
-      setServiceDetailsList(list);
+    console.log(e);
+    const list = [...serviceDetailsList];
+    list[index].interventionCode = e.value ? e.value : "";
+    setServiceDetailsList(list);
   };
   const handleChangeDiagnosis = (e, index) => {
-      const list = [...serviceDetailsList];
-      list[index].diagnosis = e.value;
-      setServiceDetailsList(list);
+    const list = [...serviceDetailsList];
+    list[index].diagnosis = e.value;
+    setServiceDetailsList(list);
   };
   const handleEstimateCostInService = (e, index) => {
     const { name, value } = e.target;
@@ -1236,7 +1243,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-console.log("service", serviceDetailsList)
+  console.log("service", serviceDetailsList);
   return (
     <>
       <ClaimModal
@@ -2016,14 +2023,22 @@ console.log("service", serviceDetailsList)
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
-                            defaultValue={x?.benefitStructureId ?x?.benefitStructureId : undefined}
-                            value={x?.benefitStructureId ? x?.benefitStructureId : undefined}
+                            defaultValue={
+                              x?.benefitStructureId
+                                ? x?.benefitStructureId
+                                : undefined
+                            }
+                            value={
+                              x?.benefitStructureId
+                                ? x?.benefitStructureId
+                                : undefined
+                            }
                             onChange={(e, val) => {
                               setIntervention([]);
                               getIntervemntions(val);
                               handleBenefitChangeInService(val, i);
-                              setBenefitId(val.benefitStructureId)
-                              handleChangeIntervention('', i);
+                              setBenefitId(val.benefitStructureId);
+                              handleChangeIntervention("", i);
                             }}
                             id="checkboxes-tags-demo"
                             filterOptions={autocompleteFilterChange}
@@ -2078,9 +2093,15 @@ console.log("service", serviceDetailsList)
                           <Autocomplete
                             name="intervention"
                             defaultValue={
-                              x.interventionCode ? x.interventionCode : undefined
+                              x.interventionCode
+                                ? x.interventionCode
+                                : undefined
                             }
-                            value={x.interventionCode ? x.interventionCode : undefined}
+                            value={
+                              x.interventionCode
+                                ? x.interventionCode
+                                : undefined
+                            }
                             onChange={(e, val) => {
                               getServices(val);
                               handleChangeIntervention(val, i);
@@ -2124,9 +2145,7 @@ console.log("service", serviceDetailsList)
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="diagnosis"
-                            defaultValue={
-                              x.diagnosis ? x.diagnosis : undefined
-                            }
+                            defaultValue={x.diagnosis ? x.diagnosis : undefined}
                             value={x.diagnosis ? x.diagnosis : undefined}
                             onChange={(e, val) => {
                               // getServices(val);
@@ -2151,7 +2170,9 @@ console.log("service", serviceDetailsList)
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                label={i === 0 ? "Primary Diagnosis" : "Diagnosis"}
+                                label={
+                                  i === 0 ? "Primary Diagnosis" : "Diagnosis"
+                                }
                                 variant="standard"
                               />
                             )}
