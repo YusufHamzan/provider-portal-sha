@@ -405,7 +405,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       let temp = [];
       response.forEach((el) => {
         let obj = {
-          label: el?.code + "|" + el?.name,
+          label: el?.code + " | " + el?.name,
           value: el?.code,
         };
         temp.push(obj);
