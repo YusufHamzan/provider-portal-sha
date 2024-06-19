@@ -169,6 +169,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [diagnosisList, setDiagnosisList] = React.useState([]);
   const [intervention, setIntervention] = React.useState([]);
   const [benefits, setBenefits] = React.useState([]);
+  const [benefitId, setBenefitId] = React.useState();
   const [benefitOptions, setBenefitOptions] = React.useState([]);
   const [selectedBenefit, setSelectedBenefit] = React.useState([]);
   const [otherTypeList, setOtherTypeList] = React.useState([]);
@@ -361,24 +362,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     bts$.subscribe((result) => {
       setBenefits(result);
     });
-    //   let subscription = observable.subscribe((result) => {
-    //     let arr = [];
-    //     result.content.forEach((ele) => {
-    //       if (!ele.blackListed) {
-    //         arr.push(ele);
-    //       }
-    //     });
-    //     setter(arr);
-    //   });
-    //   return () => subscription.unsubscribe();
-    // }, [observable, setter]);
   };
 
   const getIntervemntions = (data) => {
     let bts$ = benefitService.getBenefitInterventions(data.benefitStructureId);
     bts$.subscribe((result) => {
       let temp = [];
-      console.log(result);
       // temp.push(result)
       result.forEach((el) => {
         let obj = {
@@ -408,15 +397,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, []);
 
   const getServices = (data) => {
-    console.log(data);
-    let bts$ = benefitService.getServicesfromInterventions(data.value);
+    let bts$ = benefitService.getServicesfromInterventions(data.value, benefitId);
     bts$.subscribe((response) => {
       let temp = [];
-      console.log(response);
-      response.benifitMasterIntervention.forEach((el) => {
+      response.forEach((el) => {
         let obj = {
           label: el?.name,
-          value: el?.serviceId,
+          value: el?.code,
         };
         temp.push(obj);
       });
@@ -1186,7 +1173,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     const isValAlreadyPresent = serviceDetailsList.some(
       (item) => item.benefitId === e.value
     );
-
     if (!isValAlreadyPresent) {
       const list = [...serviceDetailsList];
       // list[index].benefitId = e.value;
@@ -1205,7 +1191,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleChangeIntervention = (e, index) => {
       const list = [...serviceDetailsList];
-      list[index].interventionCode = e.code;
+      list[index].interventionCode = e.code ? e.code : '';
       setServiceDetailsList(list);
   };
   const handleChangeDiagnosis = (e, index) => {
@@ -2030,6 +2016,8 @@ console.log("service", serviceDetailsList)
                               setIntervention([]);
                               getIntervemntions(val);
                               handleBenefitChangeInService(val, i);
+                              setBenefitId(val.benefitStructureId)
+                              handleChangeIntervention('', i);
                             }}
                             id="checkboxes-tags-demo"
                             filterOptions={autocompleteFilterChange}
@@ -2059,7 +2047,7 @@ console.log("service", serviceDetailsList)
                       </Grid>
                       <Grid item xs={12} sm={6} md={1}>
                         <FormControl
-                          className={classes.formControl}
+                          // className={classes.formControl}
                           style={{ width: "100%" }}
                         >
                           <InputLabel
