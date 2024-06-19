@@ -24,15 +24,17 @@ const providerService = new ProvidersService();
 const Header = ({ open, handleDrawerOpen }) => {
   const { keycloak } = useKeycloak();
   let id = localStorage.getItem("providerId");
-  // const { name } = jwtDecode(token.toString());
+  let name = localStorage.getItem("provider");
+  // let t = token.toString();
+  // const { name } = jwtDecode(token);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  useEffect(()=>{
-    let ps$ = providerService.getProviderDetails(id);
-    ps$.subscribe((result) => {
-      console.log(result,"result");
-    });
-  },[])
+  // useEffect(()=>{
+  //   let ps$ = providerService.getProviderDetails(id);
+  //   ps$.subscribe((result) => {
+  //     console.log(result,"result");
+  //   });
+  // },[])
 
   const openSelect = Boolean(anchorEl);
   const handleClick = (event) => {
