@@ -1170,28 +1170,33 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, [formik.values, diagnosisList]);
 
   const handleBenefitChangeInService = (e, index) => {
-    const isValAlreadyPresent = serviceDetailsList.some(
-      (item) => item.benefitId === e.value
-    );
-    if (!isValAlreadyPresent) {
-      const list = [...serviceDetailsList];
-      // list[index].benefitId = e.value;
-      // setServiceDetailsList(list);
-      if (index >= 0 && index < list.length) {
-        list[index] = { ...list[index], benefitId: e.value }; // Ensure the object is updated immutably
-        setServiceDetailsList(list);
-      } else {
-        console.error("Index out of bounds:", index);
-      }
-    } else {
-      setAlertMsg(`Provider already selected!!!`);
-      setOpenSnack(true);
-    }
+    // const isValAlreadyPresent = serviceDetailsList.some(
+    //   (item) => item.benefitId === e.value
+    // );
+    // if (!isValAlreadyPresent) {
+    //   const list = [...serviceDetailsList];
+    //   // list[index].benefitId = e.value;
+    //   // setServiceDetailsList(list);
+    //   if (index >= 0 && index < list.length) {
+    //     list[index] = { ...list[index], benefitId: e.value }; // Ensure the object is updated immutably
+    //     setServiceDetailsList(list);
+    //   } else {
+    //     console.error("Index out of bounds:", index);
+    //   }
+    // } else {
+    //   setAlertMsg(`Provider already selected!!!`);
+    //   setOpenSnack(true);
+    // }
+
+    const list = [...serviceDetailsList];
+      list[index].benefitId = e.value ? e.value : '';
+      setServiceDetailsList(list);
   };
 
   const handleChangeIntervention = (e, index) => {
+    console.log(e)
       const list = [...serviceDetailsList];
-      list[index].interventionCode = e.code ? e.code : '';
+      list[index].interventionCode = e.value ? e.value : '';
       setServiceDetailsList(list);
   };
   const handleChangeDiagnosis = (e, index) => {
