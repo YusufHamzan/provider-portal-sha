@@ -861,7 +861,8 @@ export default function MemberEligibility() {
                       tableData.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell>
-                            {(item?.benefitName === "IN-PATIENT" &&
+                            {item?.benefitNames}
+                            {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
                                 "1245370764554674176" &&
@@ -870,7 +871,7 @@ export default function MemberEligibility() {
                                 "OUT-PATIENT") ||
                               (item?.benefitStructureId ===
                                 "1245640606146895872" &&
-                                " OUT-PATIENT >  MATERNAL HEALTH  ")}
+                                " OUT-PATIENT >  MATERNAL HEALTH  ")} */}
                           </TableCell>
                           <TableCell>
                             {item?.balance > 0 ? (
