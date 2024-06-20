@@ -507,7 +507,7 @@ const PreAuthIPDListComponent = () => {
   };
 
   const openDocumentsSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true&mode=edit`);
+    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true&mode=edit&type=ipd`);
   };
 
   const openEditSection = (preAuth) => {

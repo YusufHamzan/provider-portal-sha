@@ -507,7 +507,7 @@ const PreAuthOPDListComponent = () => {
   };
 
   const openDocumentsSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true&mode=edit`);
+    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true&mode=edit&type=opd`);
   };
 
   const openEditSection = (preAuth) => {
