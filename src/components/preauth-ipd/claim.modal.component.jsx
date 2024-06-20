@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import { MemberService } from '../../remote-api/api/member-services';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Button } from 'primereact/button';
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
 export default function ClaimModal(props) {
   const [state, setState] = React.useState({
@@ -181,10 +183,7 @@ export default function ClaimModal(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Benefit</TableCell>
-                    <TableCell>Waiting Period</TableCell>
-                    <TableCell>Max Limit(KSH)</TableCell>
-                    <TableCell>Consumed(KSH)</TableCell>
-                    <TableCell>Balance(KSH)</TableCell>
+                    <TableCell>Status</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -192,10 +191,17 @@ export default function ClaimModal(props) {
                     memberData.map(item => (
                       <TableRow key={item.id}>
                         <TableCell>{item?.benefitName}</TableCell>
-                        <TableCell>{item?.waitingPeriod}</TableCell>
+                        <TableCell>
+                              {item?.balance > 0 ? (
+                                <CheckOutlinedIcon style={{ color: "green" }} />
+                              ) : (
+                                <ClearOutlinedIcon style={{ color: "red" }} />
+                              )}
+                            </TableCell>
+                        {/* <TableCell>{item?.waitingPeriod}</TableCell>
                         <TableCell>{item?.maxLimit}</TableCell>
                         <TableCell>{item?.consumed}</TableCell>
-                        <TableCell>{item?.balance}</TableCell>
+                        <TableCell>{item?.balance}</TableCell> */}
                       </TableRow>
                     ))}
                 </TableBody>

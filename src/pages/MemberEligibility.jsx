@@ -871,11 +871,7 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {`${item?.benefitName} ${
-                                parentBenefitName != undefined
-                                  ? `> ${parentBenefitName}`
-                                  : ""
-                              }`}
+                              {` ${parentBenefitName != undefined ? `${parentBenefitName} >`: ''} ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
