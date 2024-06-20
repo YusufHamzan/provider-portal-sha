@@ -213,7 +213,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       handleSubmit();
     },
   });
-
   const allSelected =
     diagnosisList &&
     diagnosisList?.length > 0 &&
@@ -240,6 +239,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
     planScheme: "",
     productName: "",
     clientType: "",
+    active: "",
+    dateOfBirth: "",
+    mobileNo: "",
+    nationalDocId: "",
+    email: "",
   });
   const [memberName, setMemberName] = React.useState({
     name: "",
@@ -260,6 +264,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     planName: "",
     planScheme: "",
     productName: "",
+    clientType: "",
+    active: "",
+    dateOfBirth: "",
+    mobileNo: "",
+    nationalDocId: "",
+    email: "",
   });
   const [providerDetailsList, setProviderDetailsList] = React.useState([
     {
@@ -360,6 +370,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       claimType: "IPD",
     });
     bts$.subscribe((result) => {
+      console.log(result);
       setBenefits(result);
     });
   };
@@ -419,13 +430,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
       acc[el.benefitStructureId] = el.name;
       return acc;
     }, {});
-    console.log(benefitLookup)
+    console.log(benefitLookup);
     let temp = [];
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
-      console.log(parentBenefitName, ele.name)
+      console.log(parentBenefitName, ele.name);
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >`: ''} ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -832,6 +845,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
         if (searchType === "name") {
+          console.log(res);
           setMemberName({ res });
           handleopenClientModal();
         } else {
@@ -852,6 +866,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
             planName: res.content[0].planName,
             planScheme: res.content[0].planScheme,
             productName: res.content[0].productName,
+            active: res.content[0].active,
+            dateOfBirth: res.content[0].dateOfBirth,
+            mobileNo: res.content[0].mobileNo,
+            nationalDocId: res.content[0].identificationDocNumber,
+            policyNumber: res.content[0].policyNumber,
+            email: res.content[0].email,
           });
           setShowViewDetails(true);
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
@@ -896,6 +916,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
       planName: data.planName,
       planScheme: data.planScheme,
       productName: data.productName,
+      active: data.active,
+      dateOfBirth: data.dateOfBirth,
+      mobileNo: data.mobileNo,
+      nationalDocId: data.identificationDocNumber,
+      policyNumber: data.policyNumber,
+      email: data.email,
     });
     setShowViewDetails(true);
     getBenefit(data?.memberId, data?.policyNumber);
@@ -1184,7 +1210,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, [formik.values, diagnosisList]);
 
   const handleBenefitChangeInService = (e, index) => {
-    
     // const isValAlreadyPresent = serviceDetailsList.some(
     //   (item) => item.benefitId === e.value
     // );
@@ -1250,11 +1275,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-  
+
   return (
     <>
       <ClaimModal
         claimModal={claimModal}
+        benefit={benefits}
         handleCloseClaimModal={handleCloseClaimModal}
         memberBasic={memberBasic}
       />

@@ -1,27 +1,41 @@
-
-import 'date-fns';
-import { differenceInDays } from 'date-fns';
-import * as React from 'react';
-import { useEffect } from 'react';
-import { MemberService } from '../../remote-api/api/member-services';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
-import { Button } from 'primereact/button';
+import "date-fns";
+import { differenceInDays } from "date-fns";
+import * as React from "react";
+import { useEffect } from "react";
+import { MemberService } from "../../remote-api/api/member-services";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+} from "@mui/material";
+import { Button } from "primereact/button";
 
 export default function ClaimModal(props) {
   const [state, setState] = React.useState({
-    insuranceCompany: '',
-    corporateName: '',
-    membershipNo: '',
-    memberName: '',
-    gender: '',
-    age: '',
-    policyCode: '',
-    policyType: '',
-    policyPeriod: '',
-    enrolmentDate: '',
+    insuranceCompany: "",
+    corporateName: "",
+    membershipNo: "",
+    memberName: "",
+    gender: "",
+    age: "",
+    policyCode: "",
+    policyType: "",
+    policyPeriod: "",
+    enrolmentDate: "",
   });
   const [fullWidth, setFullWidth] = React.useState(true);
-  const [maxWidth, setMaxWidth] = React.useState('xl');
+  const [maxWidth, setMaxWidth] = React.useState("xl");
   const [memberData, setMemberData] = React.useState([]);
   const handleClose = () => {
     props.handleCloseClaimModal();
@@ -37,9 +51,11 @@ export default function ClaimModal(props) {
 
   useEffect(() => {
     if (props?.memberBasic?.membershipNo) {
-      memberService.getMemberBalance(props?.memberBasic?.membershipNo).subscribe(res => {
-        setMemberData(res);
-      });
+      memberService
+        .getMemberBalance(props?.memberBasic?.membershipNo)
+        .subscribe((res) => {
+          setMemberData(res);
+        });
     }
   }, [props?.memberBasic?.membershipNo]);
 
@@ -50,11 +66,12 @@ export default function ClaimModal(props) {
       fullWidth={fullWidth}
       maxWidth={maxWidth}
       aria-labelledby="form-dialog-title"
-      disableEnforceFocus>
+      disableEnforceFocus
+    >
       <DialogTitle id="form-dialog-title">Claim Member Details</DialogTitle>
       <DialogContent>
-        <Grid container spacing={3} style={{ marginBottom: '20px' }}>
-          <Grid item xs={12} style={{ marginTop: '20px' }}>
+        <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+          <Grid item xs={12} style={{ marginTop: "20px" }}>
             <TableContainer component={Paper}>
               <Table size="small" aria-label="a dense table">
                 <TableHead>
@@ -90,7 +107,7 @@ export default function ClaimModal(props) {
             <TextField
               id="standard-multiline-flexible"
               name="membershipNo"
-              variant='standard'
+              variant="standard"
               value={props.memberBasic.membershipNo}
               label="Membership No"
               readonly
@@ -100,9 +117,13 @@ export default function ClaimModal(props) {
             <TextField
               id="standard-multiline-flexible"
               name="corporateName"
-              variant='standard'
-              value={props.memberBasic.clientType + " " +  "POLICY"}
-              label={props.memberBasic.clientType ? 'Client Type ' : 'Corporate Policy'}
+              variant="standard"
+              value={props.memberBasic.clientType + " " + "POLICY"}
+              label={
+                props.memberBasic.clientType
+                  ? "Client Type "
+                  : "Corporate Policy"
+              }
               readonly
             />
           </Grid>
@@ -110,7 +131,7 @@ export default function ClaimModal(props) {
             <TextField
               id="standard-multiline-flexible"
               readonly
-              variant='standard'
+              variant="standard"
               name="memberName"
               value={props.memberBasic.name}
               label="Member Name"
@@ -120,20 +141,27 @@ export default function ClaimModal(props) {
             <TextField
               id="standard-multiline-flexible"
               readonly
-              variant='standard'
+              variant="standard"
               name="gender"
               value={props.memberBasic.gender}
               label="Gender"
             />
           </Grid>
           <Grid item xs={6}>
-            <TextField variant='standard' id="standard-multiline-flexible" readonly name="age" value={props.memberBasic.age} label="Age" />
+            <TextField
+              variant="standard"
+              id="standard-multiline-flexible"
+              readonly
+              name="age"
+              value={props.memberBasic.age}
+              label="Age"
+            />
           </Grid>
           <Grid item xs={6}>
             <TextField
               id="standard-multiline-flexible"
               readonly
-              variant='standard'
+              variant="standard"
               name="policyCode"
               value={props.memberBasic.policyNumber}
               label="Policy Code"
@@ -143,7 +171,7 @@ export default function ClaimModal(props) {
             <TextField
               id="standard-multiline-flexible"
               readonly
-              variant='standard'
+              variant="standard"
               name="policyType"
               value={props.memberBasic.policyType}
               label="Policy type"
@@ -156,7 +184,7 @@ export default function ClaimModal(props) {
               value={props.memberBasic.enrolmentDate}
               label="First Enrollment date"
               readonly
-              variant='standard'
+              variant="standard"
             />
           </Grid>
           <Grid item xs={6}>
@@ -166,11 +194,13 @@ export default function ClaimModal(props) {
               value={periodInDays}
               label="Policy Period"
               readonly
-              variant='standard'
+              variant="standard"
             />
           </Grid>
-          <Grid item xs={12} style={{ marginTop: '20px' }}>
-            <span style={{ color: '#4472C4', fontWeight: 'bold' }}>Policy Conditions(Benefits/Coverage)</span>
+          <Grid item xs={12} style={{ marginTop: "20px" }}>
+            <span style={{ color: "#4472C4", fontWeight: "bold" }}>
+              Policy Conditions(Benefits/Coverage)
+            </span>
           </Grid>
           <Grid item xs={12}>
             <Divider />
@@ -189,7 +219,7 @@ export default function ClaimModal(props) {
                 </TableHead>
                 <TableBody>
                   {memberData?.map &&
-                    memberData.map(item => (
+                    memberData.map((item) => (
                       <TableRow key={item.id}>
                         <TableCell>{item?.benefitName}</TableCell>
                         <TableCell>{item?.waitingPeriod}</TableCell>

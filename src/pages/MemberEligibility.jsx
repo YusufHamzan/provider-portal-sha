@@ -871,7 +871,11 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${parentBenefitName != undefined ? `${parentBenefitName} >`: ''} ${item?.benefitName}`}
+                              {` ${
+                                parentBenefitName != undefined
+                                  ? `${parentBenefitName} >`
+                                  : ""
+                              } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
@@ -900,13 +904,15 @@ export default function MemberEligibility() {
                     ) : (
                       <TableRow>
                         <TableCell colSpan={2} align="center">
-                        {/* <LinearProgress /> */}
+                          {/* <LinearProgress /> */}
                           <CircularProgress
-                            sx={{
-                              // color: "white",
-                              // width: "20px",
-                              // height: "20px",
-                            }}
+                            sx={
+                              {
+                                // color: "white",
+                                // width: "20px",
+                                // height: "20px",
+                              }
+                            }
                           />
                         </TableCell>
                       </TableRow>
