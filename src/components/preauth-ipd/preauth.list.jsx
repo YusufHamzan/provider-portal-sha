@@ -511,7 +511,7 @@ const PreAuthIPDListComponent = () => {
   };
 
   const openEditSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth.id}?mode=edit`);
+    navigate(`/submit-preauth/${preAuth.id}?mode=edit&type=ipd`);
   };
 
   const preAuthDOASearch = (type) => {

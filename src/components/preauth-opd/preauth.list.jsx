@@ -511,7 +511,7 @@ const PreAuthOPDListComponent = () => {
   };
 
   const openEditSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth.id}?mode=edit`);
+    navigate(`/submit-preauth/${preAuth.id}?mode=edit&type=opd`);
   };
 
   const preAuthDOASearch = (type) => {
