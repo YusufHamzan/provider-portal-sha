@@ -415,10 +415,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   useEffect(() => {
+    const benefitLookup = benefits?.reduce((acc, el) => {
+      acc[el.benefitStructureId] = el.name;
+      return acc;
+    }, {});
+    console.log(benefitLookup)
     let temp = [];
     let X = benefits?.forEach((ele) => {
+      const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
+      console.log(parentBenefitName, ele.name)
       let obj = {
-        label: ele.name,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >`: ''} ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -1177,7 +1184,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, [formik.values, diagnosisList]);
 
   const handleBenefitChangeInService = (e, index) => {
-    console.log("asasas", e);
+    
     // const isValAlreadyPresent = serviceDetailsList.some(
     //   (item) => item.benefitId === e.value
     // );
@@ -1243,7 +1250,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-  console.log("service", serviceDetailsList);
+  
   return (
     <>
       <ClaimModal
@@ -2019,7 +2026,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       spacing={3}
                       style={{ marginBottom: "20px" }}
                     >
-                      <Grid item xs={12} sm={6} md={2}>
+                      <Grid item xs={12} sm={6} md={3}>
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
