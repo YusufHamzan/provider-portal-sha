@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import {
   Box,
@@ -17,12 +17,24 @@ import { jwtDecode } from "jwt-decode";
 import { useKeycloak } from "@react-keycloak/web";
 import { Button } from "primereact/button";
 import { Logout } from "@mui/icons-material";
+import { ProvidersService } from "../remote-api/api/provider-services";
+
+const providerService = new ProvidersService();
 
 const Header = ({ open, handleDrawerOpen }) => {
   const { keycloak } = useKeycloak();
+  let id = localStorage.getItem("providerId");
   let name = localStorage.getItem("provider");
-  // const { name } = jwtDecode(token.toString());
+  // let t = token.toString();
+  // const { name } = jwtDecode(token);
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  // useEffect(()=>{
+  //   let ps$ = providerService.getProviderDetails(id);
+  //   ps$.subscribe((result) => {
+  //     console.log(result,"result");
+  //   });
+  // },[])
 
   const openSelect = Boolean(anchorEl);
   const handleClick = (event) => {

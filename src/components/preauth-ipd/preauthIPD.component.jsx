@@ -169,6 +169,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [diagnosisList, setDiagnosisList] = React.useState([]);
   const [intervention, setIntervention] = React.useState([]);
   const [benefits, setBenefits] = React.useState([]);
+  const [benefitId, setBenefitId] = React.useState();
   const [benefitOptions, setBenefitOptions] = React.useState([]);
   const [selectedBenefit, setSelectedBenefit] = React.useState([]);
   const [otherTypeList, setOtherTypeList] = React.useState([]);
@@ -372,24 +373,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
       console.log(result);
       setBenefits(result);
     });
-    //   let subscription = observable.subscribe((result) => {
-    //     let arr = [];
-    //     result.content.forEach((ele) => {
-    //       if (!ele.blackListed) {
-    //         arr.push(ele);
-    //       }
-    //     });
-    //     setter(arr);
-    //   });
-    //   return () => subscription.unsubscribe();
-    // }, [observable, setter]);
   };
 
   const getIntervemntions = (data) => {
     let bts$ = benefitService.getBenefitInterventions(data.benefitStructureId);
     bts$.subscribe((result) => {
       let temp = [];
-      console.log(result);
       // temp.push(result)
       result.forEach((el) => {
         let obj = {
@@ -419,15 +408,16 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, []);
 
   const getServices = (data) => {
-    console.log(data);
-    let bts$ = benefitService.getServicesfromInterventions(data.value);
+    let bts$ = benefitService.getServicesfromInterventions(
+      data.value,
+      benefitId
+    );
     bts$.subscribe((response) => {
       let temp = [];
-      console.log(response);
-      response.benifitMasterIntervention.forEach((el) => {
+      response.forEach((el) => {
         let obj = {
-          label: el?.name,
-          value: el?.serviceId,
+          label: el?.code + " | " + el?.name,
+          value: el?.code,
         };
         temp.push(obj);
       });
@@ -436,10 +426,19 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   useEffect(() => {
+    const benefitLookup = benefits?.reduce((acc, el) => {
+      acc[el.benefitStructureId] = el.name;
+      return acc;
+    }, {});
+    console.log(benefitLookup);
     let temp = [];
     let X = benefits?.forEach((ele) => {
+      const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
+      console.log(parentBenefitName, ele.name);
       let obj = {
-        label: ele.name,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -1211,29 +1210,33 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, [formik.values, diagnosisList]);
 
   const handleBenefitChangeInService = (e, index) => {
-    const isValAlreadyPresent = serviceDetailsList.some(
-      (item) => item.benefitId === e.value
-    );
+    // const isValAlreadyPresent = serviceDetailsList.some(
+    //   (item) => item.benefitId === e.value
+    // );
+    // if (!isValAlreadyPresent) {
+    //   const list = [...serviceDetailsList];
+    //   // list[index].benefitId = e.value;
+    //   // setServiceDetailsList(list);
+    //   if (index >= 0 && index < list.length) {
+    //     list[index] = { ...list[index], benefitId: e.value }; // Ensure the object is updated immutably
+    //     setServiceDetailsList(list);
+    //   } else {
+    //     console.error("Index out of bounds:", index);
+    //   }
+    // } else {
+    //   setAlertMsg(`Provider already selected!!!`);
+    //   setOpenSnack(true);
+    // }
 
-    if (!isValAlreadyPresent) {
-      const list = [...serviceDetailsList];
-      // list[index].benefitId = e.value;
-      // setServiceDetailsList(list);
-      if (index >= 0 && index < list.length) {
-        list[index] = { ...list[index], benefitId: e.value }; // Ensure the object is updated immutably
-        setServiceDetailsList(list);
-      } else {
-        console.error("Index out of bounds:", index);
-      }
-    } else {
-      setAlertMsg(`Provider already selected!!!`);
-      setOpenSnack(true);
-    }
+    const list = [...serviceDetailsList];
+    list[index].benefitId = e.benefitStructureId ? e.benefitStructureId : "";
+    setServiceDetailsList(list);
   };
 
   const handleChangeIntervention = (e, index) => {
+    console.log(e);
     const list = [...serviceDetailsList];
-    list[index].interventionCode = e.code;
+    list[index].interventionCode = e.value ? e.value : "";
     setServiceDetailsList(list);
   };
   const handleChangeDiagnosis = (e, index) => {
@@ -1272,7 +1275,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-  console.log("service", serviceDetailsList);
+
   return (
     <>
       <ClaimModal
@@ -2049,18 +2052,26 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       spacing={3}
                       style={{ marginBottom: "20px" }}
                     >
-                      <Grid item xs={12} sm={6} md={2}>
+                      <Grid item xs={12} sm={6} md={3}>
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
                             defaultValue={
-                              x?.benefitId ? x?.benefitId : undefined
+                              x?.benefitStructureId
+                                ? x?.benefitStructureId
+                                : undefined
                             }
-                            value={x?.benefitId ? x?.benefitId : undefined}
+                            value={
+                              x?.benefitStructureId
+                                ? x?.benefitStructureId
+                                : undefined
+                            }
                             onChange={(e, val) => {
                               setIntervention([]);
                               getIntervemntions(val);
                               handleBenefitChangeInService(val, i);
+                              setBenefitId(val.benefitStructureId);
+                              handleChangeIntervention("", i);
                             }}
                             id="checkboxes-tags-demo"
                             filterOptions={autocompleteFilterChange}
@@ -2090,7 +2101,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       </Grid>
                       <Grid item xs={12} sm={6} md={1}>
                         <FormControl
-                          className={classes.formControl}
+                          // className={classes.formControl}
                           style={{ width: "100%" }}
                         >
                           <InputLabel

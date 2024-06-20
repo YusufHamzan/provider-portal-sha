@@ -32,7 +32,7 @@ export class ProvidersService {
 
 	getProviderDetails(providerid: string): Observable<Provider> {
 		return http
-			.get<Provider>(`${this.QUERY_CONTEXT}/${providerid}`)
+			.get<Provider>(`${this.QUERY_CONTEXT}/provider/${providerid}`)
 			.pipe(map((response) => response.data));
 	}
 

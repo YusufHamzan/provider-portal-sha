@@ -33,9 +33,9 @@ export class BenefitService {
           .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }/benifit-intervention/${id}`)
           .pipe(map(response => response.data));
       }
-    getServicesfromInterventions(id: string): Observable<Page<any>> {
+    getServicesfromInterventions(id: string, benefitStructureId:string): Observable<Page<any>> {
         return http
-          .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }/benifit-intervention-digonesis/${id}`)
+          .get<Page<any>>(`${this.BENEFIT_QUERY_CONTEXT }/benifit-intervention-digonesis/${id}/${benefitStructureId}`)
           .pipe(map(response => response.data));
       }
 
