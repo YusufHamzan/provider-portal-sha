@@ -212,7 +212,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       handleSubmit();
     },
   });
-
   const allSelected =
     diagnosisList &&
     diagnosisList?.length > 0 &&
@@ -239,6 +238,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     planScheme: "",
     productName: "",
     clientType: "",
+    active: "",
+    dateOfBirth: "",
+    mobileNo: "",
+    nationalDocId: "",
+    policyNumber: "",
+    email: "",
   });
   const [memberName, setMemberName] = React.useState({
     name: "",
@@ -259,6 +264,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
     planName: "",
     planScheme: "",
     productName: "",
+    clientType: "",
+    active: "",
+    dateOfBirth: "",
+    mobileNo: "",
+    nationalDocId: "",
+    policyNumber: "",
+    email: "",
   });
   const [providerDetailsList, setProviderDetailsList] = React.useState([
     {
@@ -359,6 +371,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       claimType: "IPD",
     });
     bts$.subscribe((result) => {
+      console.log(result);
       setBenefits(result);
     });
     //   let subscription = observable.subscribe((result) => {
@@ -384,7 +397,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         let obj = {
           label: el.code + "|" + el.name,
           value: el?.interventionId,
-          code: el?.code
+          code: el?.code,
         };
         temp.push(obj);
       });
@@ -835,6 +848,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
         if (searchType === "name") {
+          console.log(res);
           setMemberName({ res });
           handleopenClientModal();
         } else {
@@ -855,6 +869,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
             planName: res.content[0].planName,
             planScheme: res.content[0].planScheme,
             productName: res.content[0].productName,
+            active: res.content[0].active,
+            dateOfBirth: res.content[0].dateOfBirth,
+            mobileNo: res.content[0].mobileNo,
+            nationalDocId: res.content[0].nationalDocId,
+            policyNumber: res.content[0].policyNumber,
+            email: res.content[0].email,
           });
           setShowViewDetails(true);
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
@@ -899,6 +919,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
       planName: data.planName,
       planScheme: data.planScheme,
       productName: data.productName,
+      active: data.active,
+      dateOfBirth: data.dateOfBirth,
+      mobileNo: data.mobileNo,
+      nationalDocId: data.nationalDocId,
+      policyNumber: data.policyNumber,
+      email: data.email,
     });
     setShowViewDetails(true);
     getBenefit(data?.memberId, data?.policyNumber);
@@ -993,7 +1019,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
       return;
     }
 
-    if (formik.values.contactNoOne.toString().length > 10 && formik.values.contactNoOne.toString().length < 15) {
+    if (
+      formik.values.contactNoOne.toString().length > 10 &&
+      formik.values.contactNoOne.toString().length < 15
+    ) {
       setAlertMsg("Provide right conact details");
       // setAlertMsg("Contact One must be of 10 digits");
       setOpenSnack(true);
@@ -1001,7 +1030,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
     if (
       formik.values.contactNoTwo &&
-      formik.values.contactNoTwo.toString().length > 10 && formik.values.contactNoTwo.toString().length < 10
+      formik.values.contactNoTwo.toString().length > 10 &&
+      formik.values.contactNoTwo.toString().length < 10
     ) {
       setAlertMsg("Contact Two must be of 10 digits");
       setOpenSnack(true);
@@ -1204,14 +1234,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleChangeIntervention = (e, index) => {
-      const list = [...serviceDetailsList];
-      list[index].interventionCode = e.code;
-      setServiceDetailsList(list);
+    const list = [...serviceDetailsList];
+    list[index].interventionCode = e.code;
+    setServiceDetailsList(list);
   };
   const handleChangeDiagnosis = (e, index) => {
-      const list = [...serviceDetailsList];
-      list[index].diagnosis = e.value;
-      setServiceDetailsList(list);
+    const list = [...serviceDetailsList];
+    list[index].diagnosis = e.value;
+    setServiceDetailsList(list);
   };
   const handleEstimateCostInService = (e, index) => {
     const { name, value } = e.target;
@@ -1244,11 +1274,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-console.log("service", serviceDetailsList)
+  console.log("service", serviceDetailsList);
   return (
     <>
       <ClaimModal
         claimModal={claimModal}
+        benefit={benefits}
         handleCloseClaimModal={handleCloseClaimModal}
         memberBasic={memberBasic}
       />
@@ -2024,7 +2055,9 @@ console.log("service", serviceDetailsList)
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="benefitId"
-                            defaultValue={x?.benefitId ?x?.benefitId : undefined}
+                            defaultValue={
+                              x?.benefitId ? x?.benefitId : undefined
+                            }
                             value={x?.benefitId ? x?.benefitId : undefined}
                             onChange={(e, val) => {
                               setIntervention([]);
@@ -2084,9 +2117,15 @@ console.log("service", serviceDetailsList)
                           <Autocomplete
                             name="intervention"
                             defaultValue={
-                              x.interventionCode ? x.interventionCode : undefined
+                              x.interventionCode
+                                ? x.interventionCode
+                                : undefined
                             }
-                            value={x.interventionCode ? x.interventionCode : undefined}
+                            value={
+                              x.interventionCode
+                                ? x.interventionCode
+                                : undefined
+                            }
                             onChange={(e, val) => {
                               getServices(val);
                               handleChangeIntervention(val, i);
@@ -2130,9 +2169,7 @@ console.log("service", serviceDetailsList)
                         <FormControl className={classes.formControl} fullWidth>
                           <Autocomplete
                             name="diagnosis"
-                            defaultValue={
-                              x.diagnosis ? x.diagnosis : undefined
-                            }
+                            defaultValue={x.diagnosis ? x.diagnosis : undefined}
                             value={x.diagnosis ? x.diagnosis : undefined}
                             onChange={(e, val) => {
                               // getServices(val);
@@ -2157,7 +2194,9 @@ console.log("service", serviceDetailsList)
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                label={i === 0 ? "Primary Diagnosis" : "Diagnosis"}
+                                label={
+                                  i === 0 ? "Primary Diagnosis" : "Diagnosis"
+                                }
                                 variant="standard"
                               />
                             )}

@@ -343,7 +343,7 @@ export default function MemberEligibility() {
       })
     );
   };
-
+  console.log(tableData);
   return (
     <>
       <Snackbar
