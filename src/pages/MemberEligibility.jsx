@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  LinearProgress,
   MenuItem,
   Paper,
   Select,
@@ -343,6 +344,11 @@ export default function MemberEligibility() {
       })
     );
   };
+
+  const benefitLookup = tableData?.reduce((acc, el) => {
+    acc[el.benefitStructureId] = el.benefitName;
+    return acc;
+  }, {});
 
   return (
     <>
@@ -857,12 +863,20 @@ export default function MemberEligibility() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {tableData?.map &&
-                      tableData.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            {item?.benefitName}
-                            {/* {(item?.benefitName === "IN-PATIENT" &&
+                    {showBalanceDetails ? (
+                      tableData?.map &&
+                      tableData.map((item) => {
+                        const parentBenefitName =
+                          benefitLookup[item.parentBenefitStructureId];
+                        return (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              {`${item?.benefitName} ${
+                                parentBenefitName != undefined
+                                  ? `> ${parentBenefitName}`
+                                  : ""
+                              }`}
+                              {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
                                 "1245370764554674176" &&
@@ -872,20 +886,35 @@ export default function MemberEligibility() {
                               (item?.benefitStructureId ===
                                 "1245640606146895872" &&
                                 " OUT-PATIENT >  MATERNAL HEALTH  ")} */}
-                          </TableCell>
-                          <TableCell>
-                            {item?.balance > 0 ? (
-                              <CheckOutlinedIcon style={{ color: "green" }} />
-                            ) : (
-                              <ClearOutlinedIcon style={{ color: "red" }} />
-                            )}
-                          </TableCell>
-                          {/* <TableCell>{item?.waitingPeriod}</TableCell>
+                            </TableCell>
+                            <TableCell>
+                              {item?.balance > 0 ? (
+                                <CheckOutlinedIcon style={{ color: "green" }} />
+                              ) : (
+                                <ClearOutlinedIcon style={{ color: "red" }} />
+                              )}
+                            </TableCell>
+                            {/* <TableCell>{item?.waitingPeriod}</TableCell>
                         <TableCell>{item?.maxLimit}</TableCell>
                         <TableCell>{item?.consumed}</TableCell>
                         <TableCell>{item?.balance}</TableCell> */}
-                        </TableRow>
-                      ))}
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={2} align="center">
+                        {/* <LinearProgress /> */}
+                          <CircularProgress
+                            sx={{
+                              // color: "white",
+                              // width: "20px",
+                              // height: "20px",
+                            }}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>
