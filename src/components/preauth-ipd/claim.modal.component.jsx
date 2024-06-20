@@ -40,7 +40,7 @@ export default function ClaimModal(props) {
     enrolmentDate: "",
   });
 
-  console.log(props.benefit);
+  console.log(props.memberBasic);
   const [fullWidth, setFullWidth] = React.useState(true);
   const [maxWidth, setMaxWidth] = React.useState("xl");
   const [memberData, setMemberData] = React.useState([]);

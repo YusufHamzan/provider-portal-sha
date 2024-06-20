@@ -242,7 +242,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     dateOfBirth: "",
     mobileNo: "",
     nationalDocId: "",
-    policyNumber: "",
     email: "",
   });
   const [memberName, setMemberName] = React.useState({
@@ -269,7 +268,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     dateOfBirth: "",
     mobileNo: "",
     nationalDocId: "",
-    policyNumber: "",
     email: "",
   });
   const [providerDetailsList, setProviderDetailsList] = React.useState([
@@ -872,7 +870,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             active: res.content[0].active,
             dateOfBirth: res.content[0].dateOfBirth,
             mobileNo: res.content[0].mobileNo,
-            nationalDocId: res.content[0].nationalDocId,
+            nationalDocId: res.content[0].identificationDocNumber,
             policyNumber: res.content[0].policyNumber,
             email: res.content[0].email,
           });
@@ -922,7 +920,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       active: data.active,
       dateOfBirth: data.dateOfBirth,
       mobileNo: data.mobileNo,
-      nationalDocId: data.nationalDocId,
+      nationalDocId: data.identificationDocNumber,
       policyNumber: data.policyNumber,
       email: data.email,
     });
