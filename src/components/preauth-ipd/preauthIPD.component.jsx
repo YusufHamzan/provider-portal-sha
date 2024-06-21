@@ -1,7 +1,7 @@
 // import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles } from "@mui/styles";
 import { useFormik } from "formik";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CheckBoxOutlineBlankOutlinedIcon from "@mui/icons-material/CheckBoxOutlineBlankOutlined";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -298,6 +298,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
       diagnosis: "",
     },
   ]);
+
+  console.log(serviceDetailsList);
   // const useObservable = (observable, setter) => {
   //   useEffect(() => {
   //     let subscription = observable.subscribe((result) => {
@@ -1276,6 +1278,128 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
   };
 
+  const serviceSection = useMemo(
+    () => (x, i) => {
+      console.log(x);
+      return (
+        <>
+          <Grid item xs={12} sm={6} md={1}>
+            <FormControl
+              // className={classes.formControl}
+              style={{ width: "100%" }}
+            >
+              <InputLabel
+                id="demo-simple-select-label"
+                style={{ marginBottom: "0px" }}
+              >
+                Standard
+              </InputLabel>
+              <Select
+                label="Code Standard"
+                name="codeStandard"
+                value={x.codeStandard}
+                variant="standard"
+                fullWidth
+              >
+                <MenuItem value="SHA">SHA</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <FormControl className={classes.formControl} fullWidth>
+              <Autocomplete
+                name="intervention"
+                defaultValue={x.interventionCode ? x.interventionCode : null}
+                value={x.interventionCode ? x.interventionCode : null}
+                onChange={(e, val) => {
+                  getServices(val);
+                  handleChangeIntervention(val, i);
+                }}
+                id="checkboxes-tags-demo"
+                // filterOptions={autocompleteFilterChange}
+                options={intervention}
+                // options={selectedBenefit}
+                getOptionLabel={(option) =>
+                  option.label ??
+                  intervention.find((benefit) => benefit?.value == option)
+                    ?.label
+                }
+                // getOptionSelected={(option, value) =>
+                //   option?.interventionId === value
+                // }
+                // renderOption={(option, { selected }) => (
+                //   <React.Fragment>{option?.label}</React.Fragment>
+                // )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Intervention"
+                    variant="standard"
+                  />
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={3}
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              marginBottom: "8px",
+            }}
+          >
+            <FormControl className={classes.formControl} fullWidth>
+              <Autocomplete
+                name="diagnosis"
+                defaultValue={x.diagnosis ? x.diagnosis : null}
+                value={x.diagnosis ? x.diagnosis : null}
+                onChange={(e, val) => {
+                  getServices(val);
+                  handleChangeDiagnosis(val, i);
+                }}
+                id="checkboxes-tags-demo"
+                // filterOptions={autocompleteFilterChange}
+                options={serviceList}
+                // options={selectedBenefit}
+                getOptionLabel={(option) =>
+                  option.label ??
+                  serviceList.find((benefit) => benefit?.value == option)?.label
+                }
+                // getOptionSelected={(option, value) =>
+                //   option?.interventionId === value
+                // }
+                // renderOption={(option, { selected }) => (
+                //   <React.Fragment>{option?.label}</React.Fragment>
+                // )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={i === 0 ? "Primary Diagnosis" : "Diagnosis"}
+                    variant="standard"
+                  />
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              id="standard-basic"
+              type="number"
+              name="estimatedCost"
+              variant="standard"
+              value={x?.estimatedCost}
+              onChange={(e) => handleEstimateCostInService(e, i)}
+              label="Estimated Cost"
+            />
+          </Grid>
+        </>
+      );
+    },
+    [intervention]
+  );
+  console.log(serviceDetailsList);
   return (
     <>
       <ClaimModal
@@ -1581,11 +1705,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
               <Grid item xs={12} sm={6} md={4}>
                 <TextField
                   id="standard-basic"
-                  name="relation"
-                  value={memberBasic.relations}
+                  name="gender"
+                  value={memberBasic.gender}
                   disabled
                   variant="standard"
-                  label="Relation"
+                  label="Gender"
                   InputProps={{
                     classes: {
                       root: classes.inputRoot,
@@ -2044,6 +2168,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Grid>
 
             {serviceDetailsList?.map((x, i) => {
+              console.log(x);
               return (
                 <Grid container spacing={3} key={i}>
                   <Grid item xs={12} sm={12} md={12}>
@@ -2072,6 +2197,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
                               handleBenefitChangeInService(val, i);
                               setBenefitId(val.benefitStructureId);
                               handleChangeIntervention("", i);
+                              setServiceDetailsList([
+                                {
+                                  providerId:
+                                    localStorage.getItem("providerId"),
+                                  estimatedCost: 0,
+                                  benefitId: "",
+                                  codeStandard: "SHA",
+                                  interventionCode: "",
+                                  diagnosis: "",
+                                },
+                              ]);
                             }}
                             id="checkboxes-tags-demo"
                             filterOptions={autocompleteFilterChange}
@@ -2099,154 +2235,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           />
                         </FormControl>
                       </Grid>
-                      <Grid item xs={12} sm={6} md={1}>
-                        <FormControl
-                          // className={classes.formControl}
-                          style={{ width: "100%" }}
-                        >
-                          <InputLabel
-                            id="demo-simple-select-label"
-                            style={{ marginBottom: "0px" }}
-                          >
-                            Standard
-                          </InputLabel>
-                          <Select
-                            label="Code Standard"
-                            name="codeStandard"
-                            value={x.codeStandard}
-                            variant="standard"
-                            fullWidth
-                          >
-                            <MenuItem value="SHA">SHA</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={3}>
-                        <FormControl className={classes.formControl} fullWidth>
-                          <Autocomplete
-                            name="intervention"
-                            defaultValue={
-                              x.interventionCode
-                                ? x.interventionCode
-                                : undefined
-                            }
-                            value={
-                              x.interventionCode
-                                ? x.interventionCode
-                                : undefined
-                            }
-                            onChange={(e, val) => {
-                              getServices(val);
-                              handleChangeIntervention(val, i);
-                            }}
-                            id="checkboxes-tags-demo"
-                            // filterOptions={autocompleteFilterChange}
-                            options={intervention}
-                            // options={selectedBenefit}
-                            getOptionLabel={(option) =>
-                              option.label ??
-                              intervention.find(
-                                (benefit) => benefit?.value == option
-                              )?.label
-                            }
-                            // getOptionSelected={(option, value) =>
-                            //   option?.interventionId === value
-                            // }
-                            // renderOption={(option, { selected }) => (
-                            //   <React.Fragment>{option?.label}</React.Fragment>
-                            // )}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Intervention"
-                                variant="standard"
-                              />
-                            )}
-                          />
-                        </FormControl>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        sm={3}
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-end",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <FormControl className={classes.formControl} fullWidth>
-                          <Autocomplete
-                            name="diagnosis"
-                            defaultValue={x.diagnosis ? x.diagnosis : undefined}
-                            value={x.diagnosis ? x.diagnosis : undefined}
-                            onChange={(e, val) => {
-                              // getServices(val);
-                              handleChangeDiagnosis(val, i);
-                            }}
-                            id="checkboxes-tags-demo"
-                            // filterOptions={autocompleteFilterChange}
-                            options={serviceList}
-                            // options={selectedBenefit}
-                            getOptionLabel={(option) =>
-                              option.label ??
-                              intervention.find(
-                                (benefit) => benefit?.value == option
-                              )?.label
-                            }
-                            // getOptionSelected={(option, value) =>
-                            //   option?.interventionId === value
-                            // }
-                            // renderOption={(option, { selected }) => (
-                            //   <React.Fragment>{option?.label}</React.Fragment>
-                            // )}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label={
-                                  i === 0 ? "Primary Diagnosis" : "Diagnosis"
-                                }
-                                variant="standard"
-                              />
-                            )}
-                          />
-                        </FormControl>
-                        {/* <Autocomplete
-                          id="checkboxes-tags-demo"
-                          options={serviceList}
-                          style={{ width: "100%" }}
-                          getOptionLabel={(option) => option.label}
-                          //   renderOption={(option) => (
-                          //     <React.Fragment>{option.diagnosisName}</React.Fragment>
-                          //   )}
-                          // value={selectedId?.length ? selectedId : undefined}
-                          value={x.diagnosis ? x.diagnosis : undefined}
-                          defaultValue={x.diagnosis ? x.diagnosis : undefined}
-                          className={classes.benifitAutoComplete}
-                          onChange={(e, value) => handleChangeDiagnosis(val, i)}
-                          // onChange={(e, value) => doSelectValue(e, value)}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label={
-                                i === 0 ? "Primary Diagnosis" : "Diagnosis"
-                              }
-                              variant="standard"
-                            />
-                          )}
-                        /> */}
-                      </Grid>
-                      <Grid item xs={12} sm={6} md={2}>
-                        <TextField
-                          id="standard-basic"
-                          type="number"
-                          name="estimatedCost"
-                          variant="standard"
-                          value={x?.estimatedCost}
-                          onChange={(e) => handleEstimateCostInService(e, i)}
-                          label="Estimated Cost"
-                        />
-                      </Grid>
+                      {serviceSection(x, i)}
                     </Grid>
                   </Grid>
                   <Grid
