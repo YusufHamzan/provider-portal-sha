@@ -84,8 +84,10 @@ export default function ClaimModal(props) {
     }
   }, [props?.memberBasic?.membershipNo]);
 
-  const tableData = [];
-  console.log(props?.memberBasic);
+  const benefitLookup = memberData?.reduce((acc, el) => {
+    acc[el.benefitStructureId] = el.benefitName;
+    return acc;
+  }, {});
   return (
     <Dialog
       open={props.claimModal}
@@ -277,10 +279,18 @@ export default function ClaimModal(props) {
                   </TableHead>
                   <TableBody>
                     {memberData?.map &&
-                      memberData.map((item) => (
+                      memberData.map((item) => {
+                        const parentBenefitName =
+                          benefitLookup[item.parentBenefitStructureId];
+                        return(
                         <TableRow key={item.id}>
                           <TableCell>
-                            {(item?.benefitName === "IN-PATIENT" &&
+                          {` ${
+                                parentBenefitName != undefined
+                                  ? `${parentBenefitName} >`
+                                  : ""
+                              } ${item?.benefitName}`}
+                            {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
                                 "1245370764554674176" &&
@@ -289,7 +299,7 @@ export default function ClaimModal(props) {
                                 "OUT-PATIENT") ||
                               (item?.benefitStructureId ===
                                 "1245640606146895872" &&
-                                " OUT-PATIENT >  MATERNAL HEALTH  ")}
+                                " OUT-PATIENT >  MATERNAL HEALTH  ")} */}
                           </TableCell>
                           <TableCell>
                             {item?.balance > 0 ? (
@@ -303,7 +313,7 @@ export default function ClaimModal(props) {
                         <TableCell>{item?.consumed}</TableCell>
                         <TableCell>{item?.balance}</TableCell> */}
                         </TableRow>
-                      ))}
+                      )})}
                   </TableBody>
                 </Table>
               </TableContainer>
