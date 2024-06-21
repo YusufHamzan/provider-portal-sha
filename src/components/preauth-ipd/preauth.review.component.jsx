@@ -233,26 +233,56 @@ export default function PreAuthReview(props) {
       services: serviceAll$,
     });
     frk$.subscribe((data) => {
-      data.bts.content.forEach((benall) => {
-        data.preAuth.benefitsWithCost.forEach((benefit) => {
-          if (benefit.benefitId === benall.id) {
-            benefit["benefitName"] = benall.name;
+      data.preAuth.benefitsWithCost.forEach(benefit => {
+        let bts$ = benefitService.getBenefitInterventions(benefit.benefitId);
+        bts$.subscribe(result => {
+          result.forEach(el => {
+            if (el.interventionId === benefit.interventionCode) {
+              benefit.interventionName = el.name;
+            }
+          });
+        });
+      });
+      data.preAuth.benefitsWithCost.forEach(benefit => {
+        let bts$ = benefitService.getServicesfromInterventions(
+          benefit.interventionCode,
+          benefit.benefitId
+        );
+        bts$.subscribe(result => {
+          result.forEach(el => {
+            if (el.code === benefit.diagnosis) {
+              benefit['diagnosisName'] = el?.name;
+            }
+          });
+        });
+      });
+      data.providers.content.forEach(proAll => {
+        data.preAuth.benefitsWithCost.forEach(benefit => {
+          if (proAll.id === benefit.providerId) {
+            benefit['providerName'] = proAll.providerBasicDetails?.name;
           }
         });
       });
-      let serviceList = [];
-      data.services.forEach((ser) => {
-        ser.content.forEach((sr) => {
-          serviceList.push(sr);
-        });
-      });
-      serviceList.forEach((ser) => {
-        data.preAuth.services.forEach((service) => {
-          if (service.serviceId === ser.id) {
-            service["serviceName"] = ser.name;
-          }
-        });
-      });
+      // data.bts.content.forEach((benall) => {
+      //   data.preAuth.benefitsWithCost.forEach((benefit) => {
+      //     if (benefit.benefitId === benall.id) {
+      //       benefit["benefitName"] = benall.name;
+      //     }
+      //   });
+      // });
+      // let serviceList = [];
+      // data.services.forEach((ser) => {
+      //   ser.content.forEach((sr) => {
+      //     serviceList.push(sr);
+      //   });
+      // });
+      // serviceList.forEach((ser) => {
+      //   data.preAuth.services.forEach((service) => {
+      //     if (service.serviceId === ser.id) {
+      //       service["serviceName"] = ser.name;
+      //     }
+      //   });
+      // });
       let pageRequest = {
         page: 0,
         size: 10,
@@ -317,33 +347,33 @@ export default function PreAuthReview(props) {
       services: serviceAll$,
     });
     frk$.subscribe((data) => {
-      // data.providers.content.forEach(proAll => {
-      //   data.preAuth.providers.forEach(pr => {
-      //     if (proAll.id === pr.providerId) {
-      //       pr['providerName'] = proAll.providerBasicDetails?.name;
+      data.providers.content.forEach(proAll => {
+        data.preAuth.providers.forEach(pr => {
+          if (proAll.id === pr.providerId) {
+            pr['providerName'] = proAll.providerBasicDetails?.name;
+          }
+        });
+      });
+      // data.bts.content.forEach((benall) => {
+      //   data.preAuth.benefitsWithCost.forEach((benefit) => {
+      //     if (benefit.benefitId === benall.id) {
+      //       benefit["benefitName"] = benall.name;
       //     }
       //   });
       // });
-      data.bts.content.forEach((benall) => {
-        data.preAuth.benefitsWithCost.forEach((benefit) => {
-          if (benefit.benefitId === benall.id) {
-            benefit["benefitName"] = benall.name;
-          }
-        });
-      });
-      let serviceList = [];
-      data.services.forEach((ser) => {
-        ser.content.forEach((sr) => {
-          serviceList.push(sr);
-        });
-      });
-      serviceList.forEach((ser) => {
-        data.preAuth.services.forEach((service) => {
-          if (service.serviceId === ser.id) {
-            service["serviceName"] = ser.name;
-          }
-        });
-      });
+      // let serviceList = [];
+      // data.services.forEach((ser) => {
+      //   ser.content.forEach((sr) => {
+      //     serviceList.push(sr);
+      //   });
+      // });
+      // serviceList.forEach((ser) => {
+      //   data.preAuth.services.forEach((service) => {
+      //     if (service.serviceId === ser.id) {
+      //       service["serviceName"] = ser.name;
+      //     }
+      //   });
+      // });
       let pageRequest = {
         page: 0,
         size: 10,
@@ -408,34 +438,41 @@ export default function PreAuthReview(props) {
       serviceType: serviceDiagnosis.getServiceTypes(),
     });
     frk$.subscribe((data) => {
-      data.providers.content.forEach((proAll) => {
-        data.preAuth.providers.forEach((pr) => {
-          if (proAll.id === pr.providerId) {
-            pr["providerName"] = proAll.providerBasicDetails?.name;
-          }
-        });
-        data.preAuth.services.forEach((service) => {
-          if (service.providerId === proAll.id) {
-            service["provider"] = proAll.providerBasicDetails?.name;
-          }
-        });
-      });
+      // data.providers.content.forEach((proAll) => {
+      //   data.preAuth.providers.forEach((pr) => {
+      //     if (proAll.id === pr.providerId) {
+      //       pr["providerName"] = proAll.providerBasicDetails?.name;
+      //     }
+      //   });
+      //   data.preAuth.services.forEach((service) => {
+      //     if (service.providerId === proAll.id) {
+      //       service["provider"] = proAll.providerBasicDetails?.name;
+      //     }
+      //   });
+      // });
+      // data.bts.content.forEach((benall) => {
+      //   data.preAuth.benefitsWithCost.forEach((benefit) => {
+      //     if (benefit.benefitId === benall.id) {
+      //       benefit["benefitName"] = benall.name;
+      //     }
+      //   });
+      //   data.preAuth.services.forEach((service) => {
+      //     if (service.benifitId === benall.id) {
+      //       service["benefitName"] = benall?.name;
+      //     }
+      //   });
+      // });
+      // data.serviceType.content.forEach((serAll) => {
+      //   data.preAuth.services.forEach((service) => {
+      //     if (service.serviceId === serAll.id) {
+      //       service["service"] = serAll?.name;
+      //     }
+      //   });
+      // });
       data.bts.content.forEach((benall) => {
         data.preAuth.benefitsWithCost.forEach((benefit) => {
           if (benefit.benefitId === benall.id) {
             benefit["benefitName"] = benall.name;
-          }
-        });
-        data.preAuth.services.forEach((service) => {
-          if (service.benifitId === benall.id) {
-            service["benefitName"] = benall?.name;
-          }
-        });
-      });
-      data.serviceType.content.forEach((serAll) => {
-        data.preAuth.services.forEach((service) => {
-          if (service.serviceId === serAll.id) {
-            service["service"] = serAll?.name;
           }
         });
       });
@@ -447,11 +484,47 @@ export default function PreAuthReview(props) {
       });
       serviceList.forEach((ser) => {
         data.preAuth.services.forEach((service) => {
-          if (service.expenseHead === ser.id) {
-            service["expense"] = ser.name;
+          if (service.serviceId === ser.id) {
+            service["serviceName"] = ser.name;
           }
         });
       });
+      data.preAuth.benefitsWithCost.forEach(benefit => {
+        let bts$ = benefitService.getBenefitInterventions(benefit.benefitId);
+        bts$.subscribe(result => {
+          result.forEach(el => {
+            if (el.interventionId === benefit.interventionCode) {
+              benefit.interventionName = el.name;
+            }
+          });
+        });
+      });
+      data.preAuth.benefitsWithCost.forEach(benefit => {
+        let bts$ = benefitService.getServicesfromInterventions(
+          benefit.interventionCode,
+          benefit.benefitId
+        );
+        bts$.subscribe(result => {
+          result.forEach(el => {
+            if (el.code === benefit.diagnosis) {
+              benefit['diagnosisName'] = el?.name;
+            }
+          });
+        });
+      });
+      // let serviceList = [];
+      // data.services.forEach((ser) => {
+      //   ser.content.forEach((sr) => {
+      //     serviceList.push(sr);
+      //   });
+      // });
+      // serviceList.forEach((ser) => {
+      //   data.preAuth.services.forEach((service) => {
+      //     if (service.expenseHead === ser.id) {
+      //       service["expense"] = ser.name;
+      //     }
+      //   });
+      // });
       let pageRequest = {
         page: 0,
         size: 10,
@@ -1240,7 +1313,7 @@ export default function PreAuthReview(props) {
     return (
       <>
         <div style={{ padding: "5px" }}>
-          <Grid item xs={12} style={{ marginTop: "1em" }}>
+          {/* <Grid item xs={12} style={{ marginTop: "1em" }}>
             <span
               style={{ color: "#313c96", fontWeight: "bold", fontSize: "13px" }}
             >
@@ -1286,13 +1359,13 @@ export default function PreAuthReview(props) {
                 )}
               </TableBody>
             </Table>
-          </TableContainer>
+          </TableContainer> */}
 
           <Grid item xs={12} style={{ marginTop: "1em" }}>
             {/* <span style={{ color: '#313c96', fontWeight: 'bold', fontSize: '13px' }}>Providers: </span> */}
           </Grid>
 
-          <TableContainer component={Paper} style={{ borderRadius: "8px" }}>
+          {/* <TableContainer component={Paper} style={{ borderRadius: "8px" }}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <StyledTableRow>
@@ -1377,26 +1450,6 @@ export default function PreAuthReview(props) {
                                   {ele.estimatedCost}
                                 </Grid>
                                 <Grid item xs={3} style={valueStyle}>
-                                  {/* <InputText
-                                  className="p-inputtext-xs"
-                                  type="number"
-                                  defaultValue={
-                                    preAuthDetails?.preAuth.preAuthStatus != 'ENHANCEMENT_REQUESTED' && ele?.approvedCost
-                                  }
-                                  id={`approveProviderAmount-${ele.benefitId}`}
-                                  name={`approveProviderAmount-${ele.benefitId}`}
-                                  disabled={preAuthDetails?.preAuth.preAuthStatus != 'EVALUATION_INPROGRESS'}
-                                  // onChange={e => handleInputChange(e)}
-                                  onChange={e => handleApproveProviderAmount(e, row, ele.benefitId)}
-                                  style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    borderBottom: '1px solid',
-                                    height: '15px',
-                                    width: '100%',
-                                    borderRadius: '0',
-                                  }}
-                                /> */}
                                   <input
                                     className="p-inputtext-xs"
                                     type="number"
@@ -1443,7 +1496,7 @@ export default function PreAuthReview(props) {
                 )}
               </TableBody>
             </Table>
-          </TableContainer>
+          </TableContainer> */}
           <Grid item xs={12} style={{ marginTop: "1em" }}>
             <span
               style={{ color: "#313c96", fontWeight: "bold", fontSize: "13px" }}
@@ -1456,18 +1509,20 @@ export default function PreAuthReview(props) {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <StyledTableRow>
-                  <StyledTableCellHeader>Provider Name</StyledTableCellHeader>
+                <StyledTableCellHeader>Provider Name</StyledTableCellHeader>
                   <StyledTableCellHeader>Benefit Name</StyledTableCellHeader>
-                  <StyledTableCellHeader>Service Type</StyledTableCellHeader>
-                  <StyledTableCellHeader>Service Name</StyledTableCellHeader>
-                  <StyledTableCellHeader>Estimated cost</StyledTableCellHeader>
+                  <StyledTableCellHeader>Intervention</StyledTableCellHeader>
+                  <StyledTableCellHeader>Diagnosis</StyledTableCellHeader>
+                  <StyledTableCellHeader>Estimated</StyledTableCellHeader>
+                  <StyledTableCellHeader>Comment</StyledTableCellHeader>
                   <StyledTableCellHeader></StyledTableCellHeader>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {preAuthDetails?.preAuth.services[0].serviceId ? (
-                  preAuthDetails?.preAuth.services?.map((row) => {
+              {preAuthDetails?.preAuth?.benefitsWithCost[0].benefitId ? (
+                  preAuthDetails?.preAuth?.benefitsWithCost?.map(row => {
                     let proId = localStorage.getItem("providerId");
+                    let poviderName = localStorage.getItem("provider");
                     let value =
                       preAuthDetails?.preAuth.preAuthStatus !=
                         "ENHANCEMENT_REQUESTED" && row?.approvedCost;
@@ -1484,7 +1539,7 @@ export default function PreAuthReview(props) {
                             scope="row"
                             style={valueStyle}
                           >
-                            {row.provider}
+                            {poviderName}
                           </StyledTableCellRow>
                           <StyledTableCellRow
                             component="th"
@@ -1498,18 +1553,17 @@ export default function PreAuthReview(props) {
                             scope="row"
                             style={valueStyle}
                           >
-                            {row.service}
+                            {row.interventionName}
                           </StyledTableCellRow>
                           <StyledTableCellRow
                             component="th"
                             scope="row"
                             style={valueStyle}
                           >
-                            {row.expense}
+                            {row.diagnosisName}
                           </StyledTableCellRow>
-                          <StyledTableCellRow style={valueStyle}>
-                            {row.estimatedCost}
-                          </StyledTableCellRow>
+                          <StyledTableCellRow style={valueStyle}>{row.estimatedCost}</StyledTableCellRow>
+                        <StyledTableCellRow style={valueStyle}>{row.comment || 'NA'}</StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
                             <InputText
                               className="p-inputtext-sm"
