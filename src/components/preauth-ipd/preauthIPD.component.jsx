@@ -46,6 +46,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import ClaimModal from "./claim.modal.component";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 
 const useStyles = makeStyles((theme) => ({
   input1: {
@@ -183,6 +184,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [serviceTypeList, setServiceTypeList] = React.useState();
   const [expenseHeadList, setExpenseHeadList] = React.useState();
   const [showViewDetails, setShowViewDetails] = React.useState(false);
+  const [serviceSectionHandle, setServiceSectionHandle] = React.useState(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -410,21 +412,25 @@ export default function ClaimsPreAuthIPDComponent(props) {
   }, []);
 
   const getServices = (data) => {
-    let bts$ = benefitService.getServicesfromInterventions(
-      data.value,
-      benefitId
-    );
-    bts$.subscribe((response) => {
-      let temp = [];
-      response.forEach((el) => {
-        let obj = {
-          label: el?.code + " | " + el?.name,
-          value: el?.code,
-        };
-        temp.push(obj);
+    if (data == null) {
+      setServiceList([]);
+    } else {
+      let bts$ = benefitService.getServicesfromInterventions(
+        data.value,
+        benefitId
+      );
+      bts$.subscribe((response) => {
+        let temp = [];
+        response.forEach((el) => {
+          let obj = {
+            label: el?.code + " | " + el?.name,
+            value: el?.code,
+          };
+          temp.push(obj);
+        });
+        setServiceList(temp);
       });
-      setServiceList(temp);
-    });
+    }
   };
 
   useEffect(() => {
@@ -636,8 +642,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
         estimatedCost: 0,
         benefitId: "",
         codeStandard: "SHA",
-        interventionCode: "",
-        diagnosis: "",
+        interventionCode: null,
+        diagnosis: null,
       },
     ]);
   };
@@ -1236,7 +1242,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleChangeIntervention = (e, index) => {
-    console.log(e);
     const list = [...serviceDetailsList];
     list[index].interventionCode = e.value ? e.value : "";
     setServiceDetailsList(list);
@@ -1277,7 +1282,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-
   const serviceSection = useMemo(
     () => (x, i) => {
       console.log(x);
@@ -1312,8 +1316,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 defaultValue={x.interventionCode ? x.interventionCode : null}
                 value={x.interventionCode ? x.interventionCode : null}
                 onChange={(e, val) => {
+                  // setServiceSectionHandle(val);
+
                   getServices(val);
                   handleChangeIntervention(val, i);
+                  // setServiceList([]);
                 }}
                 id="checkboxes-tags-demo"
                 // filterOptions={autocompleteFilterChange}
@@ -1324,17 +1331,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   intervention.find((benefit) => benefit?.value == option)
                     ?.label
                 }
-                // getOptionSelected={(option, value) =>
-                //   option?.interventionId === value
-                // }
-                // renderOption={(option, { selected }) => (
-                //   <React.Fragment>{option?.label}</React.Fragment>
-                // )}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     label="Intervention"
                     variant="standard"
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: null, // This removes the clear icon
+                    }}
                   />
                 )}
               />
@@ -1356,7 +1361,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 defaultValue={x.diagnosis ? x.diagnosis : null}
                 value={x.diagnosis ? x.diagnosis : null}
                 onChange={(e, val) => {
-                  getServices(val);
+                  // getServices(val);
                   handleChangeDiagnosis(val, i);
                 }}
                 id="checkboxes-tags-demo"
@@ -1373,6 +1378,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 // renderOption={(option, { selected }) => (
                 //   <React.Fragment>{option?.label}</React.Fragment>
                 // )}
+
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -1397,9 +1403,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
         </>
       );
     },
-    [intervention]
+    [intervention, serviceList, serviceDetailsList]
   );
-  console.log(serviceDetailsList);
+  useEffect(() => {
+    setServiceDetailsList((prevServiceDetailsList) =>
+      prevServiceDetailsList.map((serviceDetails) => ({
+        ...serviceDetails,
+        diagnosis: null,
+        estimatedCost: 0,
+      }))
+    );
+  }, serviceList);
   return (
     <>
       <ClaimModal
@@ -2184,7 +2198,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             defaultValue={
                               x?.benefitStructureId
                                 ? x?.benefitStructureId
-                                : undefined
+                                : null
                             }
                             value={
                               x?.benefitStructureId
@@ -2192,6 +2206,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                                 : undefined
                             }
                             onChange={(e, val) => {
+                              console.log(val);
                               setIntervention([]);
                               getIntervemntions(val);
                               handleBenefitChangeInService(val, i);
@@ -2202,10 +2217,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                                   providerId:
                                     localStorage.getItem("providerId"),
                                   estimatedCost: 0,
-                                  benefitId: "",
+                                  benefitId: val?.benefitStructureId,
                                   codeStandard: "SHA",
-                                  interventionCode: "",
-                                  diagnosis: "",
+                                  interventionCode: null,
+                                  diagnosis: null,
                                 },
                               ]);
                             }}
