@@ -18,6 +18,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import { Button } from "primereact/button";
 import { Logout } from "@mui/icons-material";
 import { ProvidersService } from "../remote-api/api/provider-services";
+import ProfileSection from "./ProfileSection";
 
 const providerService = new ProvidersService();
 
@@ -95,26 +96,20 @@ const Header = ({ open, handleDrawerOpen }) => {
           <Box
             display={"flex"}
             justifyContent={"space-between"}
-            width={"10%"}
+            width={"7%"}
             alignItems={"center"}
           >
-            <Typography
-              variant="body1"
-              component="a"
-              sx={{ flexGrow: 1, marginleft: 4 }}
-            >
-              {name}
-            </Typography>
-            <Box sx={{ marginLeft: "2%" }}>
+            <ProfileSection />
+            {/* <Box sx={{ marginLeft: "2%" }}>
               <Logout
-              cursor={"pointer"}
+                cursor={"pointer"}
                 fontSize="small"
                 onClick={() => {
                   localStorage.clear();
                   keycloak.logout();
                 }}
               />
-            </Box>
+            </Box> */}
           </Box>
           {/* <Button
             onClick={() => {

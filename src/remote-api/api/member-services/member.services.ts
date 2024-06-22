@@ -57,4 +57,17 @@ export class MemberService {
   getMemberBalance(id: any): Observable<Page<any>> {
     return http.get<Page<any>>(`${this.QUERY_CONTEXT}/balance?membershipNo=${id}`).pipe(map(response => response.data));
   }
+
+  getValidate(payload: any): Observable<Page<any>> {
+    return http.post<Page<any>>(`http://10.64.6.100:11010/sharules/validate`,  payload ).pipe(
+      map(response => response.data)
+    );
+  }
+
+  getDecsion(id: any): Observable<Page<any>> {
+    return http.get<Page<any>>(`http://10.64.6.100:11010/sharules/show-decission/${id}` ).pipe(
+      map(response => response.data)
+    );
+  }
+  
 }
