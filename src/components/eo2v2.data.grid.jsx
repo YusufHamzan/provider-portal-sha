@@ -50,7 +50,7 @@ export const Eo2v2DataGrid = (props) => {
   const location = useLocation();
   // console.log(location.pathname);/membereligibility
   const renderGrid = (pageData) => {
-    console.log(pageData)
+    // console.log(pageData)
     setTotalRecords(pageData?.totalElements);
     setItems(pageData?.content);
     if(location.pathname === "/membereligibility"){
@@ -58,7 +58,7 @@ export const Eo2v2DataGrid = (props) => {
     }
     setLoading(false);
   };
-console.log(items)
+// console.log(items)
   useEffect(() => {
     if (props.hasOwnProperty("selectedId")) {
       renderGrid({ totalElements: 0, content: [] });

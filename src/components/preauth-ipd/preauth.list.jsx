@@ -109,6 +109,7 @@ const benefitService = new BenefitService();
 const PreAuthIPDListComponent = () => {
   const navigate = useNavigate();
   const providerId = localStorage.getItem("providerId");
+  let name = localStorage.getItem("provider");
   const [benefits, setBenefits] = useState();
   const [searchModal, setSearchModal] = React.useState(false);
   const [searchType, setSearchType] = React.useState();
@@ -199,30 +200,76 @@ const PreAuthIPDListComponent = () => {
   // };
 
   const renderBenefitWithCost = (rowData) => {
+    // console.log("rowData", rowData);
     const length = rowData?.benefitsWithCost?.length;
-    const benefitsWithCost = rowData.benefitsWithCost?.map((ben) => {
-      const benefitName = benefits?.find(
-        (item) => item.id === ben?.benefitId
-      )?.name;
-      return benefitName ? (
-        <TreeItem
-          itemId={ben?.benefitId}
-          label={
-            <Typography
-              sx={{ fontSize: "12px" }}
-            >{`${benefitName}: ${ben?.estimatedCost}`}</Typography>
-          }
-        ></TreeItem>
-      ) : (
-        <TreeItem
-          itemId={ben?.benefitId}
-          label={
-            <Typography sx={{ fontSize: "12px" }}>{`Unknown: ${
-              ben?.estimatedCost || null
-            }`}</Typography>
-          }
-        ></TreeItem>
-      );
+    // const benefitsWithCost = rowData.benefitsWithCost?.map((ben) => {
+    //   const benefitName = benefits?.find(
+    //     (item) => item.id === ben?.benefitId
+    //   )?.name;
+    //   return ben?.benefitName ? (
+    //     <TreeItem
+    //       itemId={ben?.benefitId}
+    //       label={
+    //         <Typography
+    //           sx={{ fontSize: "12px" }}
+    //         >{`${ben?.benefitName}: ${ben?.estimatedCost}`}</Typography>
+    //       }
+    //     ></TreeItem>
+    //   ) : (
+    //     <TreeItem
+    //       itemId={ben?.benefitId}
+    //       label={
+    //         <Typography sx={{ fontSize: "12px" }}>{`Unknown: ${
+    //           ben?.estimatedCost || null
+    //         }`}</Typography>
+    //       }
+    //     ></TreeItem>
+    //   );
+    // });
+
+    const benefitsWithCost = rowData?.benefitsWithCost?.map((benefit) => {
+      if (providerId == benefit.providerId) {
+        return (
+          // <TreeItem
+          //   itemId={benefit?.providerId}
+          //   label={
+          //     <Typography
+          //       sx={{ fontSize: "12px" }}
+          //     >{`${name}: ${benefit?.estimatedCost}`}</Typography>
+          //   }
+          // >
+          <TreeItem
+            itemId={"_" + Math.random().toString(24).substring(2, 9)}
+            // itemId={benefit?.benefitId}
+            label={
+              <Typography
+                sx={{ fontSize: "12px" }}
+              >{`${benefit?.benefitName}: ${benefit?.estimatedCost}`}</Typography>
+            }
+          >
+            <TreeItem
+              // itemId={benefit?.interventionCode}
+              itemId={"_" + Math.random().toString(24).substring(2, 9)}
+              label={
+                <Typography
+                  sx={{ fontSize: "12px" }}
+                >{`${benefit?.interventionCode}: ${benefit?.estimatedCost}`}</Typography>
+              }
+            >
+              <TreeItem
+                // itemId={benefit?.diagnosis}
+                itemId={"_" + Math.random().toString(24).substring(2, 9)}
+                label={
+                  <Typography
+                    sx={{ fontSize: "12px" }}
+                  >{`${benefit?.diagnosis}: ${benefit?.estimatedCost}`}</Typography>
+                }
+              ></TreeItem>
+            </TreeItem>
+          </TreeItem>
+          // </TreeItem>
+        );
+      }
     });
 
     const totalAmount = rowData.benefitsWithCost.reduce(
@@ -233,7 +280,7 @@ const PreAuthIPDListComponent = () => {
     return (
       <SimpleTreeView>
         <TreeItem
-          itemId="benefit"
+          itemId={rowData?.id}
           label={
             <Typography sx={{ fontSize: "12px" }}>{`${length} ${
               length === 1 ? "Benefit: " : "Benefits: "

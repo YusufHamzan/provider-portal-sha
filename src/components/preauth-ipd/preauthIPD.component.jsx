@@ -177,7 +177,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [claimModal, setClaimModal] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState("");
   const [openSnack, setOpenSnack] = React.useState(false);
-  const [searchType, setSearchType] = React.useState("national_id");
+  const [searchType, setSearchType] = React.useState("membership_no");
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState([]);
   const [selectSpecId, setSelectedSpecId] = React.useState("");
@@ -1453,8 +1453,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   onChange={handleChange}
                   fullWidth
                 >
-                  <MenuItem value="national_id">National ID</MenuItem>
                   <MenuItem value="membership_no">Membership No.</MenuItem>
+                  <MenuItem value="national_id">National ID</MenuItem>
                   <MenuItem value="name">Member Name</MenuItem>
                 </Select>
               </Grid>

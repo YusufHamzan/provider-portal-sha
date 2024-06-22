@@ -174,7 +174,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [claimModal, setClaimModal] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState("");
   const [openSnack, setOpenSnack] = React.useState(false);
-  const [searchType, setSearchType] = React.useState("national_id");
+  const [searchType, setSearchType] = React.useState("membership_no");
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState([]);
   const [selectSpecId, setSelectedSpecId] = React.useState("");
@@ -453,7 +453,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const handleChange = (event) => {
     setSearchType(event.target.value);
   };
-
+console.log(searchType,"searchType")
   const handleopenClientModal = () => {
     setOpenClientModal(true);
   };
@@ -705,6 +705,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         referalTicketRequired: res.referalTicketRequired,
         preAuthStatus: res.preAuthStatus,
       });
+      // getBenefit(res.memberId, res.policyNumber);
 
       setSelectedDOD(new Date(res.expectedDOD));
       setSelectedDOA(new Date(res.expectedDOA));
@@ -762,22 +763,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       summary: true,
       active: true,
     };
-    let pageRequest11 = {
-      page: 0,
-      size: 10,
-      summary: true,
-      active: true,
-      key: searchType,
-      value: id,
-    };
-    let pageRequest1 = {
-      page: 0,
-      size: 10,
-      summary: true,
-      active: true,
-      name: id,
-    };
-
+    
     if (searchType === "name") {
       pageRequest.name = id;
     }
@@ -1247,8 +1233,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   onChange={handleChange}
                   fullWidth
                 >
-                  <MenuItem value="national_id">National ID</MenuItem>
                   <MenuItem value="membership_no">Membership No.</MenuItem>
+                  <MenuItem value="national_id">National ID</MenuItem>
                   <MenuItem value="name">Member Name</MenuItem>
                 </Select>
               </Grid>
