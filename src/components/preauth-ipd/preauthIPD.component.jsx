@@ -1364,6 +1364,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
   const serviceSection = useMemo(
     () => (x, i) => {
+      console.log(x);
       return (
         <>
           <Grid item xs={12} sm={6} md={1}>
@@ -1393,7 +1394,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
               <Autocomplete
                 name="intervention"
                 defaultValue={x.interventionCode ? x.interventionCode : null}
-                value={x.interventionCode ? x.interventionCode : null}
+                value={
+                  x.interventionCode
+                    ? intervention?.find(
+                        (item) => item?.code == x?.interventionCode
+                      )
+                    : null
+                }
                 onChange={(e, val) => {
                   // setServiceSectionHandle(val);
 
