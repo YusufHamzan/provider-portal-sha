@@ -957,7 +957,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             dateOfBirth: res.content[0].dateOfBirth,
             mobileNo: res.content[0].mobileNo,
             nationalDocId: res.content[0].identificationDocNumber,
-            policyNumber: res.content[0].policyNumber,
+            // policyNumber: res.content[0].policyNumber,
             email: res.content[0].email,
           });
           setShowViewDetails(true);
@@ -1007,7 +1007,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       dateOfBirth: data.dateOfBirth,
       mobileNo: data.mobileNo,
       nationalDocId: data.identificationDocNumber,
-      policyNumber: data.policyNumber,
+      // policyNumber: data.policyNumber,
       email: data.email,
     });
     setShowViewDetails(true);
