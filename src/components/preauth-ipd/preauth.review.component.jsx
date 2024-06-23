@@ -13,6 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import { withStyles } from "@mui/styles";
+import DialogTable from "../eo2v2.dialog";
 import React, { useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import {
@@ -33,6 +34,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import DocumentPreview from "./component/preview.thumbnail";
 import { CreditClaimService } from "../../remote-api/api/claim-services/credit-claim-services";
+import { CheckCircle } from "@mui/icons-material";
 
 const style = {
   position: "absolute",
@@ -137,6 +139,7 @@ export default function PreAuthReview(props) {
   const [serviceData, setServiceData] = React.useState([]);
   const [benefit, setBenefit] = React.useState([]);
   const [reviewDecision, setReviewDecision] = React.useState("");
+  const [decionData, setDecionData] = React.useState([]);
   const [maxApprovableAmount, setMaxApprovableAmount] = React.useState(0);
   const [providerDetails, setProviderDetails] = React.useState([]);
   const [serviceDetails, setServiceDetails] = React.useState([]);
@@ -151,6 +154,7 @@ export default function PreAuthReview(props) {
   const memberservice = new MemberService();
   const benefitService = new BenefitService();
   const serviceDiagnosis = new ServiceTypeService();
+  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     if (preAuthDetails?.preAuth.calculationStatus === "COMPLETED")
@@ -233,33 +237,33 @@ export default function PreAuthReview(props) {
       services: serviceAll$,
     });
     frk$.subscribe((data) => {
-      data.preAuth.benefitsWithCost.forEach(benefit => {
+      data.preAuth.benefitsWithCost.forEach((benefit) => {
         let bts$ = benefitService.getBenefitInterventions(benefit.benefitId);
-        bts$.subscribe(result => {
-          result.forEach(el => {
+        bts$.subscribe((result) => {
+          result.forEach((el) => {
             if (el.interventionId === benefit.interventionCode) {
               benefit.interventionName = el.name;
             }
           });
         });
       });
-      data.preAuth.benefitsWithCost.forEach(benefit => {
+      data.preAuth.benefitsWithCost.forEach((benefit) => {
         let bts$ = benefitService.getServicesfromInterventions(
           benefit.interventionCode,
           benefit.benefitId
         );
-        bts$.subscribe(result => {
-          result.forEach(el => {
+        bts$.subscribe((result) => {
+          result.forEach((el) => {
             if (el.code === benefit.diagnosis) {
-              benefit['diagnosisName'] = el?.name;
+              benefit["diagnosisName"] = el?.name;
             }
           });
         });
       });
-      data.providers.content.forEach(proAll => {
-        data.preAuth.benefitsWithCost.forEach(benefit => {
+      data.providers.content.forEach((proAll) => {
+        data.preAuth.benefitsWithCost.forEach((benefit) => {
           if (proAll.id === benefit.providerId) {
-            benefit['providerName'] = proAll.providerBasicDetails?.name;
+            benefit["providerName"] = proAll.providerBasicDetails?.name;
           }
         });
       });
@@ -296,6 +300,7 @@ export default function PreAuthReview(props) {
       let obj = { preAuth: data.preAuth };
       memberservice.getMember(pageRequest).subscribe((res) => {
         if (res.content?.length > 0) {
+          console.log(res);
           setMemberData(res.content[0]);
           const member = res.content[0];
           obj.member = member;
@@ -347,10 +352,10 @@ export default function PreAuthReview(props) {
       services: serviceAll$,
     });
     frk$.subscribe((data) => {
-      data.providers.content.forEach(proAll => {
-        data.preAuth.providers.forEach(pr => {
+      data.providers.content.forEach((proAll) => {
+        data.preAuth.providers.forEach((pr) => {
           if (proAll.id === pr.providerId) {
-            pr['providerName'] = proAll.providerBasicDetails?.name;
+            pr["providerName"] = proAll.providerBasicDetails?.name;
           }
         });
       });
@@ -387,6 +392,7 @@ export default function PreAuthReview(props) {
       let obj = { preAuth: data.preAuth };
       memberservice.getMember(pageRequest).subscribe((res) => {
         if (res.content?.length > 0) {
+          console.log(res);
           setMemberData(res.content[0]);
           const member = res.content[0];
           obj.member = member;
@@ -489,25 +495,25 @@ export default function PreAuthReview(props) {
           }
         });
       });
-      data.preAuth.benefitsWithCost.forEach(benefit => {
+      data.preAuth.benefitsWithCost.forEach((benefit) => {
         let bts$ = benefitService.getBenefitInterventions(benefit.benefitId);
-        bts$.subscribe(result => {
-          result.forEach(el => {
+        bts$.subscribe((result) => {
+          result.forEach((el) => {
             if (el.interventionId === benefit.interventionCode) {
               benefit.interventionName = el.name;
             }
           });
         });
       });
-      data.preAuth.benefitsWithCost.forEach(benefit => {
+      data.preAuth.benefitsWithCost.forEach((benefit) => {
         let bts$ = benefitService.getServicesfromInterventions(
           benefit.interventionCode,
           benefit.benefitId
         );
-        bts$.subscribe(result => {
-          result.forEach(el => {
+        bts$.subscribe((result) => {
+          result.forEach((el) => {
             if (el.code === benefit.diagnosis) {
-              benefit['diagnosisName'] = el?.name;
+              benefit["diagnosisName"] = el?.name;
             }
           });
         });
@@ -538,6 +544,7 @@ export default function PreAuthReview(props) {
       let obj = { preAuth: data.preAuth };
       memberservice.getMember(pageRequest).subscribe((res) => {
         if (res.content?.length > 0) {
+          console.log(res);
           setMemberData(res.content[0]);
           const member = res.content[0];
           obj.member = member;
@@ -737,6 +744,13 @@ export default function PreAuthReview(props) {
     }
   };
 
+  const handleDecision = () => {
+    let id = preAuthDetails?.preAuth?.benefitsWithCost[0]?.decisionId;
+    memberservice.getDecsion(id).subscribe((res) => {
+      setDecionData(res);
+    });
+    setOpen(true);
+  };
   const handleChangeOfDecitionText = (event) => {
     setCnfText(event.target.value);
   };
@@ -1509,18 +1523,19 @@ export default function PreAuthReview(props) {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <StyledTableRow>
-                <StyledTableCellHeader>Provider Name</StyledTableCellHeader>
+                  <StyledTableCellHeader>Provider Name</StyledTableCellHeader>
                   <StyledTableCellHeader>Benefit Name</StyledTableCellHeader>
                   <StyledTableCellHeader>Intervention</StyledTableCellHeader>
                   <StyledTableCellHeader>Diagnosis</StyledTableCellHeader>
                   <StyledTableCellHeader>Estimated</StyledTableCellHeader>
                   <StyledTableCellHeader>Comment</StyledTableCellHeader>
+                  <StyledTableCellHeader>Decision</StyledTableCellHeader>
                   <StyledTableCellHeader></StyledTableCellHeader>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-              {preAuthDetails?.preAuth?.benefitsWithCost[0].benefitId ? (
-                  preAuthDetails?.preAuth?.benefitsWithCost?.map(row => {
+                {preAuthDetails?.preAuth?.benefitsWithCost[0].benefitId ? (
+                  preAuthDetails?.preAuth?.benefitsWithCost?.map((row) => {
                     let proId = localStorage.getItem("providerId");
                     let poviderName = localStorage.getItem("provider");
                     let value =
@@ -1562,9 +1577,19 @@ export default function PreAuthReview(props) {
                           >
                             {row.diagnosisName}
                           </StyledTableCellRow>
-                          <StyledTableCellRow style={valueStyle}>{row.estimatedCost}</StyledTableCellRow>
-                        <StyledTableCellRow style={valueStyle}>{row.comment || 'NA'}</StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
+                            {row.estimatedCost}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow style={valueStyle}>
+                            {row.comment || "NA"}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow style={valueStyle}>
+                            <CheckCircle
+                              sx={{ color: "green", cursor: "pointer" }}
+                              onClick={handleDecision}
+                            />
+                          </StyledTableCellRow>
+                          {/* <StyledTableCellRow style={valueStyle}>
                             <InputText
                               className="p-inputtext-sm"
                               type="number"
@@ -1595,7 +1620,7 @@ export default function PreAuthReview(props) {
                                 borderRadius: "0",
                               }}
                             />
-                          </StyledTableCellRow>
+                          </StyledTableCellRow> */}
                         </StyledTableRow>
                       );
                     }
@@ -1606,6 +1631,11 @@ export default function PreAuthReview(props) {
               </TableBody>
             </Table>
           </TableContainer>
+          <DialogTable
+            open={open}
+            setOpen={setOpen}
+            data={decionData?.benefitResponseDTO}
+          />
 
           <Grid item xs={12} style={{ marginTop: "1em" }}>
             <span
@@ -1634,9 +1664,9 @@ export default function PreAuthReview(props) {
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <StyledTableCellRow component="th" scope="row">
-                        Approve
+                        --
                       </StyledTableCellRow>
-                      <StyledTableCellRow>90%</StyledTableCellRow>
+                      <StyledTableCellRow>--</StyledTableCellRow>
                     </StyledTableRow>
                   </TableBody>
                 </Table>
@@ -1660,9 +1690,9 @@ export default function PreAuthReview(props) {
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <StyledTableCellRow component="th" scope="row">
-                        Not Fraudulent
+                        --
                       </StyledTableCellRow>
-                      <StyledTableCellRow>90%</StyledTableCellRow>
+                      <StyledTableCellRow>--</StyledTableCellRow>
                     </StyledTableRow>
                   </TableBody>
                 </Table>
