@@ -273,10 +273,15 @@ const PreAuthIPDListComponent = () => {
     // });
 
     const benefitsWithCost = rowData.benefitsWithCost?.map((ben) => {
-      return (
-        <p>{ben.benefitName} | {ben.iname} | {ben.diagnosisName} :<b>{ben.estimatedCost}</b></p>
-      )
-    })
+      if (providerId == ben.providerId) {
+        return (
+          <li>
+            {ben.benefitName} | {ben.iname} | {ben.diagnosisName} :
+            <b>{ben.estimatedCost}</b>
+          </li>
+        );
+      }
+    });
 
     const totalAmount = rowData.benefitsWithCost.reduce(
       (acc, curr) => acc + curr.estimatedCost,
