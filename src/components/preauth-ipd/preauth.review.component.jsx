@@ -16,6 +16,7 @@ import { withStyles } from "@mui/styles";
 import DialogTable from "../eo2v2.dialog";
 import React, { useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import CancelIcon from "@mui/icons-material/Cancel";
 import {
   ClaimService,
   PreAuthService,
@@ -745,11 +746,12 @@ export default function PreAuthReview(props) {
   };
 
   const handleDecision = () => {
+    console.log("working");
     let id = preAuthDetails?.preAuth?.benefitsWithCost[0]?.decisionId;
     memberservice.getDecsion(id).subscribe((res) => {
       setDecionData(res);
     });
-    setOpen(true);
+    // setOpen(true);
   };
   const handleChangeOfDecitionText = (event) => {
     setCnfText(event.target.value);
@@ -758,6 +760,12 @@ export default function PreAuthReview(props) {
   const handleChangeOfCommentText = (event) => {
     setComment(event.target.value);
   };
+
+  useEffect(() => {
+    if (preAuthDetails !== undefined) {
+      handleDecision();
+    }
+  }, [preAuthDetails]);
 
   const showCommentBox = () => {
     if (
@@ -1584,10 +1592,17 @@ export default function PreAuthReview(props) {
                             {row.comment || "NA"}
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
-                            <CheckCircle
-                              sx={{ color: "green", cursor: "pointer" }}
-                              onClick={handleDecision}
-                            />
+                            {decionData?.finalApproval == "APPROVED" ? (
+                              <CheckCircle
+                                sx={{ color: "green", cursor: "pointer" }}
+                                onClick={() => setOpen(true)}
+                              />
+                            ) : (
+                              <CancelIcon
+                                sx={{ color: "red", cursor: "pointer" }}
+                                onClick={() => setOpen(true)}
+                              />
+                            )}
                           </StyledTableCellRow>
                           {/* <StyledTableCellRow style={valueStyle}>
                             <InputText
