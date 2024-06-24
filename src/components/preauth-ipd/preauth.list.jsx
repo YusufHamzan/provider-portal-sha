@@ -227,50 +227,56 @@ const PreAuthIPDListComponent = () => {
     //   );
     // });
 
-    const benefitsWithCost = rowData?.benefitsWithCost?.map((benefit) => {
-      if (providerId == benefit.providerId) {
-        return (
-          // <TreeItem
-          //   itemId={benefit?.providerId}
-          //   label={
-          //     <Typography
-          //       sx={{ fontSize: "12px" }}
-          //     >{`${name}: ${benefit?.estimatedCost}`}</Typography>
-          //   }
-          // >
-          <TreeItem
-            itemId={"_" + Math.random().toString(24).substring(2, 9)}
-            // itemId={benefit?.benefitId}
-            label={
-              <Typography
-                sx={{ fontSize: "12px" }}
-              >{`${benefit?.benefitName}: ${benefit?.estimatedCost}`}</Typography>
-            }
-          >
-            <TreeItem
-              // itemId={benefit?.interventionCode}
-              itemId={"_" + Math.random().toString(24).substring(2, 9)}
-              label={
-                <Typography
-                  sx={{ fontSize: "12px" }}
-                >{`${benefit?.iname}: ${benefit?.estimatedCost}`}</Typography>
-              }
-            >
-              <TreeItem
-                // itemId={benefit?.diagnosis}
-                itemId={"_" + Math.random().toString(24).substring(2, 9)}
-                label={
-                  <Typography
-                    sx={{ fontSize: "12px" }}
-                  >{`${benefit?.diagnosisName}: ${benefit?.estimatedCost}`}</Typography>
-                }
-              ></TreeItem>
-            </TreeItem>
-          </TreeItem>
-          // </TreeItem>
-        );
-      }
-    });
+    // const benefitsWithCost = rowData?.benefitsWithCost?.map((benefit) => {
+    //   if (providerId == benefit.providerId) {
+    //     return (
+    //       // <TreeItem
+    //       //   itemId={benefit?.providerId}
+    //       //   label={
+    //       //     <Typography
+    //       //       sx={{ fontSize: "12px" }}
+    //       //     >{`${name}: ${benefit?.estimatedCost}`}</Typography>
+    //       //   }
+    //       // >
+    //       <TreeItem
+    //         itemId={"_" + Math.random().toString(24).substring(2, 9)}
+    //         // itemId={benefit?.benefitId}
+    //         label={
+    //           <Typography
+    //             sx={{ fontSize: "12px" }}
+    //           >{`${benefit?.benefitName}: ${benefit?.estimatedCost}`}</Typography>
+    //         }
+    //       >
+    //         <TreeItem
+    //           // itemId={benefit?.interventionCode}
+    //           itemId={"_" + Math.random().toString(24).substring(2, 9)}
+    //           label={
+    //             <Typography
+    //               sx={{ fontSize: "12px" }}
+    //             >{`${benefit?.iname}: ${benefit?.estimatedCost}`}</Typography>
+    //           }
+    //         >
+    //           <TreeItem
+    //             // itemId={benefit?.diagnosis}
+    //             itemId={"_" + Math.random().toString(24).substring(2, 9)}
+    //             label={
+    //               <Typography
+    //                 sx={{ fontSize: "12px" }}
+    //               >{`${benefit?.diagnosisName}: ${benefit?.estimatedCost}`}</Typography>
+    //             }
+    //           ></TreeItem>
+    //         </TreeItem>
+    //       </TreeItem>
+    //       // </TreeItem>
+    //     );
+    //   }
+    // });
+
+    const benefitsWithCost = rowData.benefitsWithCost?.map((ben) => {
+      return (
+        <p>{ben.benefitName} | {ben.iname} | {ben.diagnosisName} :{ben.estimatedCost}</p>
+      )
+    })
 
     const totalAmount = rowData.benefitsWithCost.reduce(
       (acc, curr) => acc + curr.estimatedCost,
@@ -278,18 +284,19 @@ const PreAuthIPDListComponent = () => {
     );
 
     return (
-      <SimpleTreeView>
-        <TreeItem
-          itemId={rowData?.id}
-          label={
-            <Typography sx={{ fontSize: "12px" }}>{`${length} ${
-              length === 1 ? "Benefit: " : "Benefits: "
-            } ${totalAmount}`}</Typography>
-          }
-        >
-          {benefitsWithCost}
-        </TreeItem>
-      </SimpleTreeView>
+      // <SimpleTreeView>
+      //   <TreeItem
+      //     itemId={rowData?.id}
+      //     label={
+      //       <Typography sx={{ fontSize: "12px" }}>{`${length} ${
+      //         length === 1 ? "Benefit: " : "Benefits: "
+      //       } ${totalAmount}`}</Typography>
+      //     }
+      //   >
+      //     {benefitsWithCost}
+      //   </TreeItem>
+      // </SimpleTreeView>
+      <p>{benefitsWithCost}</p>
     );
   };
 
@@ -312,7 +319,7 @@ const PreAuthIPDListComponent = () => {
         </span>
       ),
     },
-    { field: "memberShipNo", headerName: "Membership No." },
+    { field: "memberShipNo", headerName: "Membership No.", expand: true },
     {
       field: "memberName",
       headerName: "Name",
@@ -330,7 +337,7 @@ const PreAuthIPDListComponent = () => {
     // },
     {
       field: "benefitWithCost",
-      headerName: "Benefit & Cost",
+      headerName: "Estimated Cost",
       body: renderBenefitWithCost,
     },
     { field: "policyNumber", headerName: "Policy No.", expand: true },
