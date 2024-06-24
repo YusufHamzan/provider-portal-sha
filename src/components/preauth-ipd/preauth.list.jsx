@@ -253,7 +253,7 @@ const PreAuthIPDListComponent = () => {
               label={
                 <Typography
                   sx={{ fontSize: "12px" }}
-                >{`${benefit?.interventionCode}: ${benefit?.estimatedCost}`}</Typography>
+                >{`${benefit?.iname}: ${benefit?.estimatedCost}`}</Typography>
               }
             >
               <TreeItem
@@ -262,7 +262,7 @@ const PreAuthIPDListComponent = () => {
                 label={
                   <Typography
                     sx={{ fontSize: "12px" }}
-                  >{`${benefit?.diagnosis}: ${benefit?.estimatedCost}`}</Typography>
+                  >{`${benefit?.diagnosisName}: ${benefit?.estimatedCost}`}</Typography>
                 }
               ></TreeItem>
             </TreeItem>
