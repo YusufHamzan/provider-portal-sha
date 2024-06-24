@@ -274,7 +274,7 @@ const PreAuthIPDListComponent = () => {
 
     const benefitsWithCost = rowData.benefitsWithCost?.map((ben) => {
       return (
-        <p>{ben.benefitName} | {ben.iname} | {ben.diagnosisName} :{ben.estimatedCost}</p>
+        <p>{ben.benefitName} | {ben.iname} | {ben.diagnosisName} :<b>{ben.estimatedCost}</b></p>
       )
     })
 
