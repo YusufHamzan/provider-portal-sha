@@ -5,7 +5,7 @@ import PreAuthOPDListComponent from "../components/preauth-opd/preauth.list";
 const Preauth = () => {
   return (
     // <h1>Claims</h1>
-    <TabView scrollable style={{ fontSize: '14px' }} >
+    <TabView scrollable style={{ fontSize: "14px" }}>
       <TabPanel leftIcon="pi pi-user mr-2" header="IPD Pre-Auth">
         <PreAuthIPDListComponent />
       </TabPanel>
@@ -13,6 +13,6 @@ const Preauth = () => {
         <PreAuthOPDListComponent />
       </TabPanel>
     </TabView>
-  )
-}
+  );
+};
 export default Preauth;

@@ -57,4 +57,17 @@ export class MemberService {
   getMemberBalance(id: any): Observable<Page<any>> {
     return http.get<Page<any>>(`${this.QUERY_CONTEXT}/balance?membershipNo=${id}`).pipe(map(response => response.data));
   }
+
+  getValidate(payload: any): Observable<Page<any>> {
+    return http.post<Page<any>>(`https://api.eoxegen.com/sha-rule-service/sharules/validate`,  payload ).pipe(
+      map(response => response.data)
+    );
+  }
+
+  getDecsion(id: any): Observable<Page<any>> {
+    return http.get<Page<any>>(`https://api.eoxegen.com/sha-rule-service/sharules/show-decission/${id}` ).pipe(
+      map(response => response.data)
+    );
+  }
+  
 }

@@ -47,6 +47,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import ClaimModal from "./claim.modal.component";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
+import { CheckCircle } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input1: {
@@ -185,6 +186,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [expenseHeadList, setExpenseHeadList] = React.useState();
   const [showViewDetails, setShowViewDetails] = React.useState(false);
   const [serviceSectionHandle, setServiceSectionHandle] = React.useState(false);
+  const [isLoadingValidate, setIsLoadingValidate] = React.useState(false);
+  const [Validated, setValidated] = React.useState(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -298,6 +301,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       codeStandard: "SHA",
       interventionCode: "",
       diagnosis: "",
+      decisionId: "",
     },
   ]);
   // const useObservable = (observable, setter) => {
@@ -500,6 +504,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     });
     setOpenClientModal(false);
   };
+  console.log(memberBasic);
   // set the type of state
   const handleChange = (event) => {
     setSearchType(event.target.value);
@@ -660,6 +665,82 @@ export default function ClaimsPreAuthIPDComponent(props) {
       }
     }
     formik.setFieldValue("dprimaryDiagnosis", selectedBenifits);
+  };
+
+  const handleValidation = () => {
+    if (serviceDetailsList[0]?.benefitId) {
+      setIsLoadingValidate(true);
+      const payload = {
+        id: localStorage.getItem("providerId"),
+        relations: memberBasic?.relations,
+        // employeeId: "EM002",
+        memberId: memberBasic?.memberId,
+        name: memberBasic?.name,
+        dateOfBirth: memberBasic?.dateOfBirth,
+        effectiveDate: null,
+        age: memberBasic?.age,
+        gender: memberBasic?.gender,
+        email: memberBasic?.email,
+        mobileNo: memberBasic?.mobileNo,
+
+        memberAddressLine1: null,
+        memberAddressLine2: null,
+        designation: null,
+        unit: null,
+        department: null,
+        postalCode: null,
+        identificationDocType: "NationalId",
+
+        identificationDocNumber: memberBasic?.nationalDocId,
+        planScheme: memberBasic?.planScheme,
+        membershipNo: memberBasic?.membershipNo,
+        nomineeName: null,
+        nomineeRelation: null,
+        nomineeDob: null,
+        dateOfJoining: null,
+        eftDetails: null,
+        bankName: null,
+        bankBranchCode: null,
+        accountName: null,
+        accountNo: null,
+        ifscCode: null,
+        employeeName: null,
+        // familySize: "M+2",
+        processRequestId: null,
+        // prospectId: "1252833578235994112",
+        // policyId: "1252849020459556864",
+        policyNumber: memberBasic?.policyNumber,
+
+        policyStartDate: memberBasic?.enrolmentFromDate,
+        policyEndDate: memberBasic?.enrolentToDate,
+        planName: memberBasic?.planName,
+
+        productName: memberBasic?.productName,
+        nationalDocType: null,
+        nationalDocId: null,
+        clientType: memberBasic?.clientType,
+        vip: false,
+        political: false,
+        // sourceId: "1252846529265278976",
+        active: true,
+        subbenefitStractureId: serviceDetailsList[0]?.benefitId,
+        interventionCode: serviceDetailsList[0]?.interventionCode,
+        level: 4,
+        individualHousehold: "Individual",
+      };
+
+      memberservice.getValidate(payload).subscribe((res) => {
+        console.log(res);
+        setServiceDetailsList((prevServiceDetailsList) =>
+          prevServiceDetailsList.map((serviceDetails) => ({
+            ...serviceDetails,
+            decisionId: res[0]?.decisionId,
+          }))
+        );
+        setIsLoadingValidate(false);
+        setValidated(true);
+      });
+    }
   };
 
   const handleDiagnosisChange = (e, val) => {
@@ -876,7 +957,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             dateOfBirth: res.content[0].dateOfBirth,
             mobileNo: res.content[0].mobileNo,
             nationalDocId: res.content[0].identificationDocNumber,
-            policyNumber: res.content[0].policyNumber,
+            // policyNumber: res.content[0].policyNumber,
             email: res.content[0].email,
           });
           setShowViewDetails(true);
@@ -926,7 +1007,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       dateOfBirth: data.dateOfBirth,
       mobileNo: data.mobileNo,
       nationalDocId: data.identificationDocNumber,
-      policyNumber: data.policyNumber,
+      // policyNumber: data.policyNumber,
       email: data.email,
     });
     setShowViewDetails(true);
@@ -1240,8 +1321,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleChangeIntervention = (e, index) => {
+    console.log(e);
     const list = [...serviceDetailsList];
-    list[index].interventionCode = e.value ? e.value : "";
+    list[index].interventionCode = e.code ? e.code : "";
     setServiceDetailsList(list);
   };
   const handleChangeDiagnosis = (e, index) => {
@@ -1312,7 +1394,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
               <Autocomplete
                 name="intervention"
                 defaultValue={x.interventionCode ? x.interventionCode : null}
-                value={x.interventionCode ? x.interventionCode : null}
+                value={
+                  x.interventionCode
+                    ? intervention?.find(
+                        (item) => item?.code == x?.interventionCode
+                      )
+                    : null
+                }
                 onChange={(e, val) => {
                   // setServiceSectionHandle(val);
 
@@ -2299,7 +2387,34 @@ export default function ClaimsPreAuthIPDComponent(props) {
               <Button
                 variant="contained"
                 color="primary"
+                type="button"
+                style={{
+                  minWidth: "70px",
+                  border: "none",
+                  textAlign: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                disabled={Validated ? true : false}
+                className={classes.buttonSecondary}
+                onClick={handleValidation}
+              >
+                {isLoadingValidate ? (
+                  <CircularProgress size={"15px"} sx={{ color: "white" }} />
+                ) : Validated ? (
+                  <>
+                    Success
+                    <CheckCircle sx={{ color: "blue", cursor: "pointer" }} />
+                  </>
+                ) : (
+                  "Validate"
+                )}
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
                 type="submit"
+                style={{ marginLeft: "10px" }}
                 className={classes.buttonPrimary}
               >
                 Save and Next
