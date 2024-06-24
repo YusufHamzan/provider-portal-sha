@@ -396,17 +396,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       });
       setIntervention(temp);
     });
-    //   let subscription = observable.subscribe((result) => {
-    //     let arr = [];
-    //     result.content.forEach((ele) => {
-    //       if (!ele.blackListed) {
-    //         arr.push(ele);
-    //       }
-    //     });
-    //     setter(arr);
-    //   });
-    //   return () => subscription.unsubscribe();
-    // }, [observable, setter]);
   };
 
   React.useEffect(() => {
@@ -440,11 +429,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
       acc[el.benefitStructureId] = el.name;
       return acc;
     }, {});
-    console.log(benefitLookup);
     let temp = [];
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
-      console.log(parentBenefitName, ele.name);
       let obj = {
         label: `${
           parentBenefitName != undefined ? `${parentBenefitName} >` : ""
@@ -461,7 +448,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   // useObservable(bts$, setBenefits);
   //useObservable(bts$, setOtherTypeList);
   useObservable1(ps$, setProviderList);
-  useObservable3(ad$, setDiagnosisList);
+  // useObservable3(ad$, setDiagnosisList);
   // useObservable2(serviceAll$, setServiceList);
 
   const handleClose = () => {
@@ -901,22 +888,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       summary: true,
       active: true,
     };
-    let pageRequest11 = {
-      page: 0,
-      size: 10,
-      summary: true,
-      active: true,
-      key: searchType,
-      value: id,
-    };
-    let pageRequest1 = {
-      page: 0,
-      size: 10,
-      summary: true,
-      active: true,
-      name: id,
-    };
-
+    console.log("search", searchType)
     if (searchType === "name") {
       pageRequest.name = id;
     }
@@ -1115,9 +1087,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     if (
       formik.values.contactNoTwo &&
       formik.values.contactNoTwo.toString().length > 10 &&
-      formik.values.contactNoTwo.toString().length < 10
+      formik.values.contactNoTwo.toString().length < 15
     ) {
-      setAlertMsg("Contact Two must be of 10 digits");
+      setAlertMsg("Provide right conact details");
       setOpenSnack(true);
       return;
     }
@@ -1141,9 +1113,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   arr.push(di.id.toString());
     // });
     // payload["diagnosis"] = arr;
-    // let preauthid = localStorage.getItem("preauthid")
-    //   ? localStorage.getItem("preauthid")
-    //   : "";
+    let preauthid = localStorage.getItem("preauthid")
+      ? localStorage.getItem("preauthid")
+      : "";
 
     if (id) {
       // if (preauthid) {
@@ -1321,7 +1293,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleChangeIntervention = (e, index) => {
-    console.log(e);
     const list = [...serviceDetailsList];
     list[index].interventionCode = e.code ? e.code : "";
     setServiceDetailsList(list);
@@ -2067,9 +2038,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
             <Grid
               item
-              xs={12}
-              sm={6}
-              md={4}
+              xs={12} sm={12} md={12}
               style={{ marginTop: "20px", marginBottom: "15px" }}
             >
               <Divider />
@@ -2263,7 +2232,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 SERVICE DETAILS
               </span>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} style={{ marginBottom: "15px" }}>
+            <Grid item xs={12} sm={12} md={12} style={{ marginBottom: "15px" }}>
               <Divider />
             </Grid>
 
@@ -2291,7 +2260,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                                 : undefined
                             }
                             onChange={(e, val) => {
-                              console.log(val);
                               setIntervention([]);
                               getIntervemntions(val);
                               handleBenefitChangeInService(val, i);
@@ -2374,9 +2342,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
             <Grid
               item
-              xs={12}
-              sm={6}
-              md={4}
+              xs={12} sm={12} md={12}
               style={{ marginBottom: "15px", marginTop: "10px" }}
             >
               <Divider />
