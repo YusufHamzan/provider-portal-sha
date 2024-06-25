@@ -12,6 +12,7 @@ export const PRE_AUTH_STATUS_MSG_MAP = {
   REVERTED: "Reverted",
   CLAIM_INITIATED: "Claim Initiated",
   ADD_DOC_SUBMITTED: "Document Submited",
+  PENDING_DOCTOR_APPROVAL:"Pending Doctor Approval"
 };
 
 export const REIM_STATUS_MSG_MAP = {
