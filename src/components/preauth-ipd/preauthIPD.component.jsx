@@ -355,6 +355,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
       return () => subscription.unsubscribe();
     }, [observable, setter]);
   };
+  const handleBenefitSteps = (index) => {
+    const list = [...serviceDetailsList];
+    list[index].diagnosis = null;
+    list[index].estimatedCost = 0;
+    list[index].interventionCode = null;
+    setServiceDetailsList(list);
+  };
 
   const getServiceTypes = () => {
     let serviceTypeService$ = serviceDiagnosis.getServiceTypes();
@@ -381,7 +388,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     });
   };
 
-  const getIntervemntions = (data) => {
+  const getIntervemntions = (data, i) => {
     let bts$ = benefitService.getBenefitInterventions(data.benefitStructureId);
     bts$.subscribe((result) => {
       let temp = [];
@@ -395,6 +402,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         temp.push(obj);
       });
       setIntervention(temp);
+      handleBenefitSteps(i);
     });
   };
 
@@ -402,7 +410,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     getServiceTypes();
   }, []);
 
-  const getServices = (data) => {
+  const getServices = (data, i) => {
     if (data == null) {
       setServiceList([]);
     } else {
@@ -420,6 +428,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           temp.push(obj);
         });
         setServiceList(temp);
+        handleDiagnosisSteps(i);
       });
     }
   };
@@ -655,6 +664,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleValidation = () => {
+    const { code } = serviceDetailsList[0]?.interventionCode;
+    console.log(code);
     if (serviceDetailsList[0]?.benefitId) {
       setIsLoadingValidate(true);
       const payload = {
@@ -711,7 +722,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         // sourceId: "1252846529265278976",
         active: true,
         subbenefitStractureId: serviceDetailsList[0]?.benefitId,
-        interventionCode: serviceDetailsList[0]?.interventionCode,
+        interventionCode: code,
         level: 4,
         individualHousehold: "Individual",
       };
@@ -888,7 +899,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       summary: true,
       active: true,
     };
-    console.log("search", searchType)
+    console.log("search", searchType);
     if (searchType === "name") {
       pageRequest.name = id;
     }
@@ -1094,6 +1105,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
       return;
     }
 
+    const serviceDetailListModify = [...serviceDetailsList];
+    const { value } = serviceDetailListModify[0]?.interventionCode;
+    serviceDetailListModify[0].interventionCode = value;
+
+    const diagnosisValue = serviceDetailListModify[0]?.diagnosis?.value;
+    serviceDetailListModify[0].diagnosis = diagnosisValue;
+
     let payload = {
       preAuthStatus: formik.values.preAuthStatus,
       memberShipNo: memberBasic.membershipNo,
@@ -1292,16 +1310,27 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
+  console.log(serviceDetailsList);
+
   const handleChangeIntervention = (e, index) => {
+    console.log(e);
     const list = [...serviceDetailsList];
-    list[index].interventionCode = e.code ? e.code : "";
+    list[index].interventionCode = e.code ? e : "";
     setServiceDetailsList(list);
   };
   const handleChangeDiagnosis = (e, index) => {
     const list = [...serviceDetailsList];
-    list[index].diagnosis = e.value;
+    list[index].diagnosis = e;
     setServiceDetailsList(list);
   };
+
+  const handleDiagnosisSteps = (index) => {
+    const list = [...serviceDetailsList];
+    list[index].diagnosis = null;
+    list[index].estimatedCost = 0;
+    setServiceDetailsList(list);
+  };
+
   const handleEstimateCostInService = (e, index) => {
     const { name, value } = e.target;
     const isValAlreadyPresent = serviceDetailsList.some(
@@ -1333,6 +1362,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
+  console.log(serviceDetailsList);
   const serviceSection = useMemo(
     () => (x, i) => {
       console.log(x);
@@ -1364,18 +1394,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
             <FormControl className={classes.formControl} fullWidth>
               <Autocomplete
                 name="intervention"
-                defaultValue={x.interventionCode ? x.interventionCode : null}
+                // defaultValue={
+                //   serviceDetailsList[i].interventionCode?.code
+                //     ? serviceDetailsList[i].interventionCode?.label
+                //     : null
+                // }
                 value={
-                  x.interventionCode
-                    ? intervention?.find(
-                        (item) => item?.code == x?.interventionCode
-                      )
+                  serviceDetailsList[i].interventionCode
+                    ? serviceDetailsList[i].interventionCode?.label
                     : null
                 }
                 onChange={(e, val) => {
                   // setServiceSectionHandle(val);
 
-                  getServices(val);
+                  getServices(val, i);
                   handleChangeIntervention(val, i);
                   // setServiceList([]);
                 }}
@@ -1383,11 +1415,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 // filterOptions={autocompleteFilterChange}
                 options={intervention}
                 // options={selectedBenefit}
-                getOptionLabel={(option) =>
-                  option.label ??
-                  intervention.find((benefit) => benefit?.value == option)
-                    ?.label
-                }
+                // getOptionLabel={(option) =>
+                //   option.label ??
+                //   intervention.find((benefit) => benefit?.value == option)
+                //     ?.label
+                // }
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -1415,8 +1447,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
             <FormControl className={classes.formControl} fullWidth>
               <Autocomplete
                 name="diagnosis"
-                defaultValue={x.diagnosis ? x.diagnosis : null}
-                value={x.diagnosis ? x.diagnosis : null}
+                // defaultValue={
+                //   serviceDetailsList[i]?.diagnosis
+                //     ? serviceList?.find(
+                //         (item) =>
+                //           item?.value == serviceDetailsList[i]?.diagnosis
+                //       )
+                //     : null
+                // }
+                // value={x.diagnosis ? x.diagnosis : null}
+                value={
+                  serviceDetailsList[i].diagnosis
+                    ? serviceDetailsList[i].diagnosis?.label
+                    : null
+                }
                 onChange={(e, val) => {
                   // getServices(val);
                   handleChangeDiagnosis(val, i);
@@ -1425,10 +1469,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 // filterOptions={autocompleteFilterChange}
                 options={serviceList}
                 // options={selectedBenefit}
-                getOptionLabel={(option) =>
-                  option.label ??
-                  serviceList.find((benefit) => benefit?.value == option)?.label
-                }
+                // getOptionLabel={(option) =>
+                //   option.label ??
+                //   serviceList.find((benefit) => benefit?.value == option)?.label
+                // }
                 // getOptionSelected={(option, value) =>
                 //   option?.interventionId === value
                 // }
@@ -1462,15 +1506,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     },
     [intervention, serviceList, serviceDetailsList]
   );
-  useEffect(() => {
-    setServiceDetailsList((prevServiceDetailsList) =>
-      prevServiceDetailsList.map((serviceDetails) => ({
-        ...serviceDetails,
-        diagnosis: null,
-        estimatedCost: 0,
-      }))
-    );
-  }, serviceList);
+
   return (
     <>
       <ClaimModal
@@ -2038,7 +2074,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
             <Grid
               item
-              xs={12} sm={12} md={12}
+              xs={12}
+              sm={12}
+              md={12}
               style={{ marginTop: "20px", marginBottom: "15px" }}
             >
               <Divider />
@@ -2261,21 +2299,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             }
                             onChange={(e, val) => {
                               setIntervention([]);
-                              getIntervemntions(val);
+                              getIntervemntions(val, i);
                               handleBenefitChangeInService(val, i);
                               setBenefitId(val.benefitStructureId);
                               handleChangeIntervention("", i);
-                              setServiceDetailsList([
-                                {
-                                  providerId:
-                                    localStorage.getItem("providerId"),
-                                  estimatedCost: 0,
-                                  benefitId: val?.benefitStructureId,
-                                  codeStandard: "SHA",
-                                  interventionCode: null,
-                                  diagnosis: null,
-                                },
-                              ]);
                             }}
                             id="checkboxes-tags-demo"
                             filterOptions={autocompleteFilterChange}
@@ -2342,7 +2369,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
             <Grid
               item
-              xs={12} sm={12} md={12}
+              xs={12}
+              sm={12}
+              md={12}
               style={{ marginBottom: "15px", marginTop: "10px" }}
             >
               <Divider />
