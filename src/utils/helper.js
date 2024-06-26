@@ -13,7 +13,9 @@ export const PRE_AUTH_STATUS_MSG_MAP = {
   CLAIM_INITIATED: "Claim Initiated",
   ADD_DOC_SUBMITTED: "Document Submited",
   PENDING_GATEKEPING_DOCTOR_APPROVAL:"Pending Gatekeeping Doctor Approval",
-  GATEKEPING_DOCTOR_APPROVED:"GateKeeping Doctor Approved"
+  GATEKEPING_DOCTOR_APPROVED:"GateKeeping Doctor Approved",
+  PENDING_SURVEILLANCE:"Pending Surveillance",
+  SURVEILANCE_NOT_NEEDED:"Surveillance not needed"
 };
 
 export const REIM_STATUS_MSG_MAP = {
