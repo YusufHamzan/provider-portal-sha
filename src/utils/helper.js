@@ -15,7 +15,8 @@ export const PRE_AUTH_STATUS_MSG_MAP = {
   PENDING_GATEKEPING_DOCTOR_APPROVAL:"Pending Gatekeeping Doctor Approval",
   GATEKEPING_DOCTOR_APPROVED:"GateKeeping Doctor Approved",
   PENDING_SURVEILLANCE:"Pending Surveillance",
-  SURVEILANCE_NOT_NEEDED:"Surveillance not needed"
+  SURVEILANCE_NOT_NEEDED:"Surveillance not needed",
+  GATEKEPING_DOCTOR_REJECTED:"Gatekeeping Doctorn Rejected"
 };
 
 export const REIM_STATUS_MSG_MAP = {
