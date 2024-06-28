@@ -26,7 +26,7 @@ const BioModal = ({ open, setOpen, matchResult }) => {
             width: 'auto',
             height: '90%',
             bgcolor: 'background.paper',
-            // border: '2px solid #000',
+            borderRadius: '10px',
             boxShadow: 50,
             p: 4,
           }}
