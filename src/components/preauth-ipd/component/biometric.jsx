@@ -226,7 +226,7 @@ const BiometricComponent = ({ matchResult }) => {
             title='aiuniau'
             sx={{ maxWidth: '50%', maxHeight: '50%', borderRadius: '50%' }}
           /> :
-            fingerprintData2?.ErrorCode !== 0 ?
+            fingerprintData2?.ErrorCode === 0 ?
               <Box
                 component="img"
                 src={`data:image/bmp;base64,${fingerprintData2?.BMPBase64}`}
