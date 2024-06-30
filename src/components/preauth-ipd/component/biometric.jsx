@@ -12,7 +12,7 @@ const BiometricComponent = ({ matchResult }) => {
   const [scanninng1, setScanning1] = useState(false)
   const [scanninng2, setScanning2] = useState(false)
   const [matchLoading, setMatchLoading] = useState(false)
-  const [matchData, setMatchData] = useState(false)
+  const [matchData, setMatchData] = useState({})
   const [error, setError] = useState(null);
 
   const callSGIFPGetData = (successCall, failCall) => {
@@ -75,6 +75,7 @@ const BiometricComponent = ({ matchResult }) => {
 
   const scan1Handler = () => {
     setScanning1(true)
+    setMatchData({})
 
     console.log('click 1')
     callSGIFPGetData(
@@ -90,6 +91,7 @@ const BiometricComponent = ({ matchResult }) => {
   }
   const scan2Handler = () => {
     setScanning2(true)
+    setMatchData({})
     console.log('click 2')
     callSGIFPGetData(
       (data) => {
@@ -121,16 +123,16 @@ const BiometricComponent = ({ matchResult }) => {
         if (data.ErrorCode == 0) {
           if (data.MatchingScore >= idQuality) {
             matchResult('Matched')
-            alert("MATCHED ! (" + result.MatchingScore + ")");
+            alert("MATCHED ! (" + data.MatchingScore + ")");
           }
           else {
             matchResult('Not Matched !')
-            alert("NOT MATCHED ! (" + result.MatchingScore + ")");
+            alert("NOT MATCHED ! (" + data.MatchingScore + ")");
 
           }
         }
         else {
-          alert("Error Scanning Fingerprint ErrorCode = " + result.ErrorCode);
+          alert("Error Scanning Fingerprint ErrorCode = " + data.ErrorCode);
         }
         setMatchData(data)
       },
@@ -172,7 +174,7 @@ const BiometricComponent = ({ matchResult }) => {
             <CheckCircleIcon color='success' style={{ fontSize: '44px' }} />
           </Box>
           }
-          <Typography>Fingerprint Data: 1 (Server)</Typography>
+          <Typography>Fingerprint : 1 (Server)</Typography>
           {scanninng1 ? <Box
             component="img"
             src='/icons/Fingerprint Gif.gif'
@@ -185,7 +187,7 @@ const BiometricComponent = ({ matchResult }) => {
                 component="img"
                 src={`data:image/bmp;base64,${fingerprintData1.BMPBase64}`}
                 alt="Fingerprint 1"
-                sx={{ maxWidth: '100%', maxHeight: '100%' }}
+                sx={{ width: '280px', height: '320px', borderRadius: '10px' }}
               /> : `${fingerprintData1?.ErrorCode ? 'Error ' + fingerprintData1?.ErrorCode + ':' : ''} No data`
           }
           <LoadingButton
@@ -216,7 +218,7 @@ const BiometricComponent = ({ matchResult }) => {
           {matchData?.MatchingScore > idQuality && <Box style={{ position: 'absolute', top: -15, right: -15, }}>
             <CheckCircleIcon color='success' style={{ fontSize: '44px' }} />
           </Box>}
-          <Typography>{`Fingerprint Data: 1 (Device: ${fingerprintData2?.Model ? fingerprintData2?.Model : '-'} ) `}</Typography>
+          <Typography>{`Fingerprint : 2 (Device: ${fingerprintData2?.Model ? fingerprintData2?.Model : '-'} ) `}</Typography>
           {scanninng2 ? <Box
             component="img"
             src='/icons/Fingerprint Gif.gif'
@@ -224,12 +226,12 @@ const BiometricComponent = ({ matchResult }) => {
             title='aiuniau'
             sx={{ maxWidth: '50%', maxHeight: '50%' }}
           /> :
-            fingerprintData2?.ErrorCode === 0 ?
+            fingerprintData2?.ErrorCode !== 0 ?
               <Box
                 component="img"
                 src={`data:image/bmp;base64,${fingerprintData2?.BMPBase64}`}
                 alt="Fingerprint 2"
-                sx={{ maxWidth: '100%', maxHeight: '100%' }}
+                sx={{ width: '280px', height: '320px', borderRadius: '10px' }}
               /> : `${fingerprintData2?.ErrorCode ? 'Error ' + fingerprintData2?.ErrorCode + ':' : ''} No data`
           }
           <LoadingButton
