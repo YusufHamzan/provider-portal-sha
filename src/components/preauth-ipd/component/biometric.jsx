@@ -180,7 +180,7 @@ const BiometricComponent = ({ matchResult }) => {
             src='/icons/Fingerprint Gif.gif'
             alt="Fingerprint 1"
             title='aiuniau'
-            sx={{ maxWidth: '50%', maxHeight: '50%', }}
+            sx={{ maxWidth: '50%', maxHeight: '50%', borderRadius: '50%' }}
           /> :
             fingerprintData1?.ErrorCode === 0 ?
               <Box
@@ -224,7 +224,7 @@ const BiometricComponent = ({ matchResult }) => {
             src='/icons/Fingerprint Gif.gif'
             alt="Fingerprint 2"
             title='aiuniau'
-            sx={{ maxWidth: '50%', maxHeight: '50%' }}
+            sx={{ maxWidth: '50%', maxHeight: '50%', borderRadius: '50%' }}
           /> :
             fingerprintData2?.ErrorCode !== 0 ?
               <Box
