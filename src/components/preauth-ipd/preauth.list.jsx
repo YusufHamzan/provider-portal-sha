@@ -343,7 +343,8 @@ const PreAuthIPDListComponent = () => {
     {
       field: "benefitWithCost",
       headerName: "Estimated Cost",
-      body: renderBenefitWithCost,
+      // body: renderBenefitWithCost,
+      body: rowData => <p style={{ width: '250px', whiteSpace: 'break-spaces' }}>{renderBenefitWithCost(rowData)}</p>,
     },
     { field: "policyNumber", headerName: "Policy No.", expand: true },
     { field: "admissionDate", headerName: "Admission Date", expand: true },

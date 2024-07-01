@@ -25,6 +25,7 @@ import {
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Paper,
@@ -47,7 +48,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import ClaimModal from "./claim.modal.component";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
-import { CheckCircle } from "@mui/icons-material";
+import { CheckCircle, Fingerprint } from "@mui/icons-material";
+import BioModal from "./component/bio-modal";
 
 const useStyles = makeStyles((theme) => ({
   input1: {
@@ -188,6 +190,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [serviceSectionHandle, setServiceSectionHandle] = React.useState(false);
   const [isLoadingValidate, setIsLoadingValidate] = React.useState(false);
   const [Validated, setValidated] = React.useState(false);
+  const [biomodalopen, setBioModalopen] = React.useState(false)
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -442,9 +445,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -1363,6 +1365,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
   };
   console.log(serviceDetailsList);
+  const matchResult = (result) => {
+    // setMacthResult(result) //string 
+    console.log('parent match result ', result)
+  }
+
   const serviceSection = useMemo(
     () => (x, i) => {
       console.log(x);
@@ -1653,7 +1660,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       "Search"
                     )}
                   </Button>
-
                   {/* Dialog component goes here */}
                   {openClientModal && (
                     <Dialog
@@ -1666,7 +1672,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                       <DialogContent>
                         {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                          memberName?.res?.content?.length > 0 ? (
                           <TableContainer>
                             <Table>
                               <TableHead>
@@ -1716,6 +1722,16 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   )}
                 </Grid>
               )}
+              {
+                <BioModal matchResult={matchResult} open={biomodalopen} setOpen={setBioModalopen} />
+              }
+              {
+                <Grid item style={{ display: "flex" }}>
+                  <IconButton onClick={() => setBioModalopen(true)} size="large" aria-label="fingerprint" color="primary">
+                    <Fingerprint />
+                  </IconButton>
+                </Grid>
+              }
             </Grid>
 
             <Grid container spacing={3} style={{ marginBottom: "20px" }}>
