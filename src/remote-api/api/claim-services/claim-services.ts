@@ -159,4 +159,10 @@ export class ClaimService {
       .get<Page<any>>(`${this.QUERY_CONTEXT}/audits`, { params: pageRequest })
       .pipe(map((response) => response.data));
   }
+
+  getAllDashboardCount(id: any): Observable<Page<Reimbursement>> {
+    return http
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/integration/preauths/claim-dashboard-count/${id}`)
+      .pipe(map((response) => response.data));
+  }
 }

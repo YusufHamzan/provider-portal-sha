@@ -2411,6 +2411,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 type="submit"
                 style={{ marginLeft: "10px" }}
                 className={classes.buttonPrimary}
+                disabled={Validated ? false : true}
               >
                 Save and Next
               </Button>

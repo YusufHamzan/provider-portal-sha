@@ -40,6 +40,7 @@ export default function DialogTable({ open, setOpen, data }) {
   };
 
   const displayKeys = [
+    "finalApproval",
     "healthFacilityCategory",
     "gender",
     "age",
@@ -51,6 +52,9 @@ export default function DialogTable({ open, setOpen, data }) {
     "phcfund",
     "shiffund",
     "eccfund",
+    "decisionId",
+    "interventionCode",
+    "subbenefitId",
   ];
 
   const tableCellStyle = {
@@ -101,7 +105,7 @@ export default function DialogTable({ open, setOpen, data }) {
                             : null
                         }
                       >
-                        {row[key]}
+                        {row[key] || row[key] == 0 ? row[key] : "NA"}
                       </TableCell>
                     ))}
                   </TableRow>

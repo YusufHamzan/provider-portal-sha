@@ -35,7 +35,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import DocumentPreview from "./component/preview.thumbnail";
 import { CreditClaimService } from "../../remote-api/api/claim-services/credit-claim-services";
-import { CheckCircle } from "@mui/icons-material";
+import { CheckCircle, PresentToAll } from "@mui/icons-material";
 
 const style = {
   position: "absolute",
@@ -746,8 +746,8 @@ export default function PreAuthReview(props) {
   };
 
   const handleDecision = () => {
-    console.log("working");
     let id = preAuthDetails?.preAuth?.benefitsWithCost[0]?.decisionId;
+    console.log(id);
     memberservice.getDecsion(id).subscribe((res) => {
       setDecionData(res);
     });
@@ -1537,8 +1537,10 @@ export default function PreAuthReview(props) {
                   <StyledTableCellHeader>Diagnosis</StyledTableCellHeader>
                   <StyledTableCellHeader>Estimated</StyledTableCellHeader>
                   <StyledTableCellHeader>Comment</StyledTableCellHeader>
+                  <StyledTableCellHeader>Tarrif</StyledTableCellHeader>
+
                   <StyledTableCellHeader>Decision</StyledTableCellHeader>
-                  <StyledTableCellHeader></StyledTableCellHeader>
+                  {/* <StyledTableCellHeader></StyledTableCellHeader> */}
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -1590,6 +1592,9 @@ export default function PreAuthReview(props) {
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
                             {row.comment || "NA"}
+                          </StyledTableCellRow>
+                          <StyledTableCellRow style={valueStyle}>
+                            {decionData?.benefitResponseDTO[0]?.tariffs || "NA"}
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
                             {decionData?.finalApproval == "APPROVED" ? (
