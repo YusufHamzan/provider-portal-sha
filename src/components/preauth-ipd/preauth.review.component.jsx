@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import DialogTable from "../eo2v2.dialog";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
@@ -146,6 +146,7 @@ export default function PreAuthReview(props) {
   const [serviceDetails, setServiceDetails] = React.useState([]);
   const [memberData, setMemberData] = React.useState();
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const [indexD, setIndex] = React.useState(0);
   const query = useQuery();
   const type = query.get("type");
 
@@ -745,14 +746,17 @@ export default function PreAuthReview(props) {
     }
   };
 
-  const handleDecision = () => {
-    let id = preAuthDetails?.preAuth?.benefitsWithCost[0]?.decisionId;
+  const handleDecision = (id) => {
+    // let id = preAuthDetails?.preAuth?.benefitsWithCost[0]?.decisionId;
     console.log(id);
     memberservice.getDecsion(id).subscribe((res) => {
-      setDecionData(res);
+      let arr = decionData;
+      arr.push([res.benefitResponseDTO[0]]);
+      setDecionData(arr);
     });
     // setOpen(true);
   };
+  console.log(decionData);
   const handleChangeOfDecitionText = (event) => {
     setCnfText(event.target.value);
   };
@@ -763,10 +767,13 @@ export default function PreAuthReview(props) {
 
   useEffect(() => {
     if (preAuthDetails !== undefined) {
-      handleDecision();
+      preAuthDetails?.preAuth?.benefitsWithCost.forEach((item) => {
+        handleDecision(item?.decisionId);
+      });
     }
   }, [preAuthDetails]);
 
+  console.table(preAuthDetails);
   const showCommentBox = () => {
     if (
       preAuthDetails?.preAuth?.preAuthStatus == "EVALUATION_INPROGRESS" ||
@@ -1382,11 +1389,9 @@ export default function PreAuthReview(props) {
               </TableBody>
             </Table>
           </TableContainer> */}
-
           <Grid item xs={12} style={{ marginTop: "1em" }}>
             {/* <span style={{ color: '#313c96', fontWeight: 'bold', fontSize: '13px' }}>Providers: </span> */}
           </Grid>
-
           {/* <TableContainer component={Paper} style={{ borderRadius: "8px" }}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
@@ -1526,7 +1531,6 @@ export default function PreAuthReview(props) {
               Service Details:{" "}
             </span>
           </Grid>
-
           <TableContainer component={Paper} style={{ borderRadius: "8px" }}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
@@ -1545,7 +1549,7 @@ export default function PreAuthReview(props) {
               </TableHead>
               <TableBody>
                 {preAuthDetails?.preAuth?.benefitsWithCost[0].benefitId ? (
-                  preAuthDetails?.preAuth?.benefitsWithCost?.map((row) => {
+                  preAuthDetails?.preAuth?.benefitsWithCost?.map((row, i) => {
                     let proId = localStorage.getItem("providerId");
                     let poviderName = localStorage.getItem("provider");
                     let value =
@@ -1594,18 +1598,25 @@ export default function PreAuthReview(props) {
                             {row.comment || "NA"}
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
-                            {decionData?.benefitResponseDTO[0]?.tariffs || "NA"}
+                            {row?.tariffs || "NA"}
                           </StyledTableCellRow>
+                          {console.log(decionData)}
                           <StyledTableCellRow style={valueStyle}>
-                            {decionData?.finalApproval == "APPROVED" ? (
+                            {decionData[i][i]?.finalApproval == "APPROVED" ? (
                               <CheckCircle
                                 sx={{ color: "green", cursor: "pointer" }}
-                                onClick={() => setOpen(true)}
+                                onClick={() => {
+                                  setOpen(true);
+                                  setIndex(i);
+                                }}
                               />
                             ) : (
                               <CancelIcon
                                 sx={{ color: "red", cursor: "pointer" }}
-                                onClick={() => setOpen(true)}
+                                onClick={() => {
+                                  setOpen(true);
+                                  setIndex(i);
+                                }}
                               />
                             )}
                           </StyledTableCellRow>
@@ -1651,12 +1662,18 @@ export default function PreAuthReview(props) {
               </TableBody>
             </Table>
           </TableContainer>
-          <DialogTable
+          {/* <DialogTable
             open={open}
             setOpen={setOpen}
             data={decionData?.benefitResponseDTO}
+          /> */}
+          {console.log(decionData[indexD])}
+          <DialogTable
+            open={open}
+            setOpen={setOpen}
+            data={decionData[indexD]}
+            finalApproval={decionData[indexD]}
           />
-
           <Grid item xs={12} style={{ marginTop: "1em" }}>
             <span
               style={{ color: "#313c96", fontWeight: "bold", fontSize: "13px" }}
@@ -1664,7 +1681,6 @@ export default function PreAuthReview(props) {
               AI Model Prediction
             </span>
           </Grid>
-
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TableContainer component={Paper} style={{ borderRadius: "8px" }}>
@@ -1719,7 +1735,6 @@ export default function PreAuthReview(props) {
               </TableContainer>
             </Grid>
           </Grid>
-
           <Grid item xs={12}></Grid>
         </div>
       </>

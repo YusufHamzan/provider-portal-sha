@@ -29,6 +29,7 @@ function App() {
       access_details.push(...filteredArray);
     }
     const decode = jwtDecode(tokens.token);
+    console.log(decode);
     localStorage.setItem("token", tokens.token);
     localStorage.setItem("providerId", decode.providerId);
     localStorage.setItem("provider", decode.name);

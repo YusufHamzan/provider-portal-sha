@@ -76,4 +76,10 @@ export class ProvidersService {
 			  })
 			.pipe(map((response) => response.data));
 	}
+
+	getProviderDetailsAll(id: any): Observable<Page<Provider>> {
+		return http
+			.get<Page<Provider>>(`${this.QUERY_CONTEXT}/${id}`)
+			.pipe(map((response) => response.data));
+	}
 }
