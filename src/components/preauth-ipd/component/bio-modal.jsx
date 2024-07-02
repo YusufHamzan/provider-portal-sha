@@ -33,6 +33,7 @@ const BioModal = ({ open, setOpen, matchResult }) => {
         >
           <IconButton onClick={handleClose} sx={{ mt: 2, float: 'right' }}><ClearIcon /></IconButton>
           <BiometricComponent matchResult={matchResult} />
+          <Typography sx={{ fontSize: '10px' }}>Another way of verification</Typography>
         </Box>
       </Modal>
     </div>

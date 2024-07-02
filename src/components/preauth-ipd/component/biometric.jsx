@@ -162,8 +162,8 @@ const BiometricComponent = ({ matchResult }) => {
             position: 'relative',
             borderRadius: '10px',
             p: 2,
-            width: { xs: '100%', sm: '320px' },
-            height: '420px',
+            width: { xs: '100%', sm: '280px' },
+            height: '380px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -182,12 +182,13 @@ const BiometricComponent = ({ matchResult }) => {
             title='aiuniau'
             sx={{ maxWidth: '50%', maxHeight: '50%', borderRadius: '50%' }}
           /> :
-            fingerprintData1?.ErrorCode === 0 ?
+            fingerprintData1?.ErrorCode !== 0 ?
               <Box
                 component="img"
-                src={`data:image/bmp;base64,${fingerprintData1.BMPBase64}`}
+                // src={`data:image/bmp;base64,${fingerprintData1.BMPBase64}`}
+                src={`https://artatmacarthur.weebly.com/uploads/1/3/2/3/13232743/6266845_orig.jpg`}
                 alt="Fingerprint 1"
-                sx={{ width: '280px', height: '320px', borderRadius: '10px' }}
+                sx={{ width: '240px', height: '280px', borderRadius: '10px', border: '1px solid grey' }}
               /> : `${fingerprintData1?.ErrorCode ? 'Error ' + fingerprintData1?.ErrorCode + ':' : ''} No data`
           }
           <LoadingButton
@@ -196,7 +197,8 @@ const BiometricComponent = ({ matchResult }) => {
             loading={scanninng1}
             loadingPosition="end"
             variant="outlined"
-            sx={{ mt: 2 }}
+            size='small'
+            sx={{ mt: 2, fontSize: '12px' }}
           >
             <span>Scan</span>
           </LoadingButton>
@@ -207,8 +209,8 @@ const BiometricComponent = ({ matchResult }) => {
             position: 'relative',
             borderRadius: '10px',
             p: 2,
-            width: { xs: '100%', sm: '320px' },
-            height: '420px',
+            width: { xs: '100%', sm: '280px' },
+            height: '380px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -231,7 +233,7 @@ const BiometricComponent = ({ matchResult }) => {
                 component="img"
                 src={`data:image/bmp;base64,${fingerprintData2?.BMPBase64}`}
                 alt="Fingerprint 2"
-                sx={{ width: '280px', height: '320px', borderRadius: '10px' }}
+                sx={{ width: '240px', height: '280px', borderRadius: '10px', border: '1px solid grey' }}
               /> : `${fingerprintData2?.ErrorCode ? 'Error ' + fingerprintData2?.ErrorCode + ':' : ''} No data`
           }
           <LoadingButton
@@ -240,7 +242,8 @@ const BiometricComponent = ({ matchResult }) => {
             loading={scanninng2}
             loadingPosition="end"
             variant="outlined"
-            sx={{ mt: 2 }}
+            size='small'
+            sx={{ mt: 2, fontSize: '12px' }}
           >
             <span>Scan</span>
           </LoadingButton>
@@ -254,6 +257,8 @@ const BiometricComponent = ({ matchResult }) => {
           loadingPosition="end"
           variant="contained"
           color='secondary'
+          size='small'
+          sx={{ mt: 2, fontSize: '12px' }}
         >
           <span>Match Biometric</span>
         </LoadingButton>
