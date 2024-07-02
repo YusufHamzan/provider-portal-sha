@@ -1,38 +1,35 @@
-import PropTypes from 'prop-types';
-
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import { styled, useTheme } from '@mui/material/styles';
-
-
-import Chart, { useChart } from './../../components/chart';
-import { fNumber } from '../../utils/dates';
-
-// ----------------------------------------------------------------------
+import PropTypes from "prop-types";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import { styled, useTheme } from "@mui/material/styles";
+import Chart, { useChart } from "./../../components/chart";
+import { fNumber } from "../../utils/dates";
 
 const CHART_HEIGHT = 400;
-
 const LEGEND_HEIGHT = 72;
 
 const StyledChart = styled(Chart)(({ theme }) => ({
   height: CHART_HEIGHT,
-  '& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject': {
+  "& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject": {
     height: `100% !important`,
   },
-  '& .apexcharts-legend': {
+  "& .apexcharts-legend": {
     height: LEGEND_HEIGHT,
     borderTop: `dashed 1px ${theme.palette.divider}`,
     top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
   },
 }));
 
-// ----------------------------------------------------------------------
-
-export default function AppCurrentVisits({ title, subheader, chart, ...other }) {
+export default function AppCurrentVisits({
+  title,
+  subheader,
+  chart,
+  subValue,
+  ...other
+}) {
   const theme = useTheme();
 
   const { colors, series, options } = chart;
-
   const chartSeries = series.map((i) => i.value);
 
   const chartOptions = useChart({
@@ -48,8 +45,8 @@ export default function AppCurrentVisits({ title, subheader, chart, ...other }) 
     },
     legend: {
       floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
+      position: "bottom",
+      horizontalAlign: "center",
     },
     dataLabels: {
       enabled: true,
@@ -64,6 +61,18 @@ export default function AppCurrentVisits({ title, subheader, chart, ...other }) 
         title: {
           formatter: (seriesName) => `${seriesName}`,
         },
+      },
+      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+        // const title = w.globals.labels[dataPointIndex];
+        // const value = series[seriesIndex][dataPointIndex];
+        // console.log(title, value);
+        let tooltipContent = `<div class="apexcharts-tooltip-title"> Total</div>`;
+
+        if (subValue && subValue.length > seriesIndex) {
+          tooltipContent += `<div class="apexcharts-tooltip-subvalue">${subValue[seriesIndex]}</div>`;
+        }
+
+        return tooltipContent;
       },
     },
     plotOptions: {
@@ -95,7 +104,17 @@ export default function AppCurrentVisits({ title, subheader, chart, ...other }) 
 }
 
 AppCurrentVisits.propTypes = {
-  chart: PropTypes.object,
-  subheader: PropTypes.string,
-  title: PropTypes.string,
+  chart: PropTypes.shape({
+    colors: PropTypes.array,
+    series: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        value: PropTypes.number,
+      })
+    ),
+    options: PropTypes.object,
+  }),
+  subheader: PropTypes.string, // Ensure subheader is defined as a string
+  title: PropTypes.string.isRequired, // Make sure title is required if it's necessary
+  subValue: PropTypes.arrayOf(PropTypes.string),
 };

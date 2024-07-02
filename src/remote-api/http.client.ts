@@ -11,6 +11,13 @@ export class HttpClient {
 		const requestHandler = (request: any) => {
 			let token: any =
 				(window as any)['getToken'] && (window as any)['getToken']();
+				if(request.url.slice(0,58) == 'https://api.eoxegen.com/sha-rule-service/sharules/validate' || request.url.slice(0,40) == 'https://api.eoxegen.com/sha-rule-service'){
+					const obj = {
+					  Accept: "application/json, text/plain, */*"
+					}
+					request.headers = obj;
+					return request;
+				  }
 			if (token) {
 				request.headers.Authorization = `Bearer ${token}`;
 			}
