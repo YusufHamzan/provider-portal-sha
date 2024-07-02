@@ -883,6 +883,16 @@ export default function PreAuthReview(props) {
             <Grid item xs={12} sm={6}>
               <Grid container spacing={0.5}>
                 <Grid item xs={4} style={keyStyle}>
+                  <span>Gender: </span>
+                </Grid>
+                <Grid item xs={8} style={valueStyle}>
+                  <span>{memberData?.gender}</span>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Grid container spacing={0.5}>
+                <Grid item xs={4} style={keyStyle}>
                   <span>Relations: </span>
                 </Grid>
                 <Grid item xs={8} style={valueStyle}>
