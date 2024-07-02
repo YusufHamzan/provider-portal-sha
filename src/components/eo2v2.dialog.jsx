@@ -13,6 +13,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
+// import { Button, Dialog, DialogActions, DialogContent, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
   tableContainer: {
@@ -31,14 +32,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function DialogTable({ open, setOpen, data }) {
+export default function DialogTable({ open, setOpen, data, finalApproval }) {
   const classes = useStyles();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const handleClose = () => {
     setOpen(false);
   };
-
+  console.log(finalApproval[0]?.finalApproval);
   const displayKeys = [
     "healthFacilityCategory",
     "gender",
@@ -51,6 +52,8 @@ export default function DialogTable({ open, setOpen, data }) {
     "phcfund",
     "shiffund",
     "eccfund",
+    "interventionCode",
+    "subbenefitId",
   ];
 
   const tableCellStyle = {
@@ -80,32 +83,53 @@ export default function DialogTable({ open, setOpen, data }) {
             className={`${classes.tableContainer} table-container`}
           >
             <Table sx={{ minWidth: 350 }} aria-label="simple table">
-              <TableHead>
-                <h2 style={{ margin: "0px 10px" }}>Decision Details</h2>
+              <TableHead style={{ color: "#A1A1A1", marginBottom: "15px" }}>
+                <div>
+                  <h2 style={{ margin: "0px 10px" }}>Decision Details</h2>
+                  <h3
+                    style={{
+                      backgroundColor:
+                        finalApproval == "APPROVED" ? "#01de74" : "red",
+                      width: "100px",
+                      textAlign: "center",
+                      borderRadius: "0px 3px 3px 0px",
+                      padding: "2px",
+                      color: "white",
+                    }}
+                  >
+                    {finalApproval[0]?.finalApproval}
+                  </h3>
+                </div>
+                <h4 style={{ margin: "7px" }}>
+                  DecisionID:- {data?.length > 0 ? data[0]?.decisionId : "NA"}{" "}
+                </h4>
               </TableHead>
+              {/* <Divider/> */}
               <TableBody>
-                {displayKeys?.map((key, index) => (
-                  <TableRow key={index}>
-                    <TableCell component="th" scope="row" sx={tableCellStyle}>
-                      {capitalizeFirstLetter(key)}
-                    </TableCell>
-                    {data?.map((row, rowIndex) => (
-                      <TableCell
-                        key={rowIndex}
-                        align="center"
-                        sx={
-                          row[key] === "PASS"
-                            ? { color: "green" }
-                            : row[key] === "FAIL"
-                            ? { color: "red" }
-                            : null
-                        }
-                      >
-                        {row[key]}
+                {displayKeys.length &&
+                  displayKeys?.map((key, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row" sx={tableCellStyle}>
+                        {capitalizeFirstLetter(key)}
                       </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
+                      {data?.length &&
+                        data?.map((row, rowIndex) => (
+                          <TableCell
+                            key={rowIndex}
+                            align="center"
+                            style={
+                              row[key] === "PASS"
+                                ? { color: "green" }
+                                : row[key] === "FAIL"
+                                ? { color: "red" }
+                                : null
+                            }
+                          >
+                            {row[key] || row[key] == 0 ? row[key] : "NA"}
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

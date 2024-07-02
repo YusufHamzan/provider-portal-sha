@@ -10,7 +10,8 @@ import { ProvidersService } from "../../remote-api/api/provider-services";
 import { ServiceTypeService } from "../../remote-api/api/master-services/service-type-service";
 import { PreAuthService } from "../../remote-api/api/claim-services/preauth-services";
 import { MemberService } from "../../remote-api/api/member-services";
-import { BehaviorSubject, forkJoin } from "rxjs";
+import { BehaviorSubject, forkJoin, from, lastValueFrom } from "rxjs";
+import { map } from "rxjs/operators";
 import {
   Alert,
   Autocomplete,
@@ -50,6 +51,7 @@ import ClaimModal from "./claim.modal.component";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import { CheckCircle, Fingerprint } from "@mui/icons-material";
 import BioModal from "./component/bio-modal";
+import { validate } from "numeral";
 
 const useStyles = makeStyles((theme) => ({
   input1: {
@@ -190,7 +192,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [serviceSectionHandle, setServiceSectionHandle] = React.useState(false);
   const [isLoadingValidate, setIsLoadingValidate] = React.useState(false);
   const [Validated, setValidated] = React.useState(false);
-  const [biomodalopen, setBioModalopen] = React.useState(false)
+  const [biomodalopen, setBioModalopen] = React.useState(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -445,8 +447,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -665,81 +668,98 @@ export default function ClaimsPreAuthIPDComponent(props) {
     formik.setFieldValue("dprimaryDiagnosis", selectedBenifits);
   };
 
-  const handleValidation = () => {
-    const { code } = serviceDetailsList[0]?.interventionCode;
-    console.log(code);
-    if (serviceDetailsList[0]?.benefitId) {
-      setIsLoadingValidate(true);
-      const payload = {
-        id: localStorage.getItem("providerId"),
-        relations: memberBasic?.relations,
-        // employeeId: "EM002",
-        memberId: memberBasic?.memberId,
-        name: memberBasic?.name,
-        dateOfBirth: memberBasic?.dateOfBirth,
-        effectiveDate: null,
-        age: memberBasic?.age,
-        gender: memberBasic?.gender,
-        email: memberBasic?.email,
-        mobileNo: memberBasic?.mobileNo,
+  const handleValidation = (code, benefitID) => {
+    const payload = {
+      id: localStorage.getItem("providerId"),
+      relations: memberBasic?.relations,
+      memberId: memberBasic?.memberId,
+      name: memberBasic?.name,
+      dateOfBirth: memberBasic?.dateOfBirth,
+      effectiveDate: null,
+      age: memberBasic?.age,
+      gender: memberBasic?.gender,
+      email: memberBasic?.email,
+      mobileNo: memberBasic?.mobileNo,
+      memberAddressLine1: null,
+      memberAddressLine2: null,
+      designation: null,
+      unit: null,
+      department: null,
+      postalCode: null,
+      identificationDocType: "NationalId",
+      identificationDocNumber: memberBasic?.nationalDocId,
+      planScheme: memberBasic?.planScheme,
+      membershipNo: memberBasic?.membershipNo,
+      nomineeName: null,
+      nomineeRelation: null,
+      nomineeDob: null,
+      dateOfJoining: null,
+      eftDetails: null,
+      bankName: null,
+      bankBranchCode: null,
+      accountName: null,
+      accountNo: null,
+      ifscCode: null,
+      employeeName: null,
+      processRequestId: null,
+      policyNumber: memberBasic?.policyNumber,
+      policyStartDate: memberBasic?.enrolmentFromDate,
+      policyEndDate: memberBasic?.enrolentToDate,
+      planName: memberBasic?.planName,
+      productName: memberBasic?.productName,
+      nationalDocType: null,
+      nationalDocId: null,
+      clientType: memberBasic?.clientType,
+      vip: false,
+      political: false,
+      active: true,
+      subbenefitStractureId: benefitID,
+      interventionCode: code,
+      level: localStorage.getItem("levelID"),
+      individualHousehold: "Individual",
+    };
 
-        memberAddressLine1: null,
-        memberAddressLine2: null,
-        designation: null,
-        unit: null,
-        department: null,
-        postalCode: null,
-        identificationDocType: "NationalId",
+    return lastValueFrom(
+      memberservice.getValidate(payload).pipe(map((res) => res[0]?.decisionId))
+    );
+  };
 
-        identificationDocNumber: memberBasic?.nationalDocId,
-        planScheme: memberBasic?.planScheme,
-        membershipNo: memberBasic?.membershipNo,
-        nomineeName: null,
-        nomineeRelation: null,
-        nomineeDob: null,
-        dateOfJoining: null,
-        eftDetails: null,
-        bankName: null,
-        bankBranchCode: null,
-        accountName: null,
-        accountNo: null,
-        ifscCode: null,
-        employeeName: null,
-        // familySize: "M+2",
-        processRequestId: null,
-        // prospectId: "1252833578235994112",
-        // policyId: "1252849020459556864",
-        policyNumber: memberBasic?.policyNumber,
+  const handleMultipleValid = async () => {
+    setIsLoadingValidate(true);
+    const promises = serviceDetailsList.map((obj) => {
+      if (obj?.interventionCode) {
+        let { code } = obj.interventionCode;
+        return handleValidation(code, obj?.benefitId);
+      }
+    });
 
-        policyStartDate: memberBasic?.enrolmentFromDate,
-        policyEndDate: memberBasic?.enrolentToDate,
-        planName: memberBasic?.planName,
+    if (serviceDetailsList[0]?.interventionCode) {
+      try {
+        const results = await Promise.all(promises);
+        // Handle the results
+        console.log(results);
+        let listServiceDetails = serviceDetailsList.map((item, index) => {
+          return {
+            ...item,
+            decisionId: results[index],
+          };
+        });
 
-        productName: memberBasic?.productName,
-        nationalDocType: null,
-        nationalDocId: null,
-        clientType: memberBasic?.clientType,
-        vip: false,
-        political: false,
-        // sourceId: "1252846529265278976",
-        active: true,
-        subbenefitStractureId: serviceDetailsList[0]?.benefitId,
-        interventionCode: code,
-        level: 4,
-        individualHousehold: "Individual",
-      };
-
-      memberservice.getValidate(payload).subscribe((res) => {
-        console.log(res);
-        setServiceDetailsList((prevServiceDetailsList) =>
-          prevServiceDetailsList.map((serviceDetails) => ({
-            ...serviceDetails,
-            decisionId: res[0]?.decisionId,
-          }))
-        );
+        setServiceDetailsList(listServiceDetails);
         setIsLoadingValidate(false);
         setValidated(true);
-      });
+
+        console.log(listServiceDetails);
+        setIsLoadingValidate(false);
+      } catch (error) {
+        console.error(error);
+        setIsLoadingValidate(false);
+        setValidated(false);
+      }
+    } else {
+      setTimeout(() => {
+        setIsLoadingValidate(false);
+      }, 2000);
     }
   };
 
@@ -913,6 +933,22 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.value = id;
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
+
+    providerService
+      .getProviderDetailsAll(localStorage.getItem("providerId"))
+      .subscribe((res) => {
+        const response = res?.providerCategoryHistorys;
+
+        const level = response
+          ?.map((item) => {
+            if (item?.endDate == null) {
+              return item?.categoryName;
+            }
+            return null;
+          })
+          ?.filter((value) => value);
+        localStorage.setItem("levelID", level[0]);
+      });
 
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
@@ -1114,6 +1150,21 @@ export default function ClaimsPreAuthIPDComponent(props) {
     const diagnosisValue = serviceDetailListModify[0]?.diagnosis?.value;
     serviceDetailListModify[0].diagnosis = diagnosisValue;
 
+    let serviceDetailListModify2 = serviceDetailsList.map((item) => {
+      if (
+        typeof item?.diagnosis === "object" &&
+        typeof item?.interventionCode === "object"
+      ) {
+        return {
+          ...item,
+          diagnosis: item?.diagnosis?.value,
+          interventionCode: item?.interventionCode?.value,
+        };
+      }
+      return item;
+    });
+
+    console.log(serviceDetailListModify2);
     let payload = {
       preAuthStatus: formik.values.preAuthStatus,
       memberShipNo: memberBasic.membershipNo,
@@ -1123,7 +1174,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       contactNoOne: formik.values.contactNoOne.toString(),
       contactNoTwo: formik.values.contactNoTwo.toString(),
       referalTicketRequired: formik.values.referalTicketRequired,
-      benefitsWithCost: serviceDetailsList,
+      benefitsWithCost: serviceDetailListModify2,
       // providers: providerDetailsList,
       // services: serviceDetailsList,
       preAuthType: "IPD",
@@ -1248,35 +1299,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const observable = s.asObservable();
 
-  const doSearch = (e) => {
-    const txt = e.target.value;
-    // observable
-    //   .pipe(
-    //     filter(searchTerm => txt && txt.length > 2),
-    //     debounceTime(500),
-    //     distinctUntilChanged(),
-    //     switchMap(searchKey => {
-    //       return prospectDataSource$({ searchKey: txt, page: 0, size: 10 });
-    //     }),
-    //   )
-    //   .subscribe(res => {
-    //     if (res?.content?.length) {
-    //       this.setState({ searchResult: res.content });
-    //     }
-    //   });
-  };
-
-  const doSelectValue = (e, newValue) => {
-    if (newValue && newValue.id) {
-      const selectedDiagnosis = diagnosisList.filter(
-        (item) => item.id === newValue?.id
-      );
-      if (selectedDiagnosis.length > 0) {
-        setSelectedId(selectedDiagnosis[0]);
-        setSelectedSpecId(selectedDiagnosis[0]?.id);
-      }
-    }
-  };
+  // const doSelectValue = (e, newValue) => {
+  //   if (newValue && newValue.id) {
+  //     const selectedDiagnosis = diagnosisList.filter(
+  //       (item) => item.id === newValue?.id
+  //     );
+  //     if (selectedDiagnosis.length > 0) {
+  //       setSelectedId(selectedDiagnosis[0]);
+  //       setSelectedSpecId(selectedDiagnosis[0]?.id);
+  //     }
+  //   }
+  // };
   useEffect(() => {
     if (formik.values && formik.values.primaryDigonesisId) {
       const selectedDiagnosis = diagnosisList.filter(
@@ -1366,9 +1399,40 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
   console.log(serviceDetailsList);
   const matchResult = (result) => {
-    // setMacthResult(result) //string 
-    console.log('parent match result ', result)
-  }
+    // setMacthResult(result) //string
+    console.log("parent match result ", result);
+  };
+
+  const handleInterventionValidation = (val, i) => {
+    const serviceDetailsListValid = serviceDetailsList
+      .map((data, index) => {
+        if (
+          data?.benefitId == benefitId &&
+          index < serviceDetailsList?.length - 1
+        ) {
+          return data?.interventionCode?.value;
+        }
+        return null;
+      })
+      ?.filter((value) => value);
+
+    if (serviceDetailsListValid?.length > 0) {
+      const serviceDetailsListIntValid = serviceDetailsListValid.some(
+        (data) => {
+          console.log(data, val);
+          return data == val?.value;
+        }
+      );
+
+      console.log(serviceDetailsListIntValid);
+      if (serviceDetailsListIntValid) {
+        throw new Error("Intervention Should Be Different !!");
+      }
+    }
+
+    console.log(serviceDetailsListValid);
+    handleChangeIntervention(val, i);
+  };
 
   const serviceSection = useMemo(
     () => (x, i) => {
@@ -1415,7 +1479,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   // setServiceSectionHandle(val);
 
                   getServices(val, i);
-                  handleChangeIntervention(val, i);
+                  console.log(serviceDetailsList);
+                  handleInterventionValidation(val, i);
+
                   // setServiceList([]);
                 }}
                 id="checkboxes-tags-demo"
@@ -1672,7 +1738,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                       <DialogContent>
                         {memberName?.res?.content &&
-                          memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                           <TableContainer>
                             <Table>
                               <TableHead>
@@ -1723,11 +1789,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 </Grid>
               )}
               {
-                <BioModal matchResult={matchResult} open={biomodalopen} setOpen={setBioModalopen} />
+                <BioModal
+                  matchResult={matchResult}
+                  open={biomodalopen}
+                  setOpen={setBioModalopen}
+                />
               }
               {
                 <Grid item style={{ display: "flex" }}>
-                  <IconButton onClick={() => setBioModalopen(true)} size="large" aria-label="fingerprint" color="primary">
+                  <IconButton
+                    onClick={() => setBioModalopen(true)}
+                    size="large"
+                    aria-label="fingerprint"
+                    color="primary"
+                  >
                     <Fingerprint />
                   </IconButton>
                 </Grid>
@@ -1833,6 +1908,22 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   disabled
                   variant="standard"
                   label="Relation"
+                  InputProps={{
+                    classes: {
+                      root: classes.inputRoot,
+                      disabled: classes.disabled,
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  id="standard-basic"
+                  name="gender"
+                  value={memberBasic.gender}
+                  disabled
+                  variant="standard"
+                  label="Gender"
                   InputProps={{
                     classes: {
                       root: classes.inputRoot,
@@ -2374,6 +2465,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         className={classes.buttonPrimary}
                         style={{ marginLeft: "5px" }}
                         onClick={handleAddServicedetails}
+                        disabled={Validated ? true : false}
                       >
                         <AddIcon />
                       </Button>
@@ -2408,7 +2500,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 }}
                 disabled={Validated ? true : false}
                 className={classes.buttonSecondary}
-                onClick={handleValidation}
+                onClick={handleMultipleValid}
               >
                 {isLoadingValidate ? (
                   <CircularProgress size={"15px"} sx={{ color: "white" }} />
@@ -2427,6 +2519,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 type="submit"
                 style={{ marginLeft: "10px" }}
                 className={classes.buttonPrimary}
+                disabled={Validated ? false : true}
               >
                 Save and Next
               </Button>
