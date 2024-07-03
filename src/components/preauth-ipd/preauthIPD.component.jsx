@@ -388,7 +388,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       claimType: "IPD",
     });
     bts$.subscribe((result) => {
-      console.log(result);
       setBenefits(result);
     });
   };
@@ -505,7 +504,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     });
     setOpenClientModal(false);
   };
-  console.log(memberBasic);
   // set the type of state
   const handleChange = (event) => {
     setSearchType(event.target.value);
@@ -737,7 +735,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       try {
         const results = await Promise.all(promises);
         // Handle the results
-        console.log(results);
         let listServiceDetails = serviceDetailsList.map((item, index) => {
           return {
             ...item,
@@ -749,10 +746,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
         setIsLoadingValidate(false);
         setValidated(true);
 
-        console.log(listServiceDetails);
         setIsLoadingValidate(false);
       } catch (error) {
-        console.error(error);
         setIsLoadingValidate(false);
         setValidated(false);
       }
@@ -921,7 +916,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       summary: true,
       active: true,
     };
-    console.log("search", searchType);
     if (searchType === "name") {
       pageRequest.name = id;
     }
@@ -953,7 +947,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
         if (searchType === "name") {
-          console.log(res);
           setMemberName({ res });
           handleopenClientModal();
         } else {
@@ -1164,7 +1157,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       return item;
     });
 
-    console.log(serviceDetailListModify2);
     let payload = {
       preAuthStatus: formik.values.preAuthStatus,
       memberShipNo: memberBasic.membershipNo,
@@ -1345,10 +1337,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  console.log(serviceDetailsList);
-
   const handleChangeIntervention = (e, index) => {
-    console.log(e);
     const list = [...serviceDetailsList];
     list[index].interventionCode = e.code ? e : "";
     setServiceDetailsList(list);
@@ -1397,10 +1386,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setOpenSnack(true);
     }
   };
-  console.log(serviceDetailsList);
   const matchResult = (result) => {
     // setMacthResult(result) //string
-    console.log("parent match result ", result);
   };
 
   const handleInterventionValidation = (val, i) => {
@@ -1419,24 +1406,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
     if (serviceDetailsListValid?.length > 0) {
       const serviceDetailsListIntValid = serviceDetailsListValid.some(
         (data) => {
-          console.log(data, val);
           return data == val?.value;
         }
       );
 
-      console.log(serviceDetailsListIntValid);
       if (serviceDetailsListIntValid) {
         throw new Error("Intervention Should Be Different !!");
       }
     }
 
-    console.log(serviceDetailsListValid);
     handleChangeIntervention(val, i);
   };
 
   const serviceSection = useMemo(
     () => (x, i) => {
-      console.log(x);
       return (
         <>
           <Grid item xs={12} sm={6} md={1}>
@@ -1479,7 +1462,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   // setServiceSectionHandle(val);
 
                   getServices(val, i);
-                  console.log(serviceDetailsList);
                   handleInterventionValidation(val, i);
 
                   // setServiceList([]);
@@ -1900,6 +1882,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   }}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={4}>
                 <TextField
                   id="standard-basic"
