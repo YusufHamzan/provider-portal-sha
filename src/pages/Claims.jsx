@@ -67,8 +67,16 @@ const Claims = () => {
   });
 
   const { keycloak } = useKeycloak();
-  let token = window["getToken"] && window["getToken"]();
-  const { name } = jwtDecode(token);
+  let token, name;
+
+  try {
+    token = window["getToken"] && window["getToken"]();
+    const decoded = jwtDecode(token);
+    name = decoded.name;
+    console.log(name);
+  } catch (error) {
+    console.error('Error decoding token:', error);
+  }
 
   useEffect(() => {
     let subscription = benefitService
@@ -82,9 +90,8 @@ const Claims = () => {
   const handleProvider = (rowData) => {
     const invoiceProviders = rowData.invoices.map((inv) => {
       return (
-        <Typography sx={{ fontSize: "12px" }}>{`${name}: ${
-          inv.invoiceAmount || 0
-        }`}</Typography>
+        <Typography sx={{ fontSize: "12px" }}>{`${name}: ${inv.invoiceAmount || 0
+          }`}</Typography>
       );
     });
 
@@ -109,9 +116,8 @@ const Claims = () => {
         <TreeItem
           itemId={ben?.benefitId}
           label={
-            <Typography sx={{ fontSize: "12px" }}>{`Unknown: ${
-              ben?.estimatedCost || null
-            }`}</Typography>
+            <Typography sx={{ fontSize: "12px" }}>{`Unknown: ${ben?.estimatedCost || null
+              }`}</Typography>
           }
         ></TreeItem>
       );
@@ -148,7 +154,7 @@ const Claims = () => {
           onClick={() => {
             navigate(`/view/${rowData?.id}?mode=viewOnly&type=claim`);
           }}
-          // onClick={() => handleMembershipClick(rowData, "membershipNo")}
+        // onClick={() => handleMembershipClick(rowData, "membershipNo")}
         >
           {rowData.id}
         </span>
@@ -279,49 +285,49 @@ const Claims = () => {
     } else {
       return isSearched
         ? claimservice
-            .getFilteredClaimReim(
-              searchType ? pagerequestquery : pageRequest,
-              providerId
-            )
-            .pipe(
-              map((data) => {
-                let content = data?.data?.content;
-                let records = content.map((item) => {
-                  item["admissionDate"] = new Date(
-                    item.expectedDOA
-                  ).toLocaleDateString();
-                  item["dischargeDate"] = new Date(
-                    item.expectedDOD
-                  ).toLocaleDateString();
-                  item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
-                  return item;
-                });
-                data.content = records;
-                return data?.data;
-              })
-            )
+          .getFilteredClaimReim(
+            searchType ? pagerequestquery : pageRequest,
+            providerId
+          )
+          .pipe(
+            map((data) => {
+              let content = data?.data?.content;
+              let records = content.map((item) => {
+                item["admissionDate"] = new Date(
+                  item.expectedDOA
+                ).toLocaleDateString();
+                item["dischargeDate"] = new Date(
+                  item.expectedDOD
+                ).toLocaleDateString();
+                item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+                return item;
+              });
+              data.content = records;
+              return data?.data;
+            })
+          )
         : claimservice
-            .getClaimReim(
-              searchType ? pagerequestquery : pageRequest,
-              providerId
-            )
-            .pipe(
-              map((data) => {
-                let content = data?.data?.content;
-                let records = content.map((item) => {
-                  item["admissionDate"] = new Date(
-                    item.expectedDOA
-                  ).toLocaleDateString();
-                  item["dischargeDate"] = new Date(
-                    item.expectedDOD
-                  ).toLocaleDateString();
-                  item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
-                  return item;
-                });
-                data.content = records;
-                return data?.data;
-              })
-            );
+          .getClaimReim(
+            searchType ? pagerequestquery : pageRequest,
+            providerId
+          )
+          .pipe(
+            map((data) => {
+              let content = data?.data?.content;
+              let records = content.map((item) => {
+                item["admissionDate"] = new Date(
+                  item.expectedDOA
+                ).toLocaleDateString();
+                item["dischargeDate"] = new Date(
+                  item.expectedDOD
+                ).toLocaleDateString();
+                item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+                return item;
+              });
+              data.content = records;
+              return data?.data;
+            })
+          );
     }
   };
   const handleOpen = () => {
@@ -750,7 +756,7 @@ const Claims = () => {
               {searchType == 2 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                  <Box component="h3" fontSize={"15px"} fontFamily={"sans-serif"}>
+                    <Box component="h3" fontSize={"15px"} fontFamily={"sans-serif"}>
                       Seach by Date of Discharge
                     </Box>
                     <CloseOutlined
@@ -861,7 +867,7 @@ const Claims = () => {
               {searchType == 3 && (
                 <>
                   <Box display={"flex"} justifyContent={"space-between"}>
-                     <Box component="h3" fontSize={"15px"} fontFamily={"sans-serif"}>
+                    <Box component="h3" fontSize={"15px"} fontFamily={"sans-serif"}>
                       Search By Creation Date
                     </Box>
                     <CloseOutlined
