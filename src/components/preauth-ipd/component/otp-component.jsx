@@ -85,6 +85,7 @@ const OTPComponent = ({ id, membershipNo }) => {
 
   const regenerateOTPHandler = () => {
     setCountdown(30);
+    generateOTPHandler()
   };
 
   return (
@@ -114,7 +115,7 @@ const OTPComponent = ({ id, membershipNo }) => {
             Did not receive?{' '}
             <span
               style={{ color: countdown > 0 ? 'gray' : 'blue', cursor: countdown > 0 ? 'not-allowed' : 'pointer' }}
-              onClick={countdown > 0 ? null : regenerateOTPHandler}
+              onClick={() => countdown > 0 ? null : regenerateOTPHandler()}
             >
               {countdown > 0 ? `Re-generate in ${countdown}s` : 'Re-generate'}
             </span>
