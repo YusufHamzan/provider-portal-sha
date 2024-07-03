@@ -70,7 +70,8 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
 
   React.useEffect(() => {
     const { pathname } = location;
-    const { activeMenuIndex, activeSubMenuIndex } = findActiveMenuAndSubMenu(menuItems, pathname);
+    const firstPathSegment = pathname.split('/')[1];
+    const { activeMenuIndex, activeSubMenuIndex } = findActiveMenuAndSubMenu(menuItems, '/' + firstPathSegment);
 
     if (activeSubMenuIndex !== null) {
       setOpenSubmenu(true);

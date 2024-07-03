@@ -217,9 +217,8 @@ const PreAuthIPDListComponent = () => {
         <TreeItem
           itemId={ben?.benefitId}
           label={
-            <Typography sx={{ fontSize: "12px" }}>{`Unknown: ${
-              ben?.estimatedCost || null
-            }`}</Typography>
+            <Typography sx={{ fontSize: "12px" }}>{`Unknown: ${ben?.estimatedCost || null
+              }`}</Typography>
           }
         ></TreeItem>
       );
@@ -235,9 +234,8 @@ const PreAuthIPDListComponent = () => {
         <TreeItem
           itemId="benefit"
           label={
-            <Typography sx={{ fontSize: "12px" }}>{`${length} ${
-              length === 1 ? "Benefit: " : "Benefits: "
-            } ${totalAmount}`}</Typography>
+            <Typography sx={{ fontSize: "12px" }}>{`${length} ${length === 1 ? "Benefit: " : "Benefits: "
+              } ${totalAmount}`}</Typography>
           }
         >
           {benefitsWithCost}
@@ -439,49 +437,49 @@ const PreAuthIPDListComponent = () => {
     } else {
       return isSearched
         ? claimservice
-            .getFilteredPreauth(
-              searchType ? pagerequestquery : pageRequest,
-              providerId
-            )
-            .pipe(
-              map((data) => {
-                let content = data?.data?.content;
-                let records = content.map((item) => {
-                  item["admissionDate"] = new Date(
-                    item.expectedDOA
-                  ).toLocaleDateString();
-                  item["dischargeDate"] = new Date(
-                    item.expectedDOD
-                  ).toLocaleDateString();
-                  item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
-                  return item;
-                });
-                data.content = records;
-                return data?.data;
-              })
-            )
+          .getFilteredPreauth(
+            searchType ? pagerequestquery : pageRequest,
+            providerId
+          )
+          .pipe(
+            map((data) => {
+              let content = data?.data?.content;
+              let records = content.map((item) => {
+                item["admissionDate"] = new Date(
+                  item.expectedDOA
+                ).toLocaleDateString();
+                item["dischargeDate"] = new Date(
+                  item.expectedDOD
+                ).toLocaleDateString();
+                item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+                return item;
+              });
+              data.content = records;
+              return data?.data;
+            })
+          )
         : claimservice
-            .getAllPreauth(
-              searchType ? pagerequestquery : pageRequest,
-              providerId
-            )
-            .pipe(
-              map((data) => {
-                let content = data?.data?.content;
-                let records = content.map((item) => {
-                  item["admissionDate"] = new Date(
-                    item.expectedDOA
-                  ).toLocaleDateString();
-                  item["dischargeDate"] = new Date(
-                    item.expectedDOD
-                  ).toLocaleDateString();
-                  item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
-                  return item;
-                });
-                data.content = records;
-                return data?.data;
-              })
-            );
+          .getAllPreauth(
+            searchType ? pagerequestquery : pageRequest,
+            providerId
+          )
+          .pipe(
+            map((data) => {
+              let content = data?.data?.content;
+              let records = content.map((item) => {
+                item["admissionDate"] = new Date(
+                  item.expectedDOA
+                ).toLocaleDateString();
+                item["dischargeDate"] = new Date(
+                  item.expectedDOD
+                ).toLocaleDateString();
+                item["status"] = PRE_AUTH_STATUS_MSG_MAP[item.preAuthStatus];
+                return item;
+              });
+              data.content = records;
+              return data?.data;
+            })
+          );
     }
     // return preAuthService.getAllPreAuths(searchType ? pagerequestquery : pageRequest).pipe(
     //   tap(data => {
@@ -503,15 +501,15 @@ const PreAuthIPDListComponent = () => {
   };
 
   const handleOpen = () => {
-    navigate("/submit-preauth?mode=create");
+    navigate("submit-preauth?mode=create");
   };
 
   const openDocumentsSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth?.id}?addDoc=true&mode=edit`);
+    navigate(`submit-preauth/${preAuth?.id}?addDoc=true&mode=edit`);
   };
 
   const openEditSection = (preAuth) => {
-    navigate(`/submit-preauth/${preAuth.id}?mode=edit`);
+    navigate(`submit-preauth/${preAuth.id}?mode=edit`);
   };
 
   const preAuthDOASearch = (type) => {

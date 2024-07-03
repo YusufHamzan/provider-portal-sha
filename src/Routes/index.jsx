@@ -20,14 +20,14 @@ export default function AppRoutes() {
       <Route path="/" element={<Dashboard />} />
       <Route path="/membereligibility" element={<MemberEligibility />} />
       <Route path="/preauths" element={<Preauth />} />
+      <Route path="/preauths/submit-preauth" element={<SubmitPreauth />} />
+      <Route path="/preauths/submit-preauth/:id" element={<SubmitPreauth />} />
       <Route path="/claims" element={<Claims />} />
       <Route path="/credit-claims" element={<CreditClaims />} />
       <Route path="/paymenthistory" element={<PaymentHistory />} />
       <Route path="/providerstatement" element={<ProviderStatement />} />
       <Route path="/submit-claim" element={<SubmitClaim />} />
       <Route path="/submit-claim/:id" element={<SubmitClaim />} />
-      <Route path="/submit-preauth" element={<SubmitPreauth />} />
-      <Route path="/submit-preauth/:id" element={<SubmitPreauth />} />
       <Route path="/view/:id" element={<PreauthView />} />
 
 
