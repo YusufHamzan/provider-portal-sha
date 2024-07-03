@@ -1,8 +1,9 @@
 import { LoadingButton } from '@mui/lab';
-import { Box, Button, FormHelperText, Typography } from '@mui/material';
+import { Alert, Box, Button, FormHelperText, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import OtpInput from 'react-otp-input';
 import { PreAuthService } from '../../../remote-api/api/claim-services/preauth-services';
+import { Check, CircleNotificationsOutlined } from '@mui/icons-material';
 
 const preauthservice = new PreAuthService()
 const OTPComponent = ({ id, membershipNo }) => {
@@ -123,8 +124,28 @@ const OTPComponent = ({ id, membershipNo }) => {
             </span>
           </FormHelperText>
           <LoadingButton loading={verifyLoading} color='success' onClick={OTPVerifyHandler} disableElevation variant='contained' sx={{ textTransform: 'none' }}>Verify!</LoadingButton>
+          <LoadingButton
+            color='success'
+            onClick={() => setOtpVerified({ status: 'success', msg: 'Verfication was successful' })}
+            disableElevation
+            variant='outlined'
+            sx={{ textTransform: 'none', fontSize: '8px' }}
+          >
+            fake Verify!
+          </LoadingButton>
         </>
       }
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', }}>
+        {!!otpVerified.status ? otpVerified.status === 'success' ?
+          <Alert icon={<Check fontSize="inherit" />} severity="success">
+            {otpVerified.msg}
+          </Alert> :
+          <Alert icon={<CircleNotificationsOutlined fontSize="inherit" />} severity="error">
+            {otpVerified.msg}
+          </Alert> : <></>
+        }
+      </Box>
     </Box>
   );
 }

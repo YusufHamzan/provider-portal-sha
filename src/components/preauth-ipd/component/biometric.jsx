@@ -1,6 +1,6 @@
-import { Fingerprint, Compare } from '@mui/icons-material';
+import { Fingerprint, Compare, Check } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
-import { Box, FormHelperText, IconButton, Typography } from '@mui/material';
+import { Alert, Box, FormHelperText, IconButton, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { errorCodes } from './errorCodes';
@@ -190,7 +190,7 @@ const BiometricComponent = ({ matchResult }) => {
                 alt="Fingerprint 1"
                 sx={{ width: '180px', maxHeight: '240px', borderRadius: '10px', border: '1px solid grey' }}
               /> :
-              <Box>
+              <>
                 <Typography sx={{ fontSize: '14px' }}>
                   {`${fingerprintData1?.ErrorCode ? 'Error ' + fingerprintData1?.ErrorCode + '*:' : ''} No data`}
                 </Typography>
@@ -200,7 +200,7 @@ const BiometricComponent = ({ matchResult }) => {
                     {'*' + errorCodes[fingerprintData1?.ErrorCode]}
                   </FormHelperText>
                 }
-              </Box>
+              </>
           }
           <LoadingButton
             onClick={scan1Handler}
@@ -244,7 +244,7 @@ const BiometricComponent = ({ matchResult }) => {
                 component="img"
                 src={`data:image/bmp;base64,${fingerprintData2?.BMPBase64}`}
                 alt="Fingerprint 2"
-                sx={{ width: '240px', height: '280px', borderRadius: '10px', border: '1px solid grey' }}
+                sx={{ width: '180px', height: '240px', borderRadius: '10px', border: '1px solid grey' }}
               /> :
               <>
                 <Typography sx={{ fontSize: '14px' }}>
