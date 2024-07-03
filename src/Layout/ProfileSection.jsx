@@ -36,6 +36,10 @@ function stringToColor(string) {
   return color;
 }
 const stringAvatar = (name) => {
+  if (!name) {
+    return ''
+  }
+
   return {
     sx: {
       bgcolor: stringToColor(name),
@@ -44,7 +48,7 @@ const stringAvatar = (name) => {
   };
 }
 
-export default function ProfileSection() {
+export default function ProfileSection({ logout }) {
   const { keycloak } = useKeycloak();
   let email = localStorage.getItem("email");
   let name = localStorage.getItem("provider");
@@ -126,9 +130,9 @@ export default function ProfileSection() {
 
         <MenuItem
           onClick={() => {
-            localStorage.clear();
-            keycloak.logout();
             handleClose()
+            localStorage.clear();
+            logout();
           }}
         >
           <ListItemIcon>

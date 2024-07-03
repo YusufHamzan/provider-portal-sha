@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Layout from "./Layout";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import keycloak from "./keycloak";
@@ -7,15 +7,18 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import "primeicons/primeicons.css";
 import AppRoutes from "./Routes";
-import { useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import Signup from "./pages/signup";
+import ThankYou from "./pages/thank-you";
 
 // https://api.eoxegen.com/client-query-service/v1/clients/search-by-mobile/9874561230
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
-  const eventLogger = (event, error) => {};
+  const eventLogger = (event, error) => { };
 
   const tokenLogger = (tokens) => {
     const { name, email, preferred_username, resource_access, providerId } =
@@ -60,7 +63,10 @@ function App() {
   return (
     <>
       {location.pathname === "/signup" || location.pathname === "/thank-you" ? (
-        <AppRoutes />
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/thank-you" element={<ThankYou />} />
+        </Routes>
       ) : (
         <ReactKeycloakProvider
           authClient={keycloak}
@@ -68,17 +74,17 @@ function App() {
           initOptions={{ onLoad: "login-required" }}
           onTokens={tokenLogger}
         >
-          {/* {isLoading ? (
-        <LoadingComponent />
-      ) : location.pathname === "/signup" || location.pathname === "/thank-you" ? (
-        <AppRoutes />
-      ) : ( */}
-          <Layout>
-            <AppRoutes />
-          </Layout>
-          {/* )} */}
+          {isLoading ? (
+            <LoadingComponent />
+          ) : (
+            <Layout>
+              <AppRoutes />
+            </Layout>
+          )
+          }
         </ReactKeycloakProvider>
-      )}
+      )
+      }
     </>
   );
 }

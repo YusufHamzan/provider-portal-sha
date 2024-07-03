@@ -9,9 +9,11 @@ import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
 import { drawerWidth } from "./index";
 import ProfileSection from './ProfileSection'
+import { useKeycloak } from "@react-keycloak/web";
+
 
 const Header = ({ open, handleDrawerOpen }) => {
-
+  const { keycloak } = useKeycloak()
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -44,7 +46,7 @@ const Header = ({ open, handleDrawerOpen }) => {
               <img style={{ width: "300px", height: "50px" }} src={"/icons/sha_logo.svg"} alt="" />
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              <ProfileSection />
+              <ProfileSection logout={() => keycloak.logout()} />
             </Box>
           </Box>
         </Toolbar>

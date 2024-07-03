@@ -18,8 +18,6 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/thank-you" element={<ThankYou />} />
       <Route path="/membereligibility" element={<MemberEligibility />} />
       <Route path="/preauths" element={<Preauth />} />
       <Route path="/claims" element={<Claims />} />
@@ -28,9 +26,9 @@ export default function AppRoutes() {
       <Route path="/providerstatement" element={<ProviderStatement />} />
       <Route path="/submit-claim" element={<SubmitClaim />} />
       <Route path="/submit-claim/:id" element={<SubmitClaim />} />
-      <Route path="/submit-preauth" element={<SubmitPreauth />} /> 
-      <Route path="/submit-preauth/:id" element={<SubmitPreauth />} /> 
-      <Route path="/view/:id" element={<PreauthView />} /> 
+      <Route path="/submit-preauth" element={<SubmitPreauth />} />
+      <Route path="/submit-preauth/:id" element={<SubmitPreauth />} />
+      <Route path="/view/:id" element={<PreauthView />} />
 
 
       {/* <Route path="/claims/preauths" element={<Claims />} />
