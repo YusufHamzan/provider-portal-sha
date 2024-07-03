@@ -31,5 +31,6 @@ export const errorCodes = {
   10001: "License error",
   10002: "Invalid domain",
   10003: "License expired",
-  10004: "WebAPI may not have received the origin header from the browser"
+  10004: "WebAPI may not have received the origin header from the browser",
+  500: "Failed to fetch."
 };

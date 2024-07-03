@@ -1,20 +1,51 @@
 import { Fingerprint, Compare, Check } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import { Alert, Box, FormHelperText, IconButton, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { errorCodes } from './errorCodes';
+import { MemberService } from '../../../remote-api/api/member-services';
 
 const idQuality = 100;
-const BiometricComponent = ({ matchResult }) => {
+const memberservice = new MemberService()
+const BiometricComponent = ({ matchResult, id }) => {
   // const [fingerprintData, setFingerprintData] = useState(null);
-  const [fingerprintData1, setFingerprintData1] = useState(null);
+  const [fingerprintData1, setFingerprintData1] = useState({
+    ErrorCode: null,
+    BMPBase64: '',
+    TemplateBase64: ''
+  });
   const [fingerprintData2, setFingerprintData2] = useState(null);
   const [scanninng1, setScanning1] = useState(false)
   const [scanninng2, setScanning2] = useState(false)
   const [matchLoading, setMatchLoading] = useState(false)
   const [matchData, setMatchData] = useState({})
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!id) {
+      alert('Fetch user details first!')
+    }
+    memberservice.getBiometric(id).subscribe({
+      next: res => {
+        setFingerprintData1({
+          ErrorCode: 0,
+          BMPBase64: res.bmpBase64,
+          TemplateBase64: res.templateBase64
+        })
+      },
+      error: err => {
+        setFingerprintData1({
+          ErrorCode: 500,
+          BMPBase64: '',
+          TemplateBase64: ''
+        })
+        console.log('err ', err)
+        alert('Could not get biometric details!')
+      }
+
+    })
+  }, [])
 
   const callSGIFPGetData = (successCall, failCall) => {
     const uri = "https://localhost:8443/SGIFPCapture";

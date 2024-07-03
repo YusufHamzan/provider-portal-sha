@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Box, Button, Typography, IconButton } from '@mui/material';
 import BiometricComponent from './biometric';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Height } from '@mui/icons-material';
 import OtpComponent from './otp-component';
+import { MemberService } from '../../../remote-api/api/member-services';
 
 const modalStyle = {
   position: 'absolute',
@@ -18,6 +19,7 @@ const modalStyle = {
   p: 4,
 };
 
+const memberservice = new MemberService()
 const BioModal = ({ open, setOpen, matchResult, id, membershipNo }) => {
   const [anotherType, setAnotherType] = useState(false);
 
@@ -43,7 +45,7 @@ const BioModal = ({ open, setOpen, matchResult, id, membershipNo }) => {
           }}>
             <ClearIcon />
           </IconButton>
-          {!anotherType ? <BiometricComponent matchResult={matchResult} /> :
+          {!anotherType ? <BiometricComponent matchResult={matchResult} id={id} /> :
             <OtpComponent id={id} membershipNo={membershipNo} />
 
           }
