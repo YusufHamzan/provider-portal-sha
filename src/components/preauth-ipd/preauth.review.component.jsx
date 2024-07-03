@@ -1608,7 +1608,8 @@ export default function PreAuthReview(props) {
                             {row.comment || "NA"}
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
-                            {row?.tariffs || "NA"}
+                            {decionData[i][0]?.tariffs || "NA"}
+                            {console.log(decionData)}
                           </StyledTableCellRow>
                           {console.log(decionData)}
                           <StyledTableCellRow style={valueStyle}>
