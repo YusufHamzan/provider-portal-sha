@@ -230,6 +230,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const icon = <CheckBoxOutlineBlankOutlinedIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   const [memberBasic, setMemberBasic] = React.useState({
+    id: '',
     name: "",
     policyNumber: "",
     age: "",
@@ -446,9 +447,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -488,6 +488,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         setMemberBasic({
           ...memberBasic,
           name: res.content[0].name,
+          id: res.content[0].id,
           age: res.content[0].age,
           gender: res.content[0].gender,
           membershipNo: res.content[0].membershipNo,
@@ -1720,7 +1721,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                       <DialogContent>
                         {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                          memberName?.res?.content?.length > 0 ? (
                           <TableContainer>
                             <Table>
                               <TableHead>
@@ -1770,11 +1771,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   )}
                 </Grid>
               )}
+              {console.log('id', memberBasic.id)}
+              {console.log('memberBasic', memberBasic)}
               {
                 <BioModal
                   matchResult={matchResult}
                   open={biomodalopen}
                   setOpen={setBioModalopen}
+                  id={memberBasic.memberId}
+                  membershipNo={memberBasic.membershipNo}
                 />
               }
               {
