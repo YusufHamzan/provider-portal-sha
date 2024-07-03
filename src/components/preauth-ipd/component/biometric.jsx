@@ -174,7 +174,7 @@ const BiometricComponent = ({ matchResult }) => {
             <CheckCircleIcon color='success' style={{ fontSize: '44px' }} />
           </Box>
           }
-          <Typography>Fingerprint : 1 (Server)</Typography>
+          <Typography sx={{ fontSize: '14px' }}>Fingerprint : 1 (Server)</Typography>
           {scanninng1 ? <Box
             component="img"
             src='/icons/Fingerprint Gif.gif'
@@ -182,14 +182,17 @@ const BiometricComponent = ({ matchResult }) => {
             title='aiuniau'
             sx={{ maxWidth: '50%', maxHeight: '50%', borderRadius: '50%' }}
           /> :
-            fingerprintData1?.ErrorCode !== 0 ?
+            fingerprintData1?.ErrorCode === 0 ?
               <Box
                 component="img"
-                // src={`data:image/bmp;base64,${fingerprintData1.BMPBase64}`}
-                src={`https://artatmacarthur.weebly.com/uploads/1/3/2/3/13232743/6266845_orig.jpg`}
+                src={`data:image/bmp;base64,${fingerprintData1?.BMPBase64}`}
+                // src={`https://artatmacarthur.weebly.com/uploads/1/3/2/3/13232743/6266845_orig.jpg`}
                 alt="Fingerprint 1"
-                sx={{ width: '240px', height: '280px', borderRadius: '10px', border: '1px solid grey' }}
-              /> : `${fingerprintData1?.ErrorCode ? 'Error ' + fingerprintData1?.ErrorCode + ':' : ''} No data`
+                sx={{ width: '240px', height: '280px', borderRadius: '10px', }}
+              /> :
+              <Typography sx={{ fontSize: '14px' }}>
+                {`${fingerprintData1?.ErrorCode ? 'Error ' + fingerprintData1?.ErrorCode + ':' : ''} No data`}
+              </Typography>
           }
           <LoadingButton
             onClick={scan1Handler}
@@ -220,7 +223,7 @@ const BiometricComponent = ({ matchResult }) => {
           {matchData?.MatchingScore > idQuality && <Box style={{ position: 'absolute', top: -15, right: -15, }}>
             <CheckCircleIcon color='success' style={{ fontSize: '44px' }} />
           </Box>}
-          <Typography>{`Fingerprint : 2 (Device: ${fingerprintData2?.Model ? fingerprintData2?.Model : '-'} ) `}</Typography>
+          <Typography sx={{ fontSize: '14px' }}>{`Fingerprint : 2 (Device: ${fingerprintData2?.Model ? fingerprintData2?.Model : '-'} ) `}</Typography>
           {scanninng2 ? <Box
             component="img"
             src='/icons/Fingerprint Gif.gif'
@@ -234,7 +237,10 @@ const BiometricComponent = ({ matchResult }) => {
                 src={`data:image/bmp;base64,${fingerprintData2?.BMPBase64}`}
                 alt="Fingerprint 2"
                 sx={{ width: '240px', height: '280px', borderRadius: '10px', border: '1px solid grey' }}
-              /> : `${fingerprintData2?.ErrorCode ? 'Error ' + fingerprintData2?.ErrorCode + ':' : ''} No data`
+              /> :
+              <Typography sx={{ fontSize: '14px' }}>
+                {`${fingerprintData2?.ErrorCode ? 'Error ' + fingerprintData2?.ErrorCode + ':' : ''} No data`}
+              </Typography>
           }
           <LoadingButton
             onClick={scan2Handler}
