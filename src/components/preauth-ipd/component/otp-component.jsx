@@ -2,8 +2,10 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Button, FormHelperText, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import OtpInput from 'react-otp-input';
+import { PreAuthService } from '../../../remote-api/api/claim-services/preauth-services';
 
-const OTPComponent = () => {
+const preauthservice = new PreAuthService()
+const OTPComponent = ({ id, membershipNo }) => {
   const [otp, setOtp] = useState('');
   const [otpGenerated, setOtpGenerated] = useState(false);
   const [otpVerified, setOtpVerified] = useState({
@@ -23,13 +25,27 @@ const OTPComponent = () => {
   }, [countdown]);
 
   const generateOTPHandler = () => {
+    const payload = { membershipNo: membershipNo }
+    if (!payload || !id) {
+      alert('Fetch member details first!')
+      return
+    }
     setgenerateLoading(true);
-    setTimeout(() => {
-      setOtpGenerated(true);
-      setCountdown(30);
-      setgenerateLoading(false);
-    }, 1000)
+    preauthservice.generateOTP(payload, id).subscribe({
+      next: res => {
+        setOtpGenerated(true);
+        setCountdown(30);
+        setgenerateLoading(false);
+        console.log(res);
+      },
+      error: err => {
+        setgenerateLoading(false);
+        console.error(err);
+        alert('Something went wrong!')
+      }
+    });
   };
+
 
   const OTPVerifyHandler = () => {
     setverifyLoading(true)

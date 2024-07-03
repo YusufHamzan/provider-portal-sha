@@ -18,8 +18,11 @@ const modalStyle = {
   p: 4,
 };
 
-const BioModal = ({ open, setOpen, matchResult }) => {
+const BioModal = ({ open, setOpen, matchResult, id, membershipNo }) => {
   const [anotherType, setAnotherType] = useState(false);
+
+  // console.clear()
+  console.log('id', id)
 
   const handleClose = () => setOpen(false);
 
@@ -41,7 +44,7 @@ const BioModal = ({ open, setOpen, matchResult }) => {
             <ClearIcon />
           </IconButton>
           {!anotherType ? <BiometricComponent matchResult={matchResult} /> :
-            <OtpComponent />
+            <OtpComponent id={id} membershipNo={membershipNo} />
 
           }
           <Typography onClick={() => setAnotherType(pre => !pre)} sx={{
