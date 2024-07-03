@@ -271,7 +271,7 @@ const BiometricComponent = ({ matchResult }) => {
           </LoadingButton>
         </Box>
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', }}>
         <LoadingButton
           onClick={matchHandler}
           endIcon={<Compare />}
@@ -280,7 +280,7 @@ const BiometricComponent = ({ matchResult }) => {
           variant="contained"
           color='secondary'
           size='small'
-          sx={{ mt: 2, fontSize: '12px' }}
+          sx={{ fontSize: '12px' }}
         >
           <span>Match Biometric</span>
         </LoadingButton>

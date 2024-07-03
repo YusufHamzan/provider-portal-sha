@@ -26,7 +26,7 @@ const OTPComponent = ({ id, membershipNo }) => {
 
   const generateOTPHandler = () => {
     const payload = { membershipNo: membershipNo }
-    if (!payload || !id) {
+    if (!payload.membershipNo || !id) {
       alert('Fetch member details first!')
       return
     }
@@ -50,13 +50,36 @@ const OTPComponent = ({ id, membershipNo }) => {
   const OTPVerifyHandler = () => {
     setverifyLoading(true)
 
-    setTimeout(() => {
-      setverifyLoading(false);
-      setOtpVerified({
-        status: 'success',
-        msg: 'Successfully verified'
-      });
-    }, 1000)
+    const payload = { otp: otp }
+    if (!payload.otp) {
+      alert('Generate OTP first!')
+      return
+    }
+    if (!id) {
+      alert('Fetch member details!')
+      return
+    }
+
+    preauthservice.verifyOTP(payload, id).subscribe({
+      next: res => {
+        setverifyLoading(false);
+        setOtpVerified({
+          status: !!res.otpValidationStatus ? 'success' : 'failed',
+          msg: res.message
+        });
+        console.log(res);
+      },
+      error: err => {
+        setverifyLoading(false);
+        setOtpVerified({
+          status: 'failed',
+          msg: 'Something went wrong.'
+        });
+        console.error(err);
+        alert('Something went wrong!')
+      }
+    });
+
   };
 
   const regenerateOTPHandler = () => {
@@ -70,8 +93,13 @@ const OTPComponent = ({ id, membershipNo }) => {
       alignItems: 'center',
       height: '100%',
       flexDirection: 'column',
-      rowGap: '18px'
+      rowGap: '18px',
+      position: 'relative'
     }}>
+      <Box sx={{ position: 'absolute', top: -20, right: 20 }}>
+        <Button variant='outlined' onClick={() => setOtpGenerated(true)}>generate mock</Button>
+
+      </Box>
       {!otpGenerated ?
         <LoadingButton loading={generateLoading} variant='contained' onClick={generateOTPHandler} disableElevation sx={{ textTransform: 'none' }}>Generate OTP</LoadingButton> :
         <>
@@ -79,9 +107,9 @@ const OTPComponent = ({ id, membershipNo }) => {
           <OtpInput
             value={otp}
             onChange={setOtp}
-            numInputs={4}
-            containerStyle={{ columnGap: '32px' }}
-            inputStyle={{ width: '32px', height: '48px' }}
+            numInputs={6}
+            containerStyle={{ columnGap: '16px' }}
+            inputStyle={{ width: '28px', height: '36px' }}
             renderSeparator={<span>-</span>}
             renderInput={(props) => <input {...props} />}
           />
