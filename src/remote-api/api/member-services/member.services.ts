@@ -4,7 +4,7 @@ import { http } from '../../http.client';
 import { Page } from '../../models/page';
 
 export class MemberService {
-	readonly COMMAND_CONTEXT = `/member-command-service/v1/members`;
+	readonly COMMAND_CONTEXT = `/member-command-service/v1`;
 	readonly QUERY_CONTEXT = `/member-query-service/v1/members`;
 
 	getMember(pageRequest: any): Observable<Page<any>> {
@@ -80,6 +80,19 @@ export class MemberService {
 	getBiometric(id: any): Observable<Page<any>> {
 		return http
 			.get<Page<any>>(`${this.QUERY_CONTEXT}/${id}/biometric`)
+			.pipe(map((response) => response.data));
+	}
+	generateOTP(payload: any, id: string): Observable<any> {
+		return http
+			.patch<any>(
+				`${this.COMMAND_CONTEXT}/member-plan-update/${id}/otp`,
+				payload
+			)
+			.pipe(map((response) => response.data));
+	}
+	verifyOTP(payload: any, id: string): Observable<any> {
+		return http
+			.patch<any>(`${this.QUERY_CONTEXT}/${id}/otp/verify`, payload)
 			.pipe(map((response) => response.data));
 	}
 }

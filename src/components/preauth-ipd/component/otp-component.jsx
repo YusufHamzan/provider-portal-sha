@@ -2,10 +2,10 @@ import { LoadingButton } from '@mui/lab';
 import { Alert, Box, Button, FormHelperText, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import OtpInput from 'react-otp-input';
-import { PreAuthService } from '../../../remote-api/api/claim-services/preauth-services';
 import { Check, CircleNotificationsOutlined } from '@mui/icons-material';
+import { MemberService } from '../../../remote-api/api/member-services';
 
-const preauthservice = new PreAuthService()
+const memberservice = new MemberService()
 const OTPComponent = ({ id, membershipNo }) => {
   const [otp, setOtp] = useState('');
   const [otpGenerated, setOtpGenerated] = useState(false);
@@ -32,7 +32,7 @@ const OTPComponent = ({ id, membershipNo }) => {
       return
     }
     setgenerateLoading(true);
-    preauthservice.generateOTP(payload, id).subscribe({
+    memberservice.generateOTP(payload, id).subscribe({
       next: res => {
         setOtpGenerated(true);
         setCountdown(30);
@@ -61,7 +61,7 @@ const OTPComponent = ({ id, membershipNo }) => {
       return
     }
 
-    preauthservice.verifyOTP(payload, id).subscribe({
+    memberservice.verifyOTP(payload, id).subscribe({
       next: res => {
         setverifyLoading(false);
         setOtpVerified({
@@ -97,10 +97,10 @@ const OTPComponent = ({ id, membershipNo }) => {
       rowGap: '18px',
       position: 'relative'
     }}>
-      <Box sx={{ position: 'absolute', top: -20, right: 20 }}>
+      {/* <Box sx={{ position: 'absolute', top: -20, right: 20 }}>
         <Button variant='outlined' onClick={() => setOtpGenerated(true)}>generate mock</Button>
 
-      </Box>
+      </Box> */}
       {!otpGenerated ?
         <LoadingButton loading={generateLoading} variant='contained' onClick={generateOTPHandler} disableElevation sx={{ textTransform: 'none' }}>Generate OTP</LoadingButton> :
         <>
@@ -124,7 +124,7 @@ const OTPComponent = ({ id, membershipNo }) => {
             </span>
           </FormHelperText>
           <LoadingButton loading={verifyLoading} color='success' onClick={OTPVerifyHandler} disableElevation variant='contained' sx={{ textTransform: 'none' }}>Verify!</LoadingButton>
-          <LoadingButton
+          {/* <LoadingButton
             color='success'
             onClick={() => setOtpVerified({ status: 'success', msg: 'Verfication was successful' })}
             disableElevation
@@ -132,7 +132,7 @@ const OTPComponent = ({ id, membershipNo }) => {
             sx={{ textTransform: 'none', fontSize: '8px' }}
           >
             fake Verify!
-          </LoadingButton>
+          </LoadingButton> */}
         </>
       }
 
