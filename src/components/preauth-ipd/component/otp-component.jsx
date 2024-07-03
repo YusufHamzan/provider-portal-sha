@@ -97,10 +97,6 @@ const OTPComponent = ({ id, membershipNo }) => {
       rowGap: '18px',
       position: 'relative'
     }}>
-      {/* <Box sx={{ position: 'absolute', top: -20, right: 20 }}>
-        <Button variant='outlined' onClick={() => setOtpGenerated(true)}>generate mock</Button>
-
-      </Box> */}
       {!otpGenerated ?
         <LoadingButton loading={generateLoading} variant='contained' onClick={generateOTPHandler} disableElevation sx={{ textTransform: 'none' }}>Generate OTP</LoadingButton> :
         <>
@@ -124,15 +120,6 @@ const OTPComponent = ({ id, membershipNo }) => {
             </span>
           </FormHelperText>
           <LoadingButton loading={verifyLoading} color='success' onClick={OTPVerifyHandler} disableElevation variant='contained' sx={{ textTransform: 'none' }}>Verify!</LoadingButton>
-          {/* <LoadingButton
-            color='success'
-            onClick={() => setOtpVerified({ status: 'success', msg: 'Verfication was successful' })}
-            disableElevation
-            variant='outlined'
-            sx={{ textTransform: 'none', fontSize: '8px' }}
-          >
-            fake Verify!
-          </LoadingButton> */}
         </>
       }
 
