@@ -30,7 +30,7 @@ const Header = ({ open, handleDrawerOpen }) => {
             aria-label="open drawer"
             onClick={() => handleDrawerOpen()}
             edge="start"
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ display: { sm: 'none' } }}
           >
             <MenuIcon sx={{ color: "#002776" }} />
           </IconButton>
@@ -40,10 +40,10 @@ const Header = ({ open, handleDrawerOpen }) => {
             width={"100%"}
             alignItems={"center"}
           >
-            <Box sx={{ flexGrow: 1, border: 1 }} >
+            <Box sx={{ flexGrow: 1 }} >
               <img style={{ width: "300px", height: "50px" }} src={"/icons/sha_logo.svg"} alt="" />
             </Box>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flexGrow: 0 }}>
               <ProfileSection />
             </Box>
           </Box>
