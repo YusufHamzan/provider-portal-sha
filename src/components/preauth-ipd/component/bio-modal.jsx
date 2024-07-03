@@ -45,7 +45,7 @@ const BioModal = ({ open, setOpen, matchResult, id, membershipNo }) => {
           }}>
             <ClearIcon />
           </IconButton>
-          {!anotherType ? <BiometricComponent matchResult={matchResult} id={id} /> :
+          {!anotherType ? <BiometricComponent matchResult={matchResult} id={id} handleClose={handleClose} /> :
             <OtpComponent id={id} membershipNo={membershipNo} />
 
           }

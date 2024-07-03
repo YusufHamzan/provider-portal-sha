@@ -8,7 +8,7 @@ import { MemberService } from '../../../remote-api/api/member-services';
 
 const idQuality = 100;
 const memberservice = new MemberService()
-const BiometricComponent = ({ matchResult, id }) => {
+const BiometricComponent = ({ matchResult, id, handleClose }) => {
   // const [fingerprintData, setFingerprintData] = useState(null);
   const [fingerprintData1, setFingerprintData1] = useState({
     ErrorCode: null,
@@ -24,7 +24,7 @@ const BiometricComponent = ({ matchResult, id }) => {
 
   useEffect(() => {
     if (!id) {
-      alert('Fetch user details first!')
+      return
     }
     memberservice.getBiometric(id).subscribe({
       next: res => {
@@ -46,6 +46,12 @@ const BiometricComponent = ({ matchResult, id }) => {
 
     })
   }, [])
+
+  if (!id) {
+    alert('Fetch user details first!')
+    handleClose()
+    return
+  }
 
   const callSGIFPGetData = (successCall, failCall) => {
     const uri = "https://localhost:8443/SGIFPCapture";
@@ -216,8 +222,8 @@ const BiometricComponent = ({ matchResult, id }) => {
             fingerprintData1?.ErrorCode === 0 ?
               <Box
                 component="img"
-                // src={`data:image/bmp;base64,${fingerprintData1?.BMPBase64}`}
-                src={`https://artatmacarthur.weebly.com/uploads/1/3/2/3/13232743/6266845_orig.jpg`}
+                src={`data:image/bmp;base64,${fingerprintData1?.BMPBase64}`}
+                // src={`https://artatmacarthur.weebly.com/uploads/1/3/2/3/13232743/6266845_orig.jpg`}
                 alt="Fingerprint 1"
                 sx={{ width: '180px', maxHeight: '240px', borderRadius: '10px', border: '1px solid grey' }}
               /> :
