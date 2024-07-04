@@ -37,9 +37,7 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
         setOtpGenerated(true);
         setCountdown(30);
         setgenerateLoading(false);
-        setTimeout(() => {
-          handleClose();
-        }, 3000);
+
         console.log(res);
       },
       error: (err) => {
@@ -70,7 +68,11 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
           status: !!res.otpValidationStatus ? "success" : "failed",
           msg: res.message,
         });
-        console.log(res);
+        if (res.otpValidationStatus) {
+          setTimeout(() => {
+            handleClose();
+          }, 3000);
+        }
       },
       error: (err) => {
         setverifyLoading(false);
