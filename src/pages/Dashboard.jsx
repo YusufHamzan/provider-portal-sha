@@ -354,7 +354,8 @@ export default function Dashboard() {
               series: [
                 { label: "0-5 years", value: 1669 },
                 { label: "6-20 years", value: 4521 },
-                { label: "20-40 years", value: 3202 },
+                { label: "21-40 years", value: 3202 },
+                { label: "41-60 years", value: 2169 },
                 { label: "Above 60", value: 4999 },
               ],
             }}
