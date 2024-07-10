@@ -43,7 +43,8 @@ const Header = ({ open, handleDrawerOpen }) => {
             alignItems={"center"}
           >
             <Box sx={{ flexGrow: 1 }} >
-              <img style={{ width: "300px", height: "50px" }} src={"/icons/sha_logo.svg"} alt="" />
+              <img style={{ width: "300px", height: "50px" }} src={"https://aar-insurance.com/media/2023/05/aar-insurance-high-res-logo.png"} alt="" />
+              {/* <img style={{ width: "300px", height: "50px" }} src={"/icons/sha_logo.svg"} alt="" /> */}
             </Box>
             <Box sx={{ flexGrow: 0 }}>
               <ProfileSection logout={() => keycloak.logout()} />
