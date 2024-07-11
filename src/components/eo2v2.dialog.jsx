@@ -86,19 +86,21 @@ export default function DialogTable({ open, setOpen, data, finalApproval }) {
               <TableHead style={{ color: "#A1A1A1", marginBottom: "15px" }}>
                 <div>
                   <h2 style={{ margin: "0px 10px" }}>Decision Details</h2>
-                  <h3
+                  <h4
                     style={{
                       backgroundColor:
-                        finalApproval == "APPROVED" ? "#01de74" : "red",
+                        finalApproval[0]?.finalApproval == "APPROVED"
+                          ? "#01de74"
+                          : "red",
                       width: "100px",
                       textAlign: "center",
                       borderRadius: "0px 3px 3px 0px",
-                      padding: "2px",
+                      padding: "2px 5px",
                       color: "white",
                     }}
                   >
                     {finalApproval[0]?.finalApproval}
-                  </h3>
+                  </h4>
                 </div>
                 <h4 style={{ margin: "7px" }}>
                   DecisionID:- {data?.length > 0 ? data[0]?.decisionId : "NA"}{" "}
