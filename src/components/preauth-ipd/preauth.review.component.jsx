@@ -24,7 +24,7 @@ import {
 import { MemberService } from "../../remote-api/api/member-services";
 import { BenefitService } from "../../remote-api/api/master-services/benefit-service";
 import { ServiceTypeService } from "../../remote-api/api/master-services/service-type-service";
-import { forkJoin } from "rxjs";
+import { forkJoin, lastValueFrom } from "rxjs";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { TabPanel, TabView } from "primereact/tabview";
@@ -746,16 +746,27 @@ export default function PreAuthReview(props) {
     }
   };
 
-  const handleDecision = (id) => {
-    // let id = preAuthDetails?.preAuth?.benefitsWithCost[0]?.decisionId;
-    console.log(id);
-    memberservice.getDecsion(id).subscribe((res) => {
-      let arr = decionData;
-      arr.push([res.benefitResponseDTO[0]]);
-      setDecionData(arr);
-    });
-    // setOpen(true);
-  };
+  function callingInSerial(id) {
+    return lastValueFrom(memberservice.getDecsion(id));
+  }
+  async function handleDecision() {
+    const observables = preAuthDetails?.preAuth?.benefitsWithCost.map(
+      (item) => {
+        return callingInSerial(item?.decisionId);
+      }
+    );
+
+    try {
+      const results = await Promise.all(observables);
+      const formatData = results?.map((item) => {
+        return [item.benefitResponseDTO[0]];
+      });
+      setDecionData(formatData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
   console.log(decionData);
   const handleChangeOfDecitionText = (event) => {
     setCnfText(event.target.value);
@@ -767,9 +778,7 @@ export default function PreAuthReview(props) {
 
   useEffect(() => {
     if (preAuthDetails !== undefined) {
-      preAuthDetails?.preAuth?.benefitsWithCost.forEach((item) => {
-        handleDecision(item?.decisionId);
-      });
+      handleDecision();
     }
   }, [preAuthDetails]);
 
