@@ -165,4 +165,10 @@ export class ClaimService {
       .get<Page<any>>(`${this.QUERY_CONTEXT}/integration/preauths/claim-dashboard-count/${id}`)
       .pipe(map((response) => response.data));
   }
+  getAgeDashboardCount(id: any): Observable<Page<Reimbursement>> {
+    return http
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/integration/preauths/count-by-age-ranges`)
+      .pipe(map((response) => response.data));
+  }
 }
+// https://api.eoxegen.com/claim-query-service/v1/integration/preauths/count-by-age-ranges

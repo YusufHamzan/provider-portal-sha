@@ -1613,7 +1613,7 @@ export default function PreAuthReview(props) {
                           </StyledTableCellRow>
                           {console.log(decionData)}
                           <StyledTableCellRow style={valueStyle}>
-                            {decionData[i][i]?.finalApproval == "APPROVED" ? (
+                            {decionData[i][0]?.finalApproval == "APPROVED" ? (
                               <CheckCircle
                                 sx={{ color: "green", cursor: "pointer" }}
                                 onClick={() => {

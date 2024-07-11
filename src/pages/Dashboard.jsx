@@ -67,6 +67,9 @@ export default function Dashboard() {
   // ];
   const [dashCount, setDashCount] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [ageData, setAgeData] = useState([]);
+  const [ageFiltered, setAgeFiltered] = useState([]);
+
   function convertToArray(data) {
     return Object.keys(data).map((key) => {
       const periodData = data[key];
@@ -76,6 +79,17 @@ export default function Dashboard() {
       };
     });
   }
+
+  const fetchAGEData = () => {
+    let subscription = claimservice
+      .getAgeDashboardCount()
+      .subscribe((result) => {
+        setAgeData(result);
+      });
+    return () => subscription.unsubscribe();
+  };
+
+  console.log(ageData);
 
   const buttons = [
     <Button key="four" onClick={() => setActiveIndex(0)}>
@@ -91,7 +105,9 @@ export default function Dashboard() {
       Year
     </Button>,
   ];
+
   useEffect(() => {
+    fetchAGEData();
     let subscription = claimservice
       .getAllDashboardCount(localStorage.getItem("providerId"))
       .subscribe((result) => {
@@ -101,64 +117,7 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // console.log(dashCount[activeIndex]);
-  // const series = [
-  //   {
-  //     name: "Sales",
-  //     data: [30, 40, 45, 50, 49, 60, 70, 91, 125],
-  //   },
-  // ];
-
-  // const options = {
-  //   chart: {
-  //     type: "bar",
-  //     height: 550,
-  //   },
-  //   plotOptions: {
-  //     bar: {
-  //       horizontal: true,
-  //       columnWidth: "55%",
-  //       endingShape: "rounded",
-  //     },
-  //   },
-  //   dataLabels: {
-  //     enabled: false,
-  //   },
-  //   stroke: {
-  //     show: true,
-  //     width: 2,
-  //     colors: ["transparent"],
-  //   },
-  //   xaxis: {
-  //     categories: [
-  //       "Jan",
-  //       "Feb",
-  //       "Mar",
-  //       "Apr",
-  //       "May",
-  //       "Jun",
-  //       "Jul",
-  //       "Aug",
-  //       "Sep",
-  //     ],
-  //   },
-  //   yaxis: {
-  //     title: {
-  //       text: "Sales (thousands)",
-  //     },
-  //   },
-  //   fill: {
-  //     opacity: 1,
-  //   },
-  //   tooltip: {
-  //     y: {
-  //       formatter: function (val) {
-  //         return "$" + val + " thousands";
-  //       },
-  //     },
-  //   },
-  // };
-
+  console.log("👋");
   return (
     <Container maxWidth="xl">
       <Typography variant="h6" fontWeight={"bold"} sx={{ mb: 2 }}>
@@ -351,13 +310,23 @@ export default function Dashboard() {
             sx={{ marginTop: "10px" }}
             title="Age"
             chart={{
-              series: [
-                { label: "0-5 years", value: 1669 },
-                { label: "6-20 years", value: 4521 },
-                { label: "21-40 years", value: 3202 },
-                { label: "41-60 years", value: 2169 },
-                { label: "Above 60", value: 4999 },
-              ],
+              series: ageData.map((item) => {
+                return {
+                  label: item?.ageRange,
+                  value:
+                    item[
+                      (() => {
+                        return activeIndex == 0
+                          ? "todayPercentage"
+                          : activeIndex == 1
+                          ? "weeklyPercentage"
+                          : activeIndex == 2
+                          ? "monthlyPercentage"
+                          : "yearlyPercentage";
+                      })()
+                    ],
+                };
+              }),
             }}
           />
           <AppCurrentVisits
