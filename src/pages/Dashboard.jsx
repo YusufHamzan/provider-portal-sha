@@ -68,6 +68,40 @@ export default function Dashboard() {
   const [dashCount, setDashCount] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [ageData, setAgeData] = useState([]);
+  const [statusData, setStatusData] = useState({
+    dailyData: {
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: null,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: null,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: null,
+    },
+    weeklyData: {
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: null,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: null,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: null,
+    },
+    monthlyData: {
+      approvedPreauthCount: 18,
+      approvedPreauthAmount: null,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: null,
+      underProcessPreauthCount: 89,
+      underProcessPreauthAmount: 140700.0,
+    },
+    yearlyData: {
+      approvedPreauthCount: 52,
+      approvedPreauthAmount: 571550.0,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: null,
+      underProcessPreauthCount: 246,
+      underProcessPreauthAmount: 229000.0,
+    },
+  });
   const [ageFiltered, setAgeFiltered] = useState([]);
 
   function convertToArray(data) {
@@ -89,7 +123,76 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   };
 
-  console.log(ageData);
+  const fetchStatusData = () => {
+    let subscription = claimservice
+      .getStatusDashboardCount()
+      .subscribe((result) => {
+        setStatusData(result[0]);
+        // setAgeData(result);
+      });
+    return () => subscription.unsubscribe();
+  };
+
+  const getCurrentActive = () => {
+    return activeIndex == 0
+      ? "dailyData"
+      : activeIndex == 1
+      ? "monthlyData"
+      : activeIndex == 2
+      ? "weeklyData"
+      : "yearlyData";
+  };
+
+  // function arrangeValue(seriesData){
+  //   const arrangeValueData = seriesData?.map((item)=>{
+
+  //   })
+  // }
+
+  const getStatusSeries = () => {
+    const currentStatus = statusData[getCurrentActive()];
+    const seriesData = Object.entries(currentStatus).map(([key, value]) => ({
+      label: key,
+      value: value == null ? 0 : value > 1000 ? value / 1000 : value,
+    }));
+
+    const checkFound = seriesData.some((item) => {
+      return item?.value > 0;
+    });
+
+    return checkFound ? seriesData : [{ label: "No Data Found", value: 99 }];
+  };
+
+  const getCurrentActiveAge = () => {
+    return activeIndex == 0
+      ? "todayPercentage"
+      : activeIndex == 1
+      ? "weeklyPercentage"
+      : activeIndex == 2
+      ? "monthlyPercentage"
+      : "yearlyPercentage";
+  };
+
+  const ageSeriesData = () => {
+    const seriesData = ageData.map((item) => {
+      return {
+        label: item?.ageRange,
+        value:
+          item[getCurrentActiveAge()] == null
+            ? 0
+            : item[getCurrentActiveAge()] > 1000
+            ? item[getCurrentActiveAge()] / 1000
+            : item[getCurrentActiveAge()],
+      };
+    });
+
+    const checkFound = seriesData.some((item) => item?.value > 0);
+
+    const finalSeriesData = checkFound
+      ? seriesData
+      : [{ label: "No Data Found", value: 99 }];
+    return finalSeriesData;
+  };
 
   const buttons = [
     <Button key="four" onClick={() => setActiveIndex(0)}>
@@ -108,6 +211,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchAGEData();
+    fetchStatusData();
     let subscription = claimservice
       .getAllDashboardCount(localStorage.getItem("providerId"))
       .subscribe((result) => {
@@ -117,7 +221,6 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   }, []);
 
-  console.log("👋");
   return (
     <Container maxWidth="xl">
       <Typography variant="h6" fontWeight={"bold"} sx={{ mb: 2 }}>
@@ -310,42 +413,35 @@ export default function Dashboard() {
             sx={{ marginTop: "10px" }}
             title="Age"
             chart={{
-              series: ageData.map((item) => {
-                return {
-                  label: item?.ageRange,
-                  value:
-                    item[
-                      (() => {
-                        return activeIndex == 0
-                          ? "todayPercentage"
-                          : activeIndex == 1
-                          ? "weeklyPercentage"
-                          : activeIndex == 2
-                          ? "monthlyPercentage"
-                          : "yearlyPercentage";
-                      })()
-                    ],
-                };
-              }),
+              series: ageSeriesData(),
             }}
+            subValue={
+              ageSeriesData()[0]?.label == "No Data Found"
+                ? ["No Data Found"]
+                : [
+                    "Age: 0-5",
+                    "Age: 6-20",
+                    "Age: 20-40",
+                    "Age: 40-60",
+                    "Above-60",
+                  ]
+            }
           />
           <AppCurrentVisits
             sx={{ marginTop: "10px" }}
             title="Status Wise"
             chart={{
-              series: [
-                { label: "APPROVED", value: 1669 },
-                { label: "UNDER PROCESS", value: 4521 },
-                { label: "OTHER", value: 0 },
-                { label: "REJECTED", value: 3202 },
-              ],
+              series: getStatusSeries(),
             }}
-            subValue={[
-              "Approved Count Amount: 45",
-              "Under Process Count Amount: 55",
-              "Rejected Count Amount: 64",
-              "Rejected Count Amount: 33",
-            ]}
+            subValue={
+              getStatusSeries()[0]?.label == "No Data Found"
+                ? ["No Data Found"]
+                : Object.entries(statusData[getCurrentActive()])?.map(
+                    ([key]) => {
+                      return key;
+                    }
+                  )
+            }
           />
           {/* <ReactApexChart
             options={options}

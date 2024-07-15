@@ -29,6 +29,7 @@ export default function AppCurrentVisits({
 }) {
   const theme = useTheme();
 
+  console.log(chart);
   const { colors, series, options } = chart;
   const chartSeries = series.map((i) => i.value);
 
@@ -66,7 +67,7 @@ export default function AppCurrentVisits({
         // const title = w.globals.labels[dataPointIndex];
         // const value = series[seriesIndex][dataPointIndex];
         // console.log(title, value);
-        let tooltipContent = `<div class="apexcharts-tooltip-title"> Total</div>`;
+        let tooltipContent = `<div class="apexcharts-tooltip-title"> Status </div>`;
 
         if (subValue && subValue.length > seriesIndex) {
           tooltipContent += `<div class="apexcharts-tooltip-subvalue">${subValue[seriesIndex]}</div>`;
