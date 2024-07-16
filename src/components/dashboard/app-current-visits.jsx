@@ -65,12 +65,12 @@ export default function AppCurrentVisits({
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
         // const title = w.globals.labels[dataPointIndex];
         // const value = series[seriesIndex][dataPointIndex];
-        // console.log(title, value);
-        let tooltipContent = `<div class="apexcharts-tooltip-title"> Total</div>`;
+        console.log(title, value);
+        let tooltipContent = "";
 
-        if (subValue && subValue.length > seriesIndex) {
-          tooltipContent += `<div class="apexcharts-tooltip-subvalue">${subValue[seriesIndex]}</div>`;
-        }
+        // if (series && series.length > seriesIndex) {
+        tooltipContent += `<div class="apexcharts-tooltip-subvalue"><b>${chart.series[seriesIndex].label}</b>: ${chart.series[seriesIndex].value}</div>`;
+        // }
 
         return tooltipContent;
       },
