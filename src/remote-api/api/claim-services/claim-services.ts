@@ -162,9 +162,10 @@ export class ClaimService {
 
   getAllDashboardCount(id: any): Observable<Page<Reimbursement>> {
     return http
-      .get<Page<any>>(`${this.QUERY_CONTEXT}/integration/preauths/claim-dashboard-count/${id}`)
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/integration/preauths/claim-dashboard-count`)
       .pipe(map((response) => response.data));
   }
+  // https://api.eoxegen.com/claim-query-service/v1/integration/preauths/claim-dashboard-count
   getAgeDashboardCount(id: any): Observable<Page<Reimbursement>> {
     return http
       .get<Page<any>>(`${this.QUERY_CONTEXT}/integration/preauths/count-by-age-ranges`)
