@@ -71,38 +71,37 @@ export default function Dashboard() {
   const [statusData, setStatusData] = useState({
     dailyData: {
       approvedPreauthCount: 0,
-      approvedPreauthAmount: null,
+      approvedPreauthAmount: 0,
       rejectedPreauthCount: 0,
-      rejectedPreauthAmount: null,
+      rejectedPreauthAmount: 0,
       underProcessPreauthCount: 0,
-      underProcessPreauthAmount: null,
+      underProcessPreauthAmount: 0,
     },
     weeklyData: {
       approvedPreauthCount: 0,
-      approvedPreauthAmount: null,
+      approvedPreauthAmount: 0,
       rejectedPreauthCount: 0,
-      rejectedPreauthAmount: null,
+      rejectedPreauthAmount: 0,
       underProcessPreauthCount: 0,
-      underProcessPreauthAmount: null,
+      underProcessPreauthAmount: 0,
     },
     monthlyData: {
-      approvedPreauthCount: 18,
-      approvedPreauthAmount: null,
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: 0,
       rejectedPreauthCount: 0,
-      rejectedPreauthAmount: null,
-      underProcessPreauthCount: 89,
-      underProcessPreauthAmount: 140700.0,
+      rejectedPreauthAmount: 0,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: 0,
     },
     yearlyData: {
-      approvedPreauthCount: 52,
-      approvedPreauthAmount: 571550.0,
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: 0,
       rejectedPreauthCount: 0,
-      rejectedPreauthAmount: null,
-      underProcessPreauthCount: 246,
-      underProcessPreauthAmount: 229000.0,
+      rejectedPreauthAmount: 0,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: 0,
     },
   });
-  const [ageFiltered, setAgeFiltered] = useState([]);
 
   function convertToArray(data) {
     return Object.keys(data).map((key) => {
@@ -137,9 +136,9 @@ export default function Dashboard() {
     return activeIndex == 0
       ? "dailyData"
       : activeIndex == 1
-      ? "monthlyData"
-      : activeIndex == 2
       ? "weeklyData"
+      : activeIndex == 2
+      ? "monthlyData"
       : "yearlyData";
   };
 
@@ -151,16 +150,21 @@ export default function Dashboard() {
 
   const getStatusSeries = () => {
     const currentStatus = statusData[getCurrentActive()];
-    const seriesData = Object.entries(currentStatus).map(([key, value]) => ({
-      label: key,
-      value: value == null ? 0 : value > 1000 ? value / 1000 : value,
-    }));
 
+    console.log(currentStatus);
+    const seriesData = Object.entries(currentStatus)
+      .filter(([key]) => key.includes("Count"))
+      .map(([key, value]) => ({
+        label: key,
+        value: value == null ? 0 : value,
+      }));
+
+    console.log(seriesData);
     const checkFound = seriesData.some((item) => {
       return item?.value > 0;
     });
 
-    return checkFound ? seriesData : [{ label: "No Data Found", value: 99 }];
+    return checkFound ? seriesData : [{ label: "No Data Found", value: 100 }];
   };
 
   const getCurrentActiveAge = () => {
@@ -178,11 +182,7 @@ export default function Dashboard() {
       return {
         label: item?.ageRange,
         value:
-          item[getCurrentActiveAge()] == null
-            ? 0
-            : item[getCurrentActiveAge()] > 1000
-            ? item[getCurrentActiveAge()] / 1000
-            : item[getCurrentActiveAge()],
+          item[getCurrentActiveAge()] == null ? 0 : item[getCurrentActiveAge()],
       };
     });
 
@@ -190,7 +190,7 @@ export default function Dashboard() {
 
     const finalSeriesData = checkFound
       ? seriesData
-      : [{ label: "No Data Found", value: 99 }];
+      : [{ label: "No Data Found", value: 100 }];
     return finalSeriesData;
   };
 
