@@ -11,7 +11,7 @@ const LEGEND_HEIGHT = 72;
 const StyledChart = styled(Chart)(({ theme }) => ({
   height: CHART_HEIGHT,
   "& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject": {
-    height: `100% !important`,
+    height: "100% !important",
   },
   "& .apexcharts-legend": {
     height: LEGEND_HEIGHT,
@@ -28,7 +28,6 @@ export default function AppCurrentVisits({
   ...other
 }) {
   const theme = useTheme();
-
   const { colors, series, options } = chart;
   const chartSeries = series.map((i) => i.value);
 
@@ -59,18 +58,24 @@ export default function AppCurrentVisits({
       y: {
         formatter: (value) => fNumber(value),
         title: {
-          formatter: (seriesName) => `${seriesName}`,
+          formatter: (seriesName) => seriesName,
         },
       },
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        // const title = w.globals.labels[dataPointIndex];
-        // const value = series[seriesIndex][dataPointIndex];
-        console.log(title, value);
-        let tooltipContent = "";
+        // // const title = w.globals.labels[dataPointIndex];
+        // // const value = series[seriesIndex][dataPointIndex];
+        // console.log(title, value);
+        // let tooltipContent = "";
 
-        // if (series && series.length > seriesIndex) {
-        tooltipContent += `<div class="apexcharts-tooltip-subvalue"><b>${chart.series[seriesIndex].label}</b>: ${chart.series[seriesIndex].value}</div>`;
-        // }
+        // // if (series && series.length > seriesIndex) {
+        // tooltipContent += `<div class="apexcharts-tooltip-subvalue"><b>${chart.series[seriesIndex].label}</b>: ${chart.series[seriesIndex].value}</div>`;
+        // // }
+        // let tooltipContent = `<div class="apexcharts-tooltip-title">Count: ${chart.series[seriesIndex].value}</div>`;
+        let tooltipContent = `<div class="apexcharts-tooltip-title">${chart.series[seriesIndex].label}: ${chart.series[seriesIndex].value}</div>`;
+
+        if (subValue && subValue.length > seriesIndex) {
+          tooltipContent += `<div class="apexcharts-tooltip-subvalue" style="text-align: center;">${subValue[seriesIndex]}</div>`;
+        }
 
         return tooltipContent;
       },
@@ -90,8 +95,8 @@ export default function AppCurrentVisits({
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
-
       <StyledChart
+        key={JSON.stringify(chartSeries)} // Using a key to force re-render when data changes
         dir="ltr"
         type="pie"
         series={chartSeries}
@@ -113,8 +118,8 @@ AppCurrentVisits.propTypes = {
       })
     ),
     options: PropTypes.object,
-  }),
-  subheader: PropTypes.string, // Ensure subheader is defined as a string
-  title: PropTypes.string.isRequired, // Make sure title is required if it's necessary
+  }).isRequired,
+  subheader: PropTypes.string,
+  title: PropTypes.string.isRequired,
   subValue: PropTypes.arrayOf(PropTypes.string),
 };

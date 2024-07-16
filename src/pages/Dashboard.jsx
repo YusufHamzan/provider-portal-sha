@@ -67,6 +67,43 @@ export default function Dashboard() {
   // ];
   const [dashCount, setDashCount] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [ageData, setAgeData] = useState([]);
+  const [interventionData, setInterventionData] = useState([]);
+  const [statusData, setStatusData] = useState({
+    dailyData: {
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: 0,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: 0,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: 0,
+    },
+    weeklyData: {
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: 0,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: 0,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: 0,
+    },
+    monthlyData: {
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: 0,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: 0,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: 0,
+    },
+    yearlyData: {
+      approvedPreauthCount: 0,
+      approvedPreauthAmount: 0,
+      rejectedPreauthCount: 0,
+      rejectedPreauthAmount: 0,
+      underProcessPreauthCount: 0,
+      underProcessPreauthAmount: 0,
+    },
+  });
+
   function convertToArray(data) {
     return Object.keys(data).map((key) => {
       const periodData = data[key];
@@ -76,6 +113,91 @@ export default function Dashboard() {
       };
     });
   }
+
+  const fetchAGEData = () => {
+    let subscription = claimservice
+      .getAgeDashboardCount()
+      .subscribe((result) => {
+        setAgeData(result);
+      });
+    return () => subscription.unsubscribe();
+  };
+
+  const fetchStatusData = () => {
+    let subscription = claimservice
+      .getStatusDashboardCount()
+      .subscribe((result) => {
+        setStatusData(result[0]);
+        // setAgeData(result);
+      });
+    return () => subscription.unsubscribe();
+  };
+
+  const fetchInterventionData = () => {
+    let subscription = claimservice
+      .getInterventionCount()
+      .subscribe((result) => {
+        console.log(result);
+        setInterventionData(result);
+        // setStatusData(result[0]);
+        // setAgeData(result);
+      });
+    return () => subscription.unsubscribe();
+  };
+
+  const getCurrentActive = () => {
+    return activeIndex == 0
+      ? "dailyData"
+      : activeIndex == 1
+      ? "weeklyData"
+      : activeIndex == 2
+      ? "monthlyData"
+      : "yearlyData";
+  };
+
+  const getStatusSeries = () => {
+    const currentStatus = statusData[getCurrentActive()];
+    const seriesData = Object.entries(currentStatus)
+      .filter(([key]) => key.includes("Count"))
+      .map(([key, value]) => ({
+        label: key,
+        value: value == null ? 0 : value,
+      }));
+
+    console.log(seriesData);
+    const checkFound = seriesData.some((item) => {
+      return item?.value > 0;
+    });
+
+    return checkFound ? seriesData : [{ label: "No Data Found", value: 100 }];
+  };
+
+  const getCurrentActiveAge = () => {
+    return activeIndex == 0
+      ? "todayPercentage"
+      : activeIndex == 1
+      ? "weeklyPercentage"
+      : activeIndex == 2
+      ? "monthlyPercentage"
+      : "yearlyPercentage";
+  };
+
+  const ageSeriesData = () => {
+    const seriesData = ageData.map((item) => {
+      return {
+        label: item?.ageRange,
+        value:
+          item[getCurrentActiveAge()] == null ? 0 : item[getCurrentActiveAge()],
+      };
+    });
+
+    const checkFound = seriesData.some((item) => item?.value > 0);
+
+    const finalSeriesData = checkFound
+      ? seriesData
+      : [{ label: "No Data Found", value: 100 }];
+    return finalSeriesData;
+  };
 
   const buttons = [
     <Button key="four" onClick={() => setActiveIndex(0)}>
@@ -91,7 +213,11 @@ export default function Dashboard() {
       Year
     </Button>,
   ];
+
   useEffect(() => {
+    fetchAGEData();
+    fetchStatusData();
+    fetchInterventionData();
     let subscription = claimservice
       .getAllDashboardCount(localStorage.getItem("providerId"))
       .subscribe((result) => {
@@ -101,63 +227,24 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // console.log(dashCount[activeIndex]);
-  // const series = [
-  //   {
-  //     name: "Sales",
-  //     data: [30, 40, 45, 50, 49, 60, 70, 91, 125],
-  //   },
-  // ];
+  const getCurrentActiveMonth = () => {
+    return activeIndex == 0
+      ? "today"
+      : activeIndex == 1
+      ? "thisWeek"
+      : activeIndex == 2
+      ? "thisMonth"
+      : "thisYear";
+  };
 
-  // const options = {
-  //   chart: {
-  //     type: "bar",
-  //     height: 550,
-  //   },
-  //   plotOptions: {
-  //     bar: {
-  //       horizontal: true,
-  //       columnWidth: "55%",
-  //       endingShape: "rounded",
-  //     },
-  //   },
-  //   dataLabels: {
-  //     enabled: false,
-  //   },
-  //   stroke: {
-  //     show: true,
-  //     width: 2,
-  //     colors: ["transparent"],
-  //   },
-  //   xaxis: {
-  //     categories: [
-  //       "Jan",
-  //       "Feb",
-  //       "Mar",
-  //       "Apr",
-  //       "May",
-  //       "Jun",
-  //       "Jul",
-  //       "Aug",
-  //       "Sep",
-  //     ],
-  //   },
-  //   yaxis: {
-  //     title: {
-  //       text: "Sales (thousands)",
-  //     },
-  //   },
-  //   fill: {
-  //     opacity: 1,
-  //   },
-  //   tooltip: {
-  //     y: {
-  //       formatter: function (val) {
-  //         return "$" + val + " thousands";
-  //       },
-  //     },
-  //   },
-  // };
+  useEffect(() => {
+    // const activeMonth = getCurrentActiveMonth(activeIndex);
+    const data = interventionData[activeIndex]?.top5Interventions
+      ?.filter((item) => item[getCurrentActiveMonth()])
+      .map((item) => item[getCurrentActiveMonth()]);
+
+    console.log(data);
+  }, [activeIndex]);
 
   return (
     <Container maxWidth="xl">
@@ -236,17 +323,19 @@ export default function Dashboard() {
             subheader="(+43%) than last year"
             chart={{
               labels: [
-                "01/01/2023",
-                "02/01/2023",
-                "03/01/2023",
-                "04/01/2023",
-                "05/01/2023",
-                "06/01/2023",
-                "07/01/2023",
-                "08/01/2023",
-                "09/01/2023",
-                "10/01/2023",
-                "11/01/2023",
+                [
+                  "01/01/2023",
+                  "02/01/2023",
+                  "03/01/2023",
+                  "04/01/2023",
+                  "05/01/2023",
+                  "06/01/2023",
+                  "07/01/2023",
+                  "08/01/2023",
+                  "09/01/2023",
+                  "10/01/2023",
+                  "11/01/2023",
+                ],
               ],
               series: [
                 {
@@ -276,30 +365,18 @@ export default function Dashboard() {
             subheader="(+43%) than last year"
             chart={{
               labels: [
-                "01/01/2023",
-                "02/01/2023",
-                "03/01/2023",
-                "04/01/2023",
-                "05/01/2023",
+                interventionData[activeIndex]?.top5Interventions
+                  ?.filter((intervention) => intervention.interventionName)
+                  .map((intervention) => intervention.interventionName),
               ],
               series: [
                 {
-                  name: "INT",
+                  name: "Intervention",
                   type: "column",
-                  fill: "solid",
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                },
-                {
-                  name: "OPD",
-                  type: "area",
                   fill: "gradient",
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                {
-                  name: "Rejected",
-                  type: "line",
-                  fill: "solid",
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: interventionData[activeIndex]?.top5Interventions
+                    ?.filter((item) => item[getCurrentActiveMonth()])
+                    .map((item) => item[getCurrentActiveMonth()]),
                 },
               ],
             }}
@@ -351,32 +428,35 @@ export default function Dashboard() {
             sx={{ marginTop: "10px" }}
             title="Age"
             chart={{
-              series: [
-                { label: "0-5 years", value: 1669 },
-                { label: "6-20 years", value: 4521 },
-                { label: "21-40 years", value: 3202 },
-                { label: "41-60 years", value: 2169 },
-                { label: "Above 60", value: 4999 },
-              ],
+              series: ageSeriesData(),
             }}
+            subValue={
+              ageSeriesData()[0]?.label == "No Data Found"
+                ? ["No Data Found"]
+                : [
+                    "Age: 0-5",
+                    "Age: 6-20",
+                    "Age: 20-40",
+                    "Age: 40-60",
+                    "Above-60",
+                  ]
+            }
           />
           <AppCurrentVisits
             sx={{ marginTop: "10px" }}
             title="Status Wise"
             chart={{
-              series: [
-                { label: "APPROVED", value: 1669 },
-                { label: "UNDER PROCESS", value: 4521 },
-                { label: "OTHER", value: 0 },
-                { label: "REJECTED", value: 3202 },
-              ],
+              series: getStatusSeries(),
             }}
-            subValue={[
-              "Approved Count Amount: 45",
-              "Under Process Count Amount: 55",
-              "Rejected Count Amount: 64",
-              "Rejected Count Amount: 33",
-            ]}
+            subValue={
+              getStatusSeries()[0]?.label == "No Data Found"
+                ? ["No Data Found"]
+                : Object.entries(statusData[getCurrentActive()])?.map(
+                    ([key]) => {
+                      return key;
+                    }
+                  )
+            }
           />
           {/* <ReactApexChart
             options={options}
