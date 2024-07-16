@@ -68,6 +68,7 @@ export default function Dashboard() {
   const [dashCount, setDashCount] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [ageData, setAgeData] = useState([]);
+  const [interventionData, setInterventionData] = useState([]);
   const [statusData, setStatusData] = useState({
     dailyData: {
       approvedPreauthCount: 0,
@@ -132,6 +133,18 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   };
 
+  const fetchInterventionData = () => {
+    let subscription = claimservice
+      .getInterventionCount()
+      .subscribe((result) => {
+        console.log(result);
+        setInterventionData(result);
+        // setStatusData(result[0]);
+        // setAgeData(result);
+      });
+    return () => subscription.unsubscribe();
+  };
+
   const getCurrentActive = () => {
     return activeIndex == 0
       ? "dailyData"
@@ -142,16 +155,8 @@ export default function Dashboard() {
       : "yearlyData";
   };
 
-  // function arrangeValue(seriesData){
-  //   const arrangeValueData = seriesData?.map((item)=>{
-
-  //   })
-  // }
-
   const getStatusSeries = () => {
     const currentStatus = statusData[getCurrentActive()];
-
-    console.log(currentStatus);
     const seriesData = Object.entries(currentStatus)
       .filter(([key]) => key.includes("Count"))
       .map(([key, value]) => ({
@@ -212,6 +217,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetchAGEData();
     fetchStatusData();
+    fetchInterventionData();
     let subscription = claimservice
       .getAllDashboardCount(localStorage.getItem("providerId"))
       .subscribe((result) => {
@@ -220,6 +226,25 @@ export default function Dashboard() {
       });
     return () => subscription.unsubscribe();
   }, []);
+
+  const getCurrentActiveMonth = () => {
+    return activeIndex == 0
+      ? "today"
+      : activeIndex == 1
+      ? "thisWeek"
+      : activeIndex == 2
+      ? "thisMonth"
+      : "thisYear";
+  };
+
+  useEffect(() => {
+    // const activeMonth = getCurrentActiveMonth(activeIndex);
+    const data = interventionData[activeIndex]?.top5Interventions
+      ?.filter((item) => item[getCurrentActiveMonth()])
+      .map((item) => item[getCurrentActiveMonth()]);
+
+    console.log(data);
+  }, [activeIndex]);
 
   return (
     <Container maxWidth="xl">
@@ -298,17 +323,19 @@ export default function Dashboard() {
             subheader="(+43%) than last year"
             chart={{
               labels: [
-                "01/01/2023",
-                "02/01/2023",
-                "03/01/2023",
-                "04/01/2023",
-                "05/01/2023",
-                "06/01/2023",
-                "07/01/2023",
-                "08/01/2023",
-                "09/01/2023",
-                "10/01/2023",
-                "11/01/2023",
+                [
+                  "01/01/2023",
+                  "02/01/2023",
+                  "03/01/2023",
+                  "04/01/2023",
+                  "05/01/2023",
+                  "06/01/2023",
+                  "07/01/2023",
+                  "08/01/2023",
+                  "09/01/2023",
+                  "10/01/2023",
+                  "11/01/2023",
+                ],
               ],
               series: [
                 {
@@ -338,30 +365,18 @@ export default function Dashboard() {
             subheader="(+43%) than last year"
             chart={{
               labels: [
-                "01/01/2023",
-                "02/01/2023",
-                "03/01/2023",
-                "04/01/2023",
-                "05/01/2023",
+                interventionData[activeIndex]?.top5Interventions
+                  ?.filter((intervention) => intervention.interventionName)
+                  .map((intervention) => intervention.interventionName),
               ],
               series: [
                 {
-                  name: "INT",
+                  name: "Intervention",
                   type: "column",
-                  fill: "solid",
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                },
-                {
-                  name: "OPD",
-                  type: "area",
                   fill: "gradient",
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                {
-                  name: "Rejected",
-                  type: "line",
-                  fill: "solid",
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: interventionData[activeIndex]?.top5Interventions
+                    ?.filter((item) => item[getCurrentActiveMonth()])
+                    .map((item) => item[getCurrentActiveMonth()]),
                 },
               ],
             }}
