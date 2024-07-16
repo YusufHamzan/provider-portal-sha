@@ -73,9 +73,9 @@ export default function AppCurrentVisits({
         // let tooltipContent = `<div class="apexcharts-tooltip-title">Count: ${chart.series[seriesIndex].value}</div>`;
         let tooltipContent = `<div class="apexcharts-tooltip-title">${chart.series[seriesIndex].label}: ${chart.series[seriesIndex].value}</div>`;
 
-        if (subValue && subValue.length > seriesIndex) {
-          tooltipContent += `<div class="apexcharts-tooltip-subvalue" style="text-align: center;">${subValue[seriesIndex]}</div>`;
-        }
+        // if (subValue && subValue.length > seriesIndex) {
+        //   tooltipContent += `<div class="apexcharts-tooltip-subvalue" style="text-align: center;">STATUS</div>`;
+        // }
 
         return tooltipContent;
       },

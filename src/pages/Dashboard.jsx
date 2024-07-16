@@ -174,12 +174,12 @@ export default function Dashboard() {
 
   const getCurrentActiveAge = () => {
     return activeIndex == 0
-      ? "todayPercentage"
+      ? "today"
       : activeIndex == 1
-      ? "weeklyPercentage"
+      ? "thisWeek"
       : activeIndex == 2
-      ? "monthlyPercentage"
-      : "yearlyPercentage";
+      ? "thisMonth"
+      : "thisYear";
   };
 
   const ageSeriesData = () => {
