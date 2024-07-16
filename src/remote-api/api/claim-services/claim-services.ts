@@ -176,4 +176,10 @@ export class ClaimService {
       .get<Page<any>>(`${this.QUERY_CONTEXT}/integration/preauths/count-by-status`)
       .pipe(map((response) => response.data));
   }
+
+  getInterventionCount(id: any): Observable<Page<Reimbursement>> {
+    return http
+      .get<Page<any>>(`${this.QUERY_CONTEXT}/preauths/intervention-name-count`)
+      .pipe(map((response) => response.data));
+  }
 }
