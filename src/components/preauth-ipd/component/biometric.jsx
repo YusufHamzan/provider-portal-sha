@@ -54,8 +54,8 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
 
   if (!id) {
     alert("Fetch user details first!");
-    // handleClose();
-    // return;
+    handleClose();
+    return;
   }
 
   const callSGIFPGetData = (successCall, failCall) => {
@@ -246,8 +246,8 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
             <>
               <Typography sx={{ fontSize: "14px" }}>
                 {`${fingerprintData1?.ErrorCode
-                    ? "Error " + fingerprintData1?.ErrorCode + "*:"
-                    : ""
+                  ? "Error " + fingerprintData1?.ErrorCode + "*:"
+                  : ""
                   } No data`}
               </Typography>
 
@@ -323,8 +323,8 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
             <>
               <Typography sx={{ fontSize: "14px" }}>
                 {`${fingerprintData2?.ErrorCode
-                    ? "Error " + fingerprintData2?.ErrorCode + "*:"
-                    : ""
+                  ? "Error " + fingerprintData2?.ErrorCode + "*:"
+                  : ""
                   } No data`}
               </Typography>
 

@@ -91,6 +91,12 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
     generateOTPHandler();
   };
 
+  if (!id) {
+    alert("Fetch user details first!");
+    handleClose();
+    return;
+  }
+
   return (
     <Box
       sx={{

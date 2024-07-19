@@ -7,6 +7,8 @@ import OtpComponent from "./otp-component";
 import { MemberService } from "../../../remote-api/api/member-services";
 import PhotoValidationComponent from "./photo-verify-component";
 import ArrowRightAlt from '@mui/icons-material/ArrowRightAlt';
+import SendToMobile from '@mui/icons-material/SendToMobile';
+import HowToReg from '@mui/icons-material/HowToReg';
 
 const modalStyle = {
   position: "absolute",
@@ -87,6 +89,7 @@ const memberservice = new MemberService();
 
 // export default BioModal;
 
+
 const PaperItem = ({ name, verificationType, setVerificationType }) => {
   return (
     <Paper
@@ -104,7 +107,9 @@ const PaperItem = ({ name, verificationType, setVerificationType }) => {
       }}
     >
       {name}
-      <FingerprintIcon color={verificationType === name ? "primary" : ""} />
+      {name === 'Biometric' && <FingerprintIcon color={verificationType === name ? "primary" : ""} />}
+      {name === 'Otp' && <SendToMobile color={verificationType === name ? "primary" : ""} />}
+      {name === 'Photo' && <HowToReg color={verificationType === name ? "primary" : ""} />}
     </Paper>
   )
 }
@@ -149,7 +154,7 @@ const VerificationModal = ({ open, setOpen, matchResult, id, membershipNo }) => 
               <PaperItem name='Otp' setVerificationType={setVerificationType} verificationType={verificationType} />
               <PaperItem name='Photo' setVerificationType={setVerificationType} verificationType={verificationType} />
             </Stack>
-            <Button endIcon={<ArrowRightAlt />} onClick={() => setNext(true)} sx={{ position: 'absolute', bottom: 10, right: 20 }}>
+            <Button disabled={!verificationType} endIcon={<ArrowRightAlt />} onClick={() => setNext(true)} sx={{ position: 'absolute', bottom: 10, right: 20 }}>
               Next
             </Button>
           </Box>
