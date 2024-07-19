@@ -92,7 +92,7 @@ export class MemberService {
 	}
 	verifyOTP(payload: any, id: string): Observable<any> {
 		return http
-			.patch<any>(`${this.QUERY_CONTEXT}/${id}/otp/verify`, payload)
+			.patch<any>(`${this.COMMAND_CONTEXT}/${id}/otp/verify`, payload)
 			.pipe(map((response) => response.data));
 	}
 }

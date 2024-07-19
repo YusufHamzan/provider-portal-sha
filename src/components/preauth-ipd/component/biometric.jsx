@@ -54,8 +54,8 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
 
   if (!id) {
     alert("Fetch user details first!");
-    handleClose();
-    return;
+    // handleClose();
+    // return;
   }
 
   const callSGIFPGetData = (successCall, failCall) => {
@@ -245,11 +245,10 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
           ) : (
             <>
               <Typography sx={{ fontSize: "14px" }}>
-                {`${
-                  fingerprintData1?.ErrorCode
+                {`${fingerprintData1?.ErrorCode
                     ? "Error " + fingerprintData1?.ErrorCode + "*:"
                     : ""
-                } No data`}
+                  } No data`}
               </Typography>
 
               {fingerprintData1?.ErrorCode && (
@@ -298,9 +297,8 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
               color: "white",
               borderRadius: "5px",
             }}
-          >{`Fingerprint Verification ${
-            fingerprintData2?.Model ? fingerprintData2?.Model : ""
-          }  `}</Typography>
+          >{`Fingerprint Verification ${fingerprintData2?.Model ? fingerprintData2?.Model : ""
+            }  `}</Typography>
           {scanninng2 ? (
             <Box
               component="img"
@@ -324,11 +322,10 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
           ) : (
             <>
               <Typography sx={{ fontSize: "14px" }}>
-                {`${
-                  fingerprintData2?.ErrorCode
+                {`${fingerprintData2?.ErrorCode
                     ? "Error " + fingerprintData2?.ErrorCode + "*:"
                     : ""
-                } No data`}
+                  } No data`}
               </Typography>
 
               {fingerprintData2?.ErrorCode && (
