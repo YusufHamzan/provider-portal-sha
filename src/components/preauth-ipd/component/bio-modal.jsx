@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Box, Button, Typography, IconButton, Paper, Grid, Stack, Divider } from "@mui/material";
-import BiometricComponent from "./biometric";
 import ClearIcon from "@mui/icons-material/Clear";
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import BiometricComponent from "./biometric";
 import OtpComponent from "./otp-component";
-import { MemberService } from "../../../remote-api/api/member-services";
 import PhotoValidationComponent from "./photo-verify-component";
+import { MemberService } from "../../../remote-api/api/member-services";
 import ArrowRightAlt from '@mui/icons-material/ArrowRightAlt';
 import SendToMobile from '@mui/icons-material/SendToMobile';
 import HowToReg from '@mui/icons-material/HowToReg';
