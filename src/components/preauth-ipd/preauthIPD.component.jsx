@@ -1042,6 +1042,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleSubmit = () => {
+    
     // if (serviceDetailsList[0].benefitId) {
     // } else {
     //   setAlertMsg("Please add Benefit!!!");
@@ -1123,7 +1124,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   // return;
     // }
     
-    console.log("entering", serviceDetailListModify);
+    
     // if (
     //   formik.values.contactNoOne.toString().length > 10 &&
     //   formik.values.contactNoOne.toString().length < 15
@@ -1144,8 +1145,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     // }
     
     const serviceDetailListModify = [...serviceDetailsList];
-    const { value } = serviceDetailListModify[0]?.interventionCode;
-    serviceDetailListModify[0].interventionCode = value;
+    // const { value } = serviceDetailListModify[0]?.interventionCode;
+    serviceDetailListModify[0].interventionCode = serviceDetailListModify[0]?.interventionCode?.value;
+    
     
     const diagnosisValue = serviceDetailListModify[0]?.diagnosis?.value;
     serviceDetailListModify[0].diagnosis = diagnosisValue;

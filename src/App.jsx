@@ -32,12 +32,12 @@ function App() {
       access_details.push(...filteredArray);
     }
     const decode = jwtDecode(tokens.token);
-    console.log(decode);
+    
     localStorage.setItem("token", tokens.token);
     localStorage.setItem("providerId", decode.providerId);
     localStorage.setItem("provider", decode.name);
     localStorage.setItem("email", decode.email);
-    console.log("asdfg", decode);
+    
 
     // TODO: Remove me
     access_details.push("CLAIM");
