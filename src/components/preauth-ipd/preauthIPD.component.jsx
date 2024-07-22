@@ -2486,6 +2486,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   textAlign: "center",
                   display: "flex",
                   justifyContent: "center",
+                  display: "none",
                 }}
                 disabled={Validated ? true : false}
                 className={classes.buttonSecondary}
@@ -2508,7 +2509,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 type="submit"
                 style={{ marginLeft: "10px" }}
                 className={classes.buttonPrimary}
-                disabled={Validated ? false : true}
+                // disabled={Validated ? false : true}
               >
                 Save and Next
               </Button>
