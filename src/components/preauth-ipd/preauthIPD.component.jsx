@@ -651,6 +651,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     ]);
   };
 
+
   const handlePrimaryDiagnosisChange = (e, val) => {
     let selectedBenifits = val;
     const isSelecAll = selectedBenifits.some((item) => item.id === "selectall");
