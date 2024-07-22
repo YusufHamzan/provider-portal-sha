@@ -304,7 +304,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       providerId: localStorage.getItem("providerId"),
       estimatedCost: 0,
       benefitId: "",
-      codeStandard: "SHA",
+      codeStandard: "ICD",
       interventionCode: "",
       diagnosis: "",
       decisionId: "",
@@ -447,9 +447,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -645,7 +644,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         providerId: localStorage.getItem("providerId"),
         estimatedCost: 0,
         benefitId: "",
-        codeStandard: "SHA",
+        codeStandard: "ICD",
         interventionCode: null,
         diagnosis: null,
       },
@@ -1442,6 +1441,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 variant="standard"
                 fullWidth
               >
+                <MenuItem value="ICD">ICD</MenuItem>
                 <MenuItem value="SHA">SHA</MenuItem>
               </Select>
             </FormControl>
@@ -1722,7 +1722,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                       <DialogContent>
                         {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                          memberName?.res?.content?.length > 0 ? (
                           <TableContainer>
                             <Table>
                               <TableHead>
