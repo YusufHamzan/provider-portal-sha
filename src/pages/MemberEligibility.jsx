@@ -214,6 +214,7 @@ export default function MemberEligibility() {
 
   const handleSelect = (data) => {
     setMemberData(data);
+    getImage(data?.id);
     memberService
       .getMemberBalance(data?.membershipNo)
       .subscribe((resesponse) => {
