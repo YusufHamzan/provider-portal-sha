@@ -447,8 +447,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -651,7 +652,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     ]);
   };
 
-
   const handlePrimaryDiagnosisChange = (e, val) => {
     let selectedBenifits = val;
     const isSelecAll = selectedBenifits.some((item) => item.id === "selectall");
@@ -725,39 +725,39 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleMultipleValid = async () => {
-    setIsLoadingValidate(true);
+    e.preventDefault();
+    // setIsLoadingValidate(true);
     const promises = serviceDetailsList.map((obj) => {
-      if (obj?.interventionCode) {
-        let { code } = obj.interventionCode;
-        return handleValidation(code, obj?.benefitId);
-      }
+      // if (obj?.interventionCode) {
+      let { code } = obj?.interventionCode;
+      return handleValidation(code, obj?.benefitId);
+      // }
     });
 
-    if (serviceDetailsList[0]?.interventionCode) {
-      try {
-        const results = await Promise.all(promises);
-        // Handle the results
-        let listServiceDetails = serviceDetailsList.map((item, index) => {
-          return {
-            ...item,
-            decisionId: results[index],
-          };
-        });
+    // if (serviceDetailsList[0]?.interventionCode) {
+    try {
+      const results = await Promise.all(promises);
+      // Handle the results
+      let listServiceDetails = serviceDetailsList.map((item, index) => {
+        return {
+          ...item,
+          decisionId: results[index],
+        };
+      });
 
-        setServiceDetailsList(listServiceDetails);
-        setIsLoadingValidate(false);
-        setValidated(true);
+      setServiceDetailsList(listServiceDetails);
+      setIsLoadingValidate(false);
+      setValidated(true);
 
-        setIsLoadingValidate(false);
-      } catch (error) {
-        setIsLoadingValidate(false);
-        setValidated(false);
-      }
-    } else {
-      setTimeout(() => {
-        setIsLoadingValidate(false);
-      }, 2000);
+      setIsLoadingValidate(false);
+    } catch (error) {
+      setIsLoadingValidate(false);
+      setValidated(false);
     }
+    // } else {
+    // setTimeout(() => {
+    //   setIsLoadingValidate(false);
+    // }, 2000);
   };
 
   const handleDiagnosisChange = (e, val) => {
@@ -1590,7 +1590,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Alert>
           </Snackbar>
 
-          <form onSubmit={formik.handleSubmit}>
+          <form>
             <Grid container spacing={3} style={{ marginBottom: "20px" }}>
               <Grid
                 item
@@ -1723,7 +1723,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                       <DialogContent>
                         {memberName?.res?.content &&
-                          memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                           <TableContainer>
                             <Table>
                               <TableHead>
@@ -2485,13 +2485,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   minWidth: "70px",
                   border: "none",
                   textAlign: "center",
-                  display: "flex",
+                  // display: "flex",
                   justifyContent: "center",
                   display: "none",
                 }}
                 disabled={Validated ? true : false}
                 className={classes.buttonSecondary}
-                onClick={handleMultipleValid}
+                // onClick={handleMultipleValid}
               >
                 {isLoadingValidate ? (
                   <CircularProgress size={"15px"} sx={{ color: "white" }} />
@@ -2510,6 +2510,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 type="submit"
                 style={{ marginLeft: "10px" }}
                 className={classes.buttonPrimary}
+                // onClick={handleValidation}
+                onClick={() => handleMultipleValid()}
+
                 // disabled={Validated ? false : true}
               >
                 Save and Next
@@ -2519,7 +2522,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 style={{ marginLeft: "10px" }}
                 variant="contained"
                 // color="secondar"
-                onClick={handleClose}
               >
                 Close
               </Button>

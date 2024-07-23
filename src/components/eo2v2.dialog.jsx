@@ -39,7 +39,6 @@ export default function DialogTable({ open, setOpen, data, finalApproval }) {
   const handleClose = () => {
     setOpen(false);
   };
-  console.log(finalApproval[0]?.finalApproval);
   const displayKeys = [
     "healthFacilityCategory",
     "gender",
@@ -71,7 +70,7 @@ export default function DialogTable({ open, setOpen, data, finalApproval }) {
     <React.Fragment>
       <Dialog
         fullScreen={fullScreen}
-        open={open}
+        open={finalApproval && open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
         maxWidth="md"
@@ -89,6 +88,7 @@ export default function DialogTable({ open, setOpen, data, finalApproval }) {
                   <h4
                     style={{
                       backgroundColor:
+                        finalApproval &&
                         finalApproval[0]?.finalApproval == "APPROVED"
                           ? "#01de74"
                           : "red",
@@ -99,7 +99,7 @@ export default function DialogTable({ open, setOpen, data, finalApproval }) {
                       color: "white",
                     }}
                   >
-                    {finalApproval[0]?.finalApproval}
+                    {finalApproval && finalApproval[0]?.finalApproval}
                   </h4>
                 </div>
                 <h4 style={{ margin: "7px" }}>
@@ -108,7 +108,7 @@ export default function DialogTable({ open, setOpen, data, finalApproval }) {
               </TableHead>
               {/* <Divider/> */}
               <TableBody>
-                {displayKeys.length &&
+                {displayKeys?.length &&
                   displayKeys?.map((key, index) => (
                     <TableRow key={index}>
                       <TableCell component="th" scope="row" sx={tableCellStyle}>
