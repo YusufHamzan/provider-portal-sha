@@ -1042,12 +1042,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleSubmit = () => {
-    if (serviceDetailsList[0].benefitId) {
-    } else {
-      setAlertMsg("Please add Benefit!!!");
-      setOpenSnack(true);
-      return;
-    }
+    // if (serviceDetailsList[0].benefitId) {
+    // } else {
+    //   setAlertMsg("Please add Benefit!!!");
+    //   setOpenSnack(true);
+    //   return;
+    // }
 
     // if (providerDetailsList[0].benefit[0].benefitId) {
     // } else {
@@ -1061,9 +1061,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //     el.estimatedCost = Number(el.estimatedCost);
     //   });
     // });
-    serviceDetailsList.forEach((sd) => {
-      sd.estimatedCost = Number(sd.estimatedCost);
-    });
+
+    // serviceDetailsList.forEach((sd) => {
+    //   sd.estimatedCost = Number(sd.estimatedCost);
+    // });
+
     // benefitsWithCost.forEach((ctc) => {
     //   ctc.estimatedCost = Number(ctc.estimatedCost);
     // });
@@ -1113,34 +1115,35 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   }
     // });
 
-    if (new Date(selectedDOA).getTime() > new Date(selectedDOD).getTime()) {
-      setAlertMsg("Admission date must be lower than Discharge date");
-      setOpenSnack(true);
-      return;
-    }
+    // if (new Date(selectedDOA).getTime() > new Date(selectedDOD).getTime()) {
+    //   setAlertMsg("Admission date must be lower than Discharge date");
+    //   setOpenSnack(true);
+    //   // return;
+    // }
 
-    if (
-      formik.values.contactNoOne.toString().length > 10 &&
-      formik.values.contactNoOne.toString().length < 15
-    ) {
-      setAlertMsg("Provide right conact details");
-      // setAlertMsg("Contact One must be of 10 digits");
-      setOpenSnack(true);
-      return;
-    }
-    if (
-      formik.values.contactNoTwo &&
-      formik.values.contactNoTwo.toString().length > 10 &&
-      formik.values.contactNoTwo.toString().length < 15
-    ) {
-      setAlertMsg("Provide right conact details");
-      setOpenSnack(true);
-      return;
-    }
+    // if (
+    //   formik.values.contactNoOne.toString().length > 10 &&
+    //   formik.values.contactNoOne.toString().length < 15
+    // ) {
+    //   setAlertMsg("Provide right conact details");
+    //   // setAlertMsg("Contact One must be of 10 digits");
+    //   setOpenSnack(true);
+    //   // return;
+    // }
+    // if (
+    //   formik.values.contactNoTwo &&
+    //   formik.values.contactNoTwo.toString().length > 10 &&
+    //   formik.values.contactNoTwo.toString().length < 15
+    // ) {
+    //   setAlertMsg("Provide right conact details");
+    //   setOpenSnack(true);
+    //   // return;
+    // }
 
     const serviceDetailListModify = [...serviceDetailsList];
-    const { value } = serviceDetailListModify[0]?.interventionCode;
-    serviceDetailListModify[0].interventionCode = value;
+    // const { value } = serviceDetailListModify[0]?.interventionCode;
+    serviceDetailListModify[0].interventionCode =
+      serviceDetailListModify[0]?.interventionCode?.value;
 
     const diagnosisValue = serviceDetailListModify[0]?.diagnosis?.value;
     serviceDetailListModify[0].diagnosis = diagnosisValue;
@@ -1773,8 +1776,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   )}
                 </Grid>
               )}
-              {console.log("id", memberBasic.id)}
-              {console.log("memberBasic", memberBasic)}
               {
                 <BioModal
                   matchResult={matchResult}
@@ -2477,7 +2478,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
             {/* {query2.get("mode") !== "viewOnly" && ( */}
             <Grid item xs={12} className={classes.actionContainer}>
-              <Button
+              {/* <Button
                 variant="contained"
                 color="primary"
                 type="button"
@@ -2503,16 +2504,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 ) : (
                   "Validate"
                 )}
-              </Button>
+              </Button> */}
               <Button
                 variant="contained"
                 color="primary"
                 type="submit"
                 style={{ marginLeft: "10px" }}
                 className={classes.buttonPrimary}
-                // onClick={handleValidation}
-                onClick={() => handleMultipleValid()}
-
                 // disabled={Validated ? false : true}
               >
                 Save and Next

@@ -118,10 +118,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-        // onClick={() => {
-        //   setShowServices(false);
-        //   getClaimsByBenefit(rowData?.benefitId);
-        // }}
+      // onClick={() => {
+      //   setShowServices(false);
+      //   getClaimsByBenefit(rowData?.benefitId);
+      // }}
       >
         {rowData.consumed}
       </span>
@@ -214,6 +214,7 @@ export default function MemberEligibility() {
 
   const handleSelect = (data) => {
     setMemberData(data);
+    getImage(data?.id);
     memberService
       .getMemberBalance(data?.membershipNo)
       .subscribe((resesponse) => {
@@ -365,7 +366,7 @@ export default function MemberEligibility() {
           {alertMsg}
         </Alert>
       </Snackbar>
-      <Paper elevation="3" style={{ padding: 15 }}>
+      <Paper elevation={3} style={{ padding: 15 }}>
         <Grid container spacing={3} style={{ marginBottom: "20px" }}>
           <Grid
             item
@@ -473,7 +474,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -569,7 +570,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -619,9 +620,9 @@ export default function MemberEligibility() {
         </Grid>
       </Paper>
       {memberData && (
-        <Paper elevation="3" style={{ padding: 15, marginTop: "15px" }}>
+        <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
-            <Grid xs={12} sm={12} md={12} container>
+            <Grid item xs={12} sm={12} md={12} container>
               {/* <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
                 <Avatar sizes="400"></Avatar>
               </Box> */}
@@ -654,7 +655,7 @@ export default function MemberEligibility() {
                 container
                 justifyContent="center"
                 alignItems="center"
-                // style={{ position: "relative", width: "fit-content" }}
+              // style={{ position: "relative", width: "fit-content" }}
               >
                 <img
                   style={{
@@ -692,7 +693,7 @@ export default function MemberEligibility() {
                 </Button>
               </Grid>
             </Grid>
-            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
+            <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
               <Box
                 display="flex"
                 flexDirection="column"
@@ -789,7 +790,7 @@ export default function MemberEligibility() {
               </Box>
             </Grid>
 
-            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
+            <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Membership No.</Typography>
                 &nbsp;
@@ -843,7 +844,7 @@ export default function MemberEligibility() {
             </Grid>
           </Grid>
 
-          <Paper elevation="none" style={{ padding: 15, marginTop: "10px" }}>
+          <Paper elevation={0} style={{ padding: 15, marginTop: "10px" }}>
             {/* <Eo2v2DataGrid
               $dataSource={dataSource$}
               config={configuration}
@@ -871,11 +872,10 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${
-                                parentBenefitName != undefined
-                                  ? `${parentBenefitName} >`
-                                  : ""
-                              } ${item?.benefitName}`}
+                              {` ${parentBenefitName != undefined
+                                ? `${parentBenefitName} >`
+                                : ""
+                                } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
