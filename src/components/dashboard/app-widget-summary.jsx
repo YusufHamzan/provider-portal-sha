@@ -31,7 +31,7 @@ export default function AppWidgetSummary({
       }}
       {...other}
     >
-      {icon && <Box sx={{ width: 40, height: 40 }}>{icon}</Box>}
+      {icon && <Box sx={{ width: 80, height: 40 }}>{icon}</Box>}
 
       <Stack spacing={0.5} sx={{ width: "100%" }}>
         <Box
@@ -45,7 +45,7 @@ export default function AppWidgetSummary({
             {fShortenNumber(total)}
             <br />
             <span
-              style={{ fontWeight: "500", color: "gray", fontSize: "12px" }}
+              style={{ fontWeight: "500", color: "white", fontSize: "12px" }}
             >
               {label[0]}
             </span>
@@ -55,7 +55,7 @@ export default function AppWidgetSummary({
             {fShortenNumber(total2)}
             <br />
             <span
-              style={{ fontWeight: "500", color: "gray", fontSize: "12px" }}
+              style={{ fontWeight: "500", color: "white", fontSize: "12px" }}
             >
               {label[1]}
             </span>
