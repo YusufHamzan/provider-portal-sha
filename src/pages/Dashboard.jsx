@@ -15,6 +15,8 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { Box, Button, ButtonGroup } from "@mui/material";
 import ReactApexChart from "react-apexcharts";
+import preAuthImg from "../assets/ImageAuth.png";
+import preAuthImg2 from "../assets/ImageAuth_2.png";
 
 // ----------------------------------------------------------------------
 const claimservice = new ClaimService();
@@ -66,7 +68,7 @@ export default function Dashboard() {
   //   },
   // ];
   const [dashCount, setDashCount] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(3);
   const [ageData, setAgeData] = useState([]);
   const [interventionData, setInterventionData] = useState([]);
   const [statusData, setStatusData] = useState({
@@ -270,7 +272,8 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.ipdPreauthCount || "NA"}
             total2={dashCount[activeIndex]?.ipdPreauthAmount || "NA"}
             color="success"
-            icon={<img alt="icon" src="/icons/glass/health.svg" />}
+            style={{ backgroundColor: "#1976d2", color: "white" }}
+            icon={<img alt="icon" src={preAuthImg} style={{ width: "75px" }} />}
           />
         </Grid>
 
@@ -281,10 +284,13 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.opdPreauthCount || "NA"}
             total2={dashCount[activeIndex]?.opdPreauthAmount || "NA"}
             color="info"
-            icon={<img alt="icon" src="/icons/glass/health.svg" />}
+            style={{ backgroundColor: "#ed6c02", color: "white" }}
+            // style={{ backgroundColor: "#1976d2", color: "white" }}
+            icon={
+              <img alt="icon" src={preAuthImg2} style={{ width: "75px" }} />
+            }
           />
         </Grid>
-
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="OPD Claims"
@@ -292,7 +298,8 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.ipdClaimCount || "NA"}
             total2={dashCount[activeIndex]?.ipdClaimAmount || "NA"}
             color="warning"
-            icon={<img alt="icon" src="/icons/glass/health.svg" />}
+            style={{ backgroundColor: "#1976d2", color: "white" }}
+            icon={<img alt="icon" src={preAuthImg} style={{ width: "75px" }} />}
           />
         </Grid>
 
@@ -303,7 +310,10 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.opdClaimCount || "NA"}
             total2={dashCount[activeIndex]?.opdClaimAmount || "NA"}
             color="error"
-            icon={<img alt="icon" src="/icons/glass/health.svg" />}
+            style={{ backgroundColor: "#ed6c02", color: "white" }}
+            icon={
+              <img alt="icon" src={preAuthImg2} style={{ width: "75px" }} />
+            }
           />
         </Grid>
 
