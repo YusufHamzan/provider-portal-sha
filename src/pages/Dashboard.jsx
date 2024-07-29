@@ -164,7 +164,6 @@ export default function Dashboard() {
         value: value == null ? 0 : value,
       }));
 
-    console.log(seriesData);
     const checkFound = seriesData.some((item) => {
       return item?.value > 0;
     });
@@ -236,15 +235,6 @@ export default function Dashboard() {
       ? "thisMonth"
       : "thisYear";
   };
-
-  useEffect(() => {
-    // const activeMonth = getCurrentActiveMonth(activeIndex);
-    const data = interventionData[activeIndex]?.top5Interventions
-      ?.filter((item) => item[getCurrentActiveMonth()])
-      .map((item) => item[getCurrentActiveMonth()]);
-
-    console.log(data);
-  }, [activeIndex]);
 
   return (
     <Container maxWidth="xl">

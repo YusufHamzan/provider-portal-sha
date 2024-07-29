@@ -725,39 +725,39 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleMultipleValid = async () => {
-    setIsLoadingValidate(true);
+    e.preventDefault();
+    // setIsLoadingValidate(true);
     const promises = serviceDetailsList.map((obj) => {
-      if (obj?.interventionCode) {
-        let { code } = obj.interventionCode;
-        return handleValidation(code, obj?.benefitId);
-      }
+      // if (obj?.interventionCode) {
+      let { code } = obj?.interventionCode;
+      return handleValidation(code, obj?.benefitId);
+      // }
     });
 
-    if (serviceDetailsList[0]?.interventionCode) {
-      try {
-        const results = await Promise.all(promises);
-        // Handle the results
-        let listServiceDetails = serviceDetailsList.map((item, index) => {
-          return {
-            ...item,
-            decisionId: results[index],
-          };
-        });
+    // if (serviceDetailsList[0]?.interventionCode) {
+    try {
+      const results = await Promise.all(promises);
+      // Handle the results
+      let listServiceDetails = serviceDetailsList.map((item, index) => {
+        return {
+          ...item,
+          decisionId: results[index],
+        };
+      });
 
-        setServiceDetailsList(listServiceDetails);
-        setIsLoadingValidate(false);
-        setValidated(true);
+      setServiceDetailsList(listServiceDetails);
+      setIsLoadingValidate(false);
+      setValidated(true);
 
-        setIsLoadingValidate(false);
-      } catch (error) {
-        setIsLoadingValidate(false);
-        setValidated(false);
-      }
-    } else {
-      setTimeout(() => {
-        setIsLoadingValidate(false);
-      }, 2000);
+      setIsLoadingValidate(false);
+    } catch (error) {
+      setIsLoadingValidate(false);
+      setValidated(false);
     }
+    // } else {
+    // setTimeout(() => {
+    //   setIsLoadingValidate(false);
+    // }, 2000);
   };
 
   const handleDiagnosisChange = (e, val) => {
@@ -1042,7 +1042,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleSubmit = () => {
-    
     // if (serviceDetailsList[0].benefitId) {
     // } else {
     //   setAlertMsg("Please add Benefit!!!");
@@ -1063,11 +1062,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   });
     // });
 
-
     // serviceDetailsList.forEach((sd) => {
     //   sd.estimatedCost = Number(sd.estimatedCost);
     // });
-
 
     // benefitsWithCost.forEach((ctc) => {
     //   ctc.estimatedCost = Number(ctc.estimatedCost);
@@ -1123,8 +1120,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   setOpenSnack(true);
     //   // return;
     // }
-    
-    
+
     // if (
     //   formik.values.contactNoOne.toString().length > 10 &&
     //   formik.values.contactNoOne.toString().length < 15
@@ -1143,15 +1139,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
     //   setOpenSnack(true);
     //   // return;
     // }
-    
+
     const serviceDetailListModify = [...serviceDetailsList];
     // const { value } = serviceDetailListModify[0]?.interventionCode;
-    serviceDetailListModify[0].interventionCode = serviceDetailListModify[0]?.interventionCode?.value;
-    
-    
+    serviceDetailListModify[0].interventionCode =
+      serviceDetailListModify[0]?.interventionCode?.value;
+
     const diagnosisValue = serviceDetailListModify[0]?.diagnosis?.value;
     serviceDetailListModify[0].diagnosis = diagnosisValue;
-    
+
     let serviceDetailListModify2 = serviceDetailsList.map((item) => {
       if (
         typeof item?.diagnosis === "object" &&
@@ -1597,7 +1593,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Alert>
           </Snackbar>
 
-          <form onSubmit={formik.handleSubmit}>
+          <form>
             <Grid container spacing={3} style={{ marginBottom: "20px" }}>
               <Grid
                 item
@@ -2490,12 +2486,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   minWidth: "70px",
                   border: "none",
                   textAlign: "center",
-                  display: "flex",
+                  // display: "flex",
                   justifyContent: "center",
+                  display: "none",
                 }}
                 disabled={Validated ? true : false}
                 className={classes.buttonSecondary}
-                onClick={handleMultipleValid}
+                // onClick={handleMultipleValid}
               >
                 {isLoadingValidate ? (
                   <CircularProgress size={"15px"} sx={{ color: "white" }} />
@@ -2523,7 +2520,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 style={{ marginLeft: "10px" }}
                 variant="contained"
                 // color="secondar"
-                onClick={handleClose}
               >
                 Close
               </Button>

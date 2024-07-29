@@ -778,7 +778,7 @@ export default function PreAuthReview(props) {
 
   useEffect(() => {
     if (preAuthDetails !== undefined) {
-      handleDecision();
+      // handleDecision();
     }
   }, [preAuthDetails]);
 
@@ -1567,17 +1567,17 @@ export default function PreAuthReview(props) {
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {preAuthDetails?.preAuth?.benefitsWithCost[0].benefitId ? (
+                {preAuthDetails?.preAuth?.benefitsWithCost[0]?.benefitId ? (
                   preAuthDetails?.preAuth?.benefitsWithCost?.map((row, i) => {
                     let proId = localStorage.getItem("providerId");
                     let poviderName = localStorage.getItem("provider");
                     let value =
-                      preAuthDetails?.preAuth.preAuthStatus !=
+                      preAuthDetails?.preAuth?.preAuthStatus !=
                         "ENHANCEMENT_REQUESTED" && row?.approvedCost;
-                    if (proId === row.providerId) {
+                    if (proId === row?.providerId) {
                       return (
                         <StyledTableRow
-                          key={row.name}
+                          key={row?.name}
                           sx={{
                             "&:last-child td, &:last-child th": { border: 0 },
                           }}
@@ -1594,35 +1594,35 @@ export default function PreAuthReview(props) {
                             scope="row"
                             style={valueStyle}
                           >
-                            {row.benefitName}
+                            {row?.benefitName}
                           </StyledTableCellRow>
                           <StyledTableCellRow
                             component="th"
                             scope="row"
                             style={valueStyle}
                           >
-                            {row.interventionName}
+                            {row?.interventionName}
                           </StyledTableCellRow>
                           <StyledTableCellRow
                             component="th"
                             scope="row"
                             style={valueStyle}
                           >
-                            {row.diagnosisName}
+                            {row?.diagnosisName}
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
-                            {row.estimatedCost}
+                            {row?.estimatedCost}
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
-                            {row.comment || "NA"}
+                            {row?.comment || "NA"}
                           </StyledTableCellRow>
                           <StyledTableCellRow style={valueStyle}>
-                            {decionData[i][0]?.tariffs || "NA"}
-                            {console.log(decionData)}
+                            {(decionData[i] && decionData[i][0]?.tariffs) ||
+                              "NA"}
                           </StyledTableCellRow>
-                          {console.log(decionData)}
                           <StyledTableCellRow style={valueStyle}>
-                            {decionData[i][0]?.finalApproval == "APPROVED" ? (
+                            {decionData[i] &&
+                            decionData[i][0]?.finalApproval == "APPROVED" ? (
                               <CheckCircle
                                 sx={{ color: "green", cursor: "pointer" }}
                                 onClick={() => {
