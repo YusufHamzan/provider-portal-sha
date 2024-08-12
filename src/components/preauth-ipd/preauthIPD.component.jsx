@@ -2478,7 +2478,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
             {/* {query2.get("mode") !== "viewOnly" && ( */}
             <Grid item xs={12} className={classes.actionContainer}>
-              {/* <Button
+              <Button
                 variant="contained"
                 color="primary"
                 type="button"
@@ -2488,11 +2488,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   textAlign: "center",
                   // display: "flex",
                   justifyContent: "center",
-                  display: "none",
+                  // display: "none",
                 }}
                 disabled={Validated ? true : false}
                 className={classes.buttonSecondary}
-                // onClick={handleMultipleValid}
+                onClick={handleMultipleValid}
               >
                 {isLoadingValidate ? (
                   <CircularProgress size={"15px"} sx={{ color: "white" }} />
@@ -2504,7 +2504,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 ) : (
                   "Validate"
                 )}
-              </Button> */}
+              </Button>
               <Button
                 variant="contained"
                 color="primary"
