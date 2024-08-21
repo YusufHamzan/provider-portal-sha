@@ -12,6 +12,7 @@ import SubmitClaim from '../pages/SubmitClaim';
 import CreditClaims from '../pages/CreditClaims';
 import Signup from '../pages/signup';
 import ThankYou from '../pages/thank-you';
+import SubmitCreditClaim from '../pages/SubmitCreditClaim';
 // import TotalPayableAmount from '../pages/TotalPayableAmount';
 
 export default function AppRoutes() {
@@ -28,6 +29,8 @@ export default function AppRoutes() {
       <Route path="/providerstatement" element={<ProviderStatement />} />
       <Route path="/submit-claim" element={<SubmitClaim />} />
       <Route path="/submit-claim/:id" element={<SubmitClaim />} />
+      <Route path="/submit-credit-claims" element={<SubmitCreditClaim />} />
+      <Route path="/submit-credit-claims/:id" element={<SubmitCreditClaim />} />
       <Route path="/view/:id" element={<PreauthView />} />
 
 

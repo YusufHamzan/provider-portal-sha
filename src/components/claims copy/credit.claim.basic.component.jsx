@@ -123,7 +123,7 @@ function useQuery1() {
   return new URLSearchParams(useLocation().search);
 }
 
-export default function ClaimsBasicComponent(props) {
+export default function CreditClaimsBasicComponent(props) {
   const query = useQuery1();
   const providerId = localStorage.getItem("providerId");
   const { id } = useParams();
@@ -248,11 +248,10 @@ export default function ClaimsBasicComponent(props) {
     planScheme: "",
     productName: "",
   });
-  const [searchType, setSearchType] = React.useState("national_id");
+  const [searchType, setSearchType] = React.useState("MEMBERSHIP_NO");
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState("");
   const [selectSpecId, setSelectedSpecId] = React.useState("");
-  const [invoiceData, setInvoiceData] = React.useState();
   const [providerDetailsList, setProviderDetailsList] = React.useState([
     {
       providerId: "",
@@ -344,19 +343,18 @@ export default function ClaimsBasicComponent(props) {
 
   useObservable(cs$, setCurrencyList);
   // useObservable(bts$, setBenefits);
-  // useObservable(bts$, setOtherTypeList); //query/
+  useObservable(bts$, setOtherTypeList); //query
   useObservable3(ad$, setDiagnosisList);
 
   const getBenefit = (id, policyNo) => {
-    console.log("called")
     let bts$ = benefitService.getAllBenefitWithChild({
       page: 0,
       size: 1000,
       memberId: id,
       policyNumber: policyNo,
-      claimType: 'IPD',
+      claimType: "IPD",
     });
-    bts$.subscribe(result => {
+    bts$.subscribe((result) => {
       setBenefits(result);
     });
   };
@@ -409,72 +407,34 @@ export default function ClaimsBasicComponent(props) {
       bf.estimatedCost = bf.maxApprovedCost;
     });
     setBenefitsWithCost(res.benefitsWithCost);
-    let inv = [];
-    const processedProviderIds = new Set();
-    res.benefitsWithCost &&
-      res.benefitsWithCost
-        .filter(item => {
-          if (processedProviderIds.has(item.providerId)) {
-            return false; // Skip this item if providerId has already been processed
-          }
-          processedProviderIds.add(item.providerId); // Mark providerId as processed
-          return true;
-        })
-        .forEach(el => {
-          let obj = {
-            ...el,
-            invoiceNo: '',
-            invoiceDate: 0,
-            invoiceDateVal: new Date(),
-            invoiceAmount: el.estimatedCost,
-            currency: '',
-            exchangeRate: 0,
-            invoiceAmountKES: 0,
-            transactionNo: '',
-            payee: '',
-            invoiceItems: [
-              {
-                serviceType: '',
-                expenseHead: '',
-                rateKes: 0,
-                unit: 0,
-                totalKes: 0,
-                finalTotal: 0,
-              },
-            ],
-          };
-          inv.push(obj);
-        });
-    setInvoiceDetailsList(inv);
-    // let prArr = [];
-    // res?.providers?.forEach((pr) => {
-    //   prArr.push({
-    //     provideId: pr.providerId,
-    //     invoiceNo: "",
-    //     invoiceDate: 0,
-    //     invoiceDateVal: new Date(),
-    //     invoiceAmount: pr.estimatedCost,
-    //     currency: "",
-    //     exchangeRate: 0,
-    //     invoiceAmountKSH: 0,
-    //     transactionNo: "",
-    //     payee: "",
-    //     invoiceItems: [
-    //       {
-    //         serviceType: "",
-    //         expenseHead: "",
-    //         rateKsh: 0,
-    //         unit: 0,
-    //         totalKsh: 0,
-    //         finalTotal: 0,
-    //       },
-    //     ],
-    //   });
-    // });
-    // if (prArr.length > 0) {
-    //   setInvoiceDetailsList(prArr);
-    // }
-    console.log("called, 777")
+    let prArr = [];
+    res.providers.forEach((pr) => {
+      prArr.push({
+        provideId: pr.providerId,
+        invoiceNo: "",
+        invoiceDate: 0,
+        invoiceDateVal: new Date(),
+        invoiceAmount: pr.estimatedCost,
+        currency: "",
+        exchangeRate: 0,
+        invoiceAmountKSH: 0,
+        transactionNo: "",
+        payee: "",
+        invoiceItems: [
+          {
+            serviceType: "",
+            expenseHead: "",
+            rateKsh: 0,
+            unit: 0,
+            totalKsh: 0,
+            finalTotal: 0,
+          },
+        ],
+      });
+    });
+    if (prArr.length > 0) {
+      setInvoiceDetailsList(prArr);
+    }
     getMemberDetails(res.memberShipNo);
     if (res.documents.length !== 0) {
       setSlideDocs(res.documents);
@@ -521,10 +481,9 @@ export default function ClaimsBasicComponent(props) {
     navigate("/claims");
   };
 
-  const handleAddInvoiceItems = (i,x) => {
+  const handleAddInvoiceItems = (i) => {
     setSelectedInvoiceItems(invoiceDetailsList[i].invoiceItems);
     setSelectedInvoiceItemIndex(i);
-    setInvoiceData(x);
     setInvoiceDetailModal(true);
   };
 
@@ -655,8 +614,8 @@ export default function ClaimsBasicComponent(props) {
     }
     formik.setFieldValue("PrimaryDiagnosis", selectedBenifits);
   };
+
   const populateStepOne = (id) => {
-    console.log("this fuctui")
     reimbursementService
       .getReimbursementById(id, providerId)
       .subscribe((res) => {
@@ -686,7 +645,6 @@ export default function ClaimsBasicComponent(props) {
         if (res.invoices && res.invoices.length !== 0) {
           setInvoiceDetailsList(res.invoices);
         }
-        console.log("called")
         getMemberDetails(res.memberShipNo);
         if (source === "PRE_AUTH") {
           setSlideDocs(res.documents);
@@ -730,7 +688,6 @@ export default function ClaimsBasicComponent(props) {
   };
 
   const getMemberDetails = (id, policyNumber) => {
-    console.log("reached here")
     let pageRequest = {
       page: 0,
       size: 10,
@@ -750,9 +707,7 @@ export default function ClaimsBasicComponent(props) {
     }
 
     memberservice.getMember(pageRequest).subscribe((res) => {
-      console.log("here we are")
       if (res.content?.length > 0) {
-        getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         if (searchType === "NAME") {
           setMemberName({ res });
           handleopenClientModal();
@@ -773,6 +728,7 @@ export default function ClaimsBasicComponent(props) {
             productName: res.content[0].productName,
           });
         }
+        getBenefit(res.content[0].memberId, res.content[0].policyNumber);
       } else {
         alert(`No Data found for ${id}`);
         setOpenSnack(true);
@@ -1017,8 +973,6 @@ export default function ClaimsBasicComponent(props) {
           onSubmit={handleInvDetClose}
           benefitsWithCost={benefitsWithCost}
           benefitOptions={benefitOptions}
-          invoiceData={invoiceData}
-          invoiceDetailsList={invoiceDetailsList}
         />
         {/* <Snackbar open={openSnack} autoHideDuration={4000} onClose={handleMsgErrorClose}>
           <Alert onClose={handleMsgErrorClose} severity="error">
@@ -1027,10 +981,10 @@ export default function ClaimsBasicComponent(props) {
         </Snackbar> */}
         {hasDoc ? (
           <Grid container spacing={3}>
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <SliderComponent items={slideDocs} />
             </Grid>
-            <Grid item xs={7}>
+            <Grid item xs={6}>
               <div
                 style={{
                   height: "700px",
@@ -1196,7 +1150,7 @@ export default function ClaimsBasicComponent(props) {
                       </LocalizationProvider>
                     </Grid>
                   </Grid>
-                  {/* <Grid
+                  <Grid
                     item
                     xs={12}
                     style={{ marginTop: "20px", marginBottom: "15px" }}
@@ -1322,7 +1276,7 @@ export default function ClaimsBasicComponent(props) {
                         </Grid>
                       </div>
                     );
-                  })} */}
+                  })}
 
                   <Grid
                     item
@@ -1540,7 +1494,7 @@ export default function ClaimsBasicComponent(props) {
                               variant="standard"
                               name="invoiceAmount"
                               value={x.invoiceAmount}
-                              // disabled={disableAllFields ? true : false}
+                              disabled={disableAllFields ? true : false}
                               onChange={(e) => handleInputChangeService(e, i)}
                               label="Invoice Amount"
                             />
@@ -1649,11 +1603,11 @@ export default function ClaimsBasicComponent(props) {
                                 onChange={(e) => handleInputChangeService(e, i)}
                               >
                                 <MenuItem value="Provider">Provider</MenuItem>
-                                {/* <MenuItem value="Member">Member</MenuItem> */}
+                                <MenuItem value="Member">Member</MenuItem>
                                 <MenuItem value="Intermediaries">
                                   Intermediaries
                                 </MenuItem>
-                                {/* <MenuItem value="Corporate">Corporate</MenuItem> */}
+                                <MenuItem value="Corporate">Corporate</MenuItem>
                               </Select>
                             </FormControl>
                           </Grid>
@@ -1662,7 +1616,7 @@ export default function ClaimsBasicComponent(props) {
                               variant="contained"
                               color="primary"
                               style={{ marginLeft: "5px", marginTop: "10px" }}
-                              onClick={() => handleAddInvoiceItems(i, x)}
+                              onClick={() => handleAddInvoiceItems(i)}
                             >
                               Add Invoice items
                             </Button>
@@ -1765,9 +1719,9 @@ export default function ClaimsBasicComponent(props) {
                       onChange={handleChange}
                       fullWidth
                     >
-                      <MenuItem value="national_id">National ID</MenuItem>
                       <MenuItem value="MEMBERSHIP_NO">Membership No.</MenuItem>
                       <MenuItem value="NAME">Member Name</MenuItem>
+                      <MenuItem value="national_id">National ID</MenuItem>
                     </Select>
                   </Grid>
 
@@ -2127,7 +2081,7 @@ export default function ClaimsBasicComponent(props) {
                     </LocalizationProvider>
                   </Grid>
                 </Grid>
-                <Grid
+                {/* <Grid
                   item
                   xs={12}
                   style={{ marginTop: "20px", marginBottom: "15px" }}
@@ -2251,18 +2205,16 @@ export default function ClaimsBasicComponent(props) {
                       </Grid>
                     </Grid>
                   );
-                })}
+                })} */}
 
                 <Grid
                   item
                   xs={12}
-                  sm={6}
-                  md={4}
                   style={{ marginTop: "20px", marginBottom: "15px" }}
                 >
                   <Divider />
                 </Grid>
-                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                <Grid container spacing={3} style={{ marginBottom: "20px", marginTop: "10px" }}>
                   <Grid
                     item
                     xs={12}
@@ -2444,9 +2396,9 @@ export default function ClaimsBasicComponent(props) {
                   </Grid>
                 </Grid>
 
-                <Grid item xs={12} style={{ marginBottom: "15px" }}>
+                {/* <Grid item xs={12} style={{ marginBottom: "15px" }}>
                   <Divider />
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12} style={{ marginTop: "20px" }}>
                   <span style={{ color: "#4472C4", fontWeight: "bold" }}>
@@ -2576,11 +2528,11 @@ export default function ClaimsBasicComponent(props) {
                               onChange={(e) => handleInputChangeService(e, i)}
                             >
                               <MenuItem value="Provider">Provider</MenuItem>
-                              {/* <MenuItem value="Member">Member</MenuItem> */}
+                              <MenuItem value="Member">Member</MenuItem>
                               <MenuItem value="Intermediaries">
                                 Intermediaries
                               </MenuItem>
-                              {/* <MenuItem value="Corporate">Corporate</MenuItem> */}
+                              <MenuItem value="Corporate">Corporate</MenuItem>
                             </Select>
                           </FormControl>
                         </Grid>
@@ -2589,7 +2541,7 @@ export default function ClaimsBasicComponent(props) {
                             variant="contained"
                             color="primary"
                             style={{ marginLeft: "5px", marginTop: "10px" }}
-                            onClick={() => handleAddInvoiceItems(i,x)}
+                            onClick={() => handleAddInvoiceItems(i)}
                           >
                             Add Invoice items
                           </Button>

@@ -1,26 +1,6 @@
 import React from "react";
 import { ServiceTypeService } from "../../../remote-api/api/master-services/service-type-service";
-import {
-  Autocomplete,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  Grid,
-  IconButton,
-  MenuItem,
-  Paper,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, IconButton, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import { AddCircleOutlined, RemoveCircleOutline } from "@mui/icons-material";
 
 export default function InvoiceDetailsModal(props) {
@@ -35,8 +15,6 @@ export default function InvoiceDetailsModal(props) {
     handleDeleteInvoiceItemRow,
     benefitOptions,
     benefitsWithCost,
-    invoiceData,
-    invoiceDetailsList,
   } = props;
   const [detailList, setDetailList] = React.useState([{}]);
   const [serviceTypeList, setServiceTypeList] = React.useState();
@@ -46,9 +24,9 @@ export default function InvoiceDetailsModal(props) {
 
   const getServiceTypes = () => {
     let serviceTypeService$ = serviceTypeService.getServiceTypes();
-    serviceTypeService$.subscribe((response) => {
+    serviceTypeService$.subscribe(response => {
       let temp = [];
-      response.content.forEach((el) => {
+      response.content.forEach(el => {
         temp.push(el);
       });
       setServiceTypeList(temp);
@@ -57,13 +35,13 @@ export default function InvoiceDetailsModal(props) {
 
   const getExpenseHead = (id) => {
     let expenseHeadService$ = serviceTypeService.getExpenseHead(id);
-    expenseHeadService$.subscribe((response) => {
+    expenseHeadService$.subscribe(response => {
       let temp = [];
-      response.content.forEach((el) => {
+      response.content.forEach(el => {
         let obj = {
           label: el?.name,
-          value: el?.id,
-        };
+          value:el?.id
+        }
         temp.push(obj);
       });
       setExpenseHeadList(temp);
@@ -75,53 +53,21 @@ export default function InvoiceDetailsModal(props) {
     // getExpenseHead();
   }, []);
 
-  const handleRemoveRow = (index) => {
-    setDetailList((oldList) => {
+  const handleRemoveRow = index => {
+    setDetailList(oldList => {
       return [...oldList.slice(0, index), ...oldList.slice(index + 1)];
     });
   };
 
   const lastRowIndex = detailList.length - 1;
   return (
-    <Dialog
-      open={isOpen}
-      onClose={onClose}
-      maxWidth="md"
-      aria-labelledby="form-dialog-title"
-      disableEnforceFocus
-    >
+    <Dialog open={isOpen} onClose={onClose} maxWidth="md" aria-labelledby="form-dialog-title" disableEnforceFocus>
       <DialogTitle id="form-dialog-title">Invoice Items</DialogTitle>
       <DialogContent>
-        <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+        <Grid container spacing={3} style={{ marginBottom: '20px' }}>
           <Grid item md={4}>
             Invoice no: {props.invoiceNo}
           </Grid>
-
-          <Grid item xs={12}>
-            <TableContainer component={Paper}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Benefit</TableCell>
-                    <TableCell>Approved Amount</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {benefitsWithCost.map((el, i) => {
-                    if (el?.providerId === invoiceData?.providerId) {
-                      return (
-                        <TableRow>
-                          <TableCell>{el.benefitName}</TableCell>
-                          <TableCell>{el.approvedAmount}</TableCell>
-                        </TableRow>
-                      );
-                    }
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-
           <Grid item xs={12}>
             <TableContainer component={Paper}>
               <Table size="small">
@@ -144,13 +90,8 @@ export default function InvoiceDetailsModal(props) {
                         <TableCell>
                           {selectedInvoiceItems.length - 1 === index && (
                             <IconButton
-                              onClick={() =>
-                                handleAddInvoiceItemRow(
-                                  selectedInvoiceItemIndex
-                                )
-                              }
-                              aria-label="Add a row below"
-                            >
+                              onClick={() => handleAddInvoiceItemRow(selectedInvoiceItemIndex)}
+                              aria-label="Add a row below">
                               <AddCircleOutlined />
                             </IconButton>
                           )}
@@ -172,21 +113,9 @@ export default function InvoiceDetailsModal(props) {
                             name="serviceType"
                             variant="standard"
                             value={detail.serviceType}
-                            onChange={(e) => {
-                              getExpenseHead(e.target.value);
-                              changeInvoiceItems(
-                                e,
-                                selectedInvoiceItemIndex,
-                                index
-                              );
-                            }}
-                          >
-                            {serviceTypeList?.map((ele) => {
-                              return (
-                                <MenuItem value={ele?.id}>
-                                  {ele?.displayName}
-                                </MenuItem>
-                              );
+                            onChange={e => {getExpenseHead(e.target.value);changeInvoiceItems(e, selectedInvoiceItemIndex, index)}}>
+                            {serviceTypeList?.map(ele => {
+                              return <MenuItem value={ele?.id}>{ele?.displayName}</MenuItem>;
                             })}
                           </Select>
                         </TableCell>
@@ -196,20 +125,9 @@ export default function InvoiceDetailsModal(props) {
                             name="expenseHead"
                             variant="standard"
                             value={detail.expenseHead}
-                            onChange={(e) =>
-                              changeInvoiceItems(
-                                e,
-                                selectedInvoiceItemIndex,
-                                index
-                              )
-                            }
-                          >
-                            {expenseHeadList?.map((ele) => {
-                              return (
-                                <MenuItem value={ele?.value}>
-                                  {ele?.label}
-                                </MenuItem>
-                              );
+                            onChange={e => changeInvoiceItems(e, selectedInvoiceItemIndex, index)}>
+                            {expenseHeadList?.map(ele => {
+                              return <MenuItem value={ele?.value}>{ele?.label}</MenuItem>;
                             })}
                           </Select>
                         </TableCell>
@@ -219,13 +137,7 @@ export default function InvoiceDetailsModal(props) {
                             type="number"
                             variant="standard"
                             value={detail.rateKsh}
-                            onChange={(e) =>
-                              changeInvoiceItems(
-                                e,
-                                selectedInvoiceItemIndex,
-                                index
-                              )
-                            }
+                            onChange={e => changeInvoiceItems(e, selectedInvoiceItemIndex, index)}
                           />
                         </TableCell>
                         <TableCell>
@@ -234,13 +146,7 @@ export default function InvoiceDetailsModal(props) {
                             type="number"
                             variant="standard"
                             value={detail.unit}
-                            onChange={(e) =>
-                              changeInvoiceItems(
-                                e,
-                                selectedInvoiceItemIndex,
-                                index
-                              )
-                            }
+                            onChange={e => changeInvoiceItems(e, selectedInvoiceItemIndex, index)}
                           />
                         </TableCell>
                         <TableCell>
@@ -249,29 +155,15 @@ export default function InvoiceDetailsModal(props) {
                             disabled
                             variant="standard"
                             value={detail.totalKsh}
-                            onChange={(e) =>
-                              changeInvoiceItems(
-                                e,
-                                selectedInvoiceItemIndex,
-                                index
-                              )
-                            }
+                            onChange={e => changeInvoiceItems(e, selectedInvoiceItemIndex, index)}
                           />
                         </TableCell>
                         <TableCell>
                           {selectedInvoiceItems.length !== 1 && (
                             <IconButton
-                              onClick={() =>
-                                handleDeleteInvoiceItemRow(
-                                  selectedInvoiceItemIndex,
-                                  index
-                                )
-                              }
-                              aria-label="Remove this row"
-                            >
-                              <RemoveCircleOutline
-                                style={{ color: "#dc3545" }}
-                              />
+                              onClick={() => handleDeleteInvoiceItemRow(selectedInvoiceItemIndex, index)}
+                              aria-label="Remove this row">
+                              <RemoveCircleOutline style={{color:"#dc3545"}} />
                             </IconButton>
                           )}
                         </TableCell>
@@ -285,9 +177,7 @@ export default function InvoiceDetailsModal(props) {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button className="p-button-text" onClick={onClose}>
-          Cancel
-        </Button>
+        <Button className='p-button-text' onClick={onClose}>Cancel</Button>
         <Button onClick={onSubmit} variant="contained" color="primary">
           Submit
         </Button>
@@ -296,20 +186,13 @@ export default function InvoiceDetailsModal(props) {
   );
 }
 
-const BenefitCostComponent = (props) => {
-  const {
-    x,
-    i,
-    changeInvoiceItems,
-    selectedInvoiceItemIndex,
-    benefitOptions,
-    benefitsWithCost,
-  } = props;
+const BenefitCostComponent = props => {
+  const { x, i, changeInvoiceItems, selectedInvoiceItemIndex, benefitOptions, benefitsWithCost } = props;
 
   const handleBenefitChange = (e, val, i) => {
     const eData = {
       target: {
-        name: "benefitId",
+        name: 'benefitId',
         value: val,
       },
     };
@@ -317,7 +200,7 @@ const BenefitCostComponent = (props) => {
   };
 
   return (
-    <Grid container spacing={3} key={i} style={{ marginBottom: "20px" }}>
+    <Grid container spacing={3} key={i} style={{ marginBottom: '20px' }}>
       <Grid item xs={4}>
         <FormControl style={{ minWidth: 220 }}>
           <Autocomplete
@@ -328,20 +211,16 @@ const BenefitCostComponent = (props) => {
               handleBenefitChange(e, val, i);
             }}
             id={`checkboxes-tags-demo${i + Math.random()}`}
-            options={benefitsWithCost?.map((option) => option.benefitId)}
-            getOptionLabel={(option) => {
-              const selectedOption = benefitOptions?.find(
-                (benefit) => benefit.value === option
-              );
-              return selectedOption ? selectedOption.label : "";
+            options={benefitsWithCost?.map(option => option.benefitId)}
+            getOptionLabel={option => {
+              const selectedOption = benefitOptions?.find(benefit => benefit.value === option);
+              return selectedOption ? selectedOption.label : '';
             }}
             getOptionSelected={(option, value) => {
               return option == value;
             }}
             // renderOption={option => <React.Fragment>{option.benefitId}</React.Fragment>}
-            renderInput={(params) => (
-              <TextField {...params} label="Select Benefit" />
-            )}
+            renderInput={params => <TextField {...params} label="Select Benefit" />}
           />
 
           {/* <Autocomplete
