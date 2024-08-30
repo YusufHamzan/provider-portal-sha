@@ -109,6 +109,7 @@ const benefitService = new BenefitService();
 const PreAuthIPDListComponent = () => {
   const navigate = useNavigate();
   const providerId = localStorage.getItem("providerId");
+  localStorage.removeItem("preauthid")
   let name = localStorage.getItem("provider");
   const [benefits, setBenefits] = useState();
   const [searchModal, setSearchModal] = React.useState(false);
