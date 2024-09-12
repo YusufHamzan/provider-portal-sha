@@ -1560,9 +1560,9 @@ export default function PreAuthReview(props) {
                   <StyledTableCellHeader>Diagnosis</StyledTableCellHeader>
                   <StyledTableCellHeader>Estimated</StyledTableCellHeader>
                   <StyledTableCellHeader>Comment</StyledTableCellHeader>
-                  <StyledTableCellHeader>Tarrif</StyledTableCellHeader>
+                  {/* <StyledTableCellHeader>Tarrif</StyledTableCellHeader> */}
 
-                  <StyledTableCellHeader>Decision</StyledTableCellHeader>
+                  {/* <StyledTableCellHeader>Decision</StyledTableCellHeader> */}
                   {/* <StyledTableCellHeader></StyledTableCellHeader> */}
                 </StyledTableRow>
               </TableHead>
@@ -1616,7 +1616,7 @@ export default function PreAuthReview(props) {
                           <StyledTableCellRow style={valueStyle}>
                             {row?.comment || "NA"}
                           </StyledTableCellRow>
-                          <StyledTableCellRow style={valueStyle}>
+                          {/* <StyledTableCellRow style={valueStyle}>
                             {(decionData[i] && decionData[i][0]?.tariffs) ||
                               "NA"}
                           </StyledTableCellRow>
@@ -1639,7 +1639,7 @@ export default function PreAuthReview(props) {
                                 }}
                               />
                             )}
-                          </StyledTableCellRow>
+                          </StyledTableCellRow> */}
                           {/* <StyledTableCellRow style={valueStyle}>
                             <InputText
                               className="p-inputtext-sm"
