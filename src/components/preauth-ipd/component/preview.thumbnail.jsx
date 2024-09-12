@@ -16,6 +16,41 @@ const DocumentPreview = ({ documents, preAuthId }) => {
   const handleCloseModal = () => {
     setSelectedDocument(null);
   };
+
+  const handleFileDownload = async (e, doc) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const anchor = document.createElement("a");
+    document.body.appendChild(anchor);
+
+    const token = window.getToken();
+    const fileUrl = `${baseDocumentURL}${doc.documentName}`;  // Build the file URL
+
+    const headers = new Headers();
+    headers.append('Authorization', `Bearer ${token}`);  // Use the token in the headers
+
+    try {
+      const response = await fetch(fileUrl, { headers });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file with status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const objectUrl = window.URL.createObjectURL(blob);
+
+      anchor.href = objectUrl;
+      anchor.download = doc.documentOriginalName;
+      anchor.click();
+
+      window.URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    } finally {
+      anchor.remove();
+    }
+  };
+
   return (
     <Grid container spacing={3}>
       {documents.map((document) => (
@@ -32,28 +67,29 @@ const DocumentPreview = ({ documents, preAuthId }) => {
             onClick={() => handleDocumentClick(document)}
           >
             {RenderPreview(document, baseDocumentURL)}
-            <a href={`${baseDocumentURL}${document.documentName}`} download>
-              <IconButton
-                style={{
-                  position: "absolute",
-                  top: 1,
-                  right: 1,
-                  padding: "4px",
-                  color: "#fff",
-                  backgroundColor: "rgba(0, 0, 0, 0.2)",
-                  transition: "background-color 0.3s",
-                }}
-                // Add onMouseEnter and onMouseLeave to handle hover effect
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.2)")
-                }
-              >
-                <CloudDownloadIcon />
-              </IconButton>
-            </a>
+
+            <IconButton
+              onClick={(e) => handleFileDownload(e, document)}
+              style={{
+                position: "absolute",
+                top: 1,
+                right: 1,
+                padding: "4px",
+                color: "#fff",
+                backgroundColor: "rgba(0, 0, 0, 0.2)",
+                transition: "background-color 0.3s",
+                cursor: "pointer",
+              }}
+              // Add onMouseEnter and onMouseLeave to handle hover effect
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.2)")
+              }
+            >
+              <CloudDownloadIcon />
+            </IconButton>
           </div>
           <div style={{ textAlign: "left", marginTop: "8px" }}>
             <Typography
