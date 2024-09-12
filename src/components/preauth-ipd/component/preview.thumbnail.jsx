@@ -1,5 +1,5 @@
 import { Grid, IconButton, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PdfReview from "./pdf.preview";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import DocumentModal from "./document.modal";
@@ -85,11 +85,36 @@ const DocumentPreview = ({ documents, preAuthId }) => {
 const RenderPreview = (document, baseDocumentURL) => {
   const { docFormat, documentName } = document;
   const completeURL = `${baseDocumentURL}${documentName}`;
+  const [img, setImg] = useState();
+
+  useEffect(() => {
+    const fetchImg = async () => {
+      try {
+        const res = await fetch(completeURL, {
+          headers: {
+            Authorization: `Bearer ${window.getToken()}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        let file = await res.blob();
+        setImg(URL.createObjectURL(file));
+      } catch (error) {
+        alert('Failed to fetch the image');
+        // Handle the error (e.g., display a fallback image or show an error message)
+      }
+    };
+    fetchImg();
+  }, []);
 
   if (docFormat.split("/")[0] === "image") {
     return (
       <img
-        src={encodeURI(completeURL)} // Complete URL for images
+        src={img} // Complete URL for images
+        // src={encodeURI(completeURL)} // Complete URL for images
         alt="Document Thumbnail"
         style={{
           width: "100%",

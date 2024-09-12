@@ -15,12 +15,37 @@ const useStyles = theme => ({
 const RenderPreview = (document, baseDocumentURL) => {
   const { docFormat, documentName } = document;
   const completeURL = `${baseDocumentURL}${documentName}`;
+  const [img, setImg] = useState();
+
+  useEffect(() => {
+    const fetchImg = async () => {
+      try {
+        const res = await fetch(completeURL, {
+          headers: {
+            Authorization: `Bearer ${window.getToken()}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        let file = await res.blob();
+        setImg(URL.createObjectURL(file));
+      } catch (error) {
+        alert('Failed to fetch the image');
+        // Handle the error (e.g., display a fallback image or show an error message)
+      }
+    };
+    fetchImg();
+  }, []);
 
   if (docFormat.split('/')[0] === 'image') {
     // if (docFormat === 'image/png') {
     return (
       <img
-        src={encodeURI(completeURL)} // Complete URL for images
+        // src={encodeURI(completeURL)} // Complete URL for images
+        src={img} // Complete URL for images
         alt="Document Thumbnail"
         style={{
           width: '100%',
