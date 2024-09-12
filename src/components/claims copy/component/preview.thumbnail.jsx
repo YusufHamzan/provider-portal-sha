@@ -1,9 +1,10 @@
 import { Grid, IconButton, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 import PdfReview from './pdf.preview';
+import { config } from '../../../remote-api/configuration';
 
 const DocumentPreview = ({ documents, preAuthId }) => {
-    const baseDocumentURL = `https://api.eoxegen.com/claim-query-service/v1/preauths/${preAuthId}/docs/`;
+    const baseDocumentURL = `${config.rootUrl}/claim-query-service/v1/preauths/${preAuthId}/docs/`;
 
     return (
         <Grid container spacing={3}>

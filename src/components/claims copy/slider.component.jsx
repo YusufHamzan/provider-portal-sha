@@ -5,6 +5,7 @@ import Carousel from "react-material-ui-carousel";
 import { useLocation, useParams } from "react-router-dom";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import PdfReview from './component/pdf.preview';
+import { config } from '../../remote-api/configuration';
 
 const useStyles = theme => ({
   navButtonsWrapperProps: {
@@ -74,7 +75,7 @@ const SliderComponent = ({ items, classes }) => {
   if (!preId) {
     preId = id?.split('-')[1];
   }
-  const baseDocumentURL = `https://api.eoxegen.com/claim-query-service/v1/preauths/${preId}/docs/`;
+  const baseDocumentURL = `${config.rootUrl}/claim-query-service/v1/preauths/${preId}/docs/`;
   return (
     <div>
       <Carousel

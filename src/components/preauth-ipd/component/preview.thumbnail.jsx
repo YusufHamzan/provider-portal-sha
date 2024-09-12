@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import PdfReview from "./pdf.preview";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import DocumentModal from "./document.modal";
+import { config } from "../../../remote-api/configuration";
 
 const DocumentPreview = ({ documents, preAuthId }) => {
   const [selectedDocument, setSelectedDocument] = useState(null);
-  const baseDocumentURL = `https://api.eoxegen.com/claim-query-service/v1/preauths/${preAuthId}/docs/`;
+  const baseDocumentURL = `${config.rootUrl}/claim-query-service/v1/preauths/${preAuthId}/docs/`;
 
   const handleDocumentClick = (document) => {
     setSelectedDocument(document);

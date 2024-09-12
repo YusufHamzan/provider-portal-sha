@@ -20,6 +20,7 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import AddIcon from "@mui/icons-material/Add";
 import PdfReview from "./component/pdf.preview";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { config } from "../../remote-api/configuration";
 
 const preAuthService = new PreAuthService();
 
@@ -104,7 +105,7 @@ export default function ClaimsDocumentComponent(props) {
   const { id } = useParams();
   let providerId = localStorage.getItem("providerId");
   const preauthid = id ? id : localStorage.getItem("preauthid");
-  const baseDocumentURL = `https://api.eoxegen.com/claim-query-service/v1/preauths/${preauthid}/docs/`;
+  const baseDocumentURL = `${config.rootUrl}/claim-query-service/v1/preauths/${preauthid}/docs/`;
 
   const [uploadSuccess, setUploadSuccess] = React.useState(false);
   const [preAuthDetails, setPreAuthDetails] = React.useState({});
