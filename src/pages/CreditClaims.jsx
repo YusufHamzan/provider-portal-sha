@@ -323,11 +323,11 @@ const CreditClaims = () => {
   };
 
   const handleOpen = () => {
-    navigate("/submit-claim?type=credit&mode=create");
+    navigate("/submit-credit-claims?type=credit&mode=create");
   };
 
   const openEditSection = (reim) => {
-    navigate(`/submit-claim/${reim.id}?type=credit&mode=edit`);
+    navigate(`/submit-credit-claims/${reim.id}?type=credit&mode=edit`);
   };
 
   const preAuthDOASearch = (type) => {

@@ -141,7 +141,7 @@ export default function CreditClaimsDetails(props) {
   const handleClose = (event) => {
     localStorage.removeItem("claimreimid");
 
-    navigate(`/claims`);
+    navigate(`/credit-claims`);
     // window.location.reload();
   };
 
