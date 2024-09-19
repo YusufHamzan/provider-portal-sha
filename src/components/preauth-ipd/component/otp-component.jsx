@@ -37,12 +37,9 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
         setOtpGenerated(true);
         setCountdown(30);
         setgenerateLoading(false);
-
-        console.log(res);
       },
       error: (err) => {
         setgenerateLoading(false);
-        console.error(err);
         alert("Something went wrong!");
       },
     });
@@ -80,7 +77,6 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
           status: "failed",
           msg: "Something went wrong.",
         });
-        console.error(err);
         alert("Something went wrong!");
       },
     });

@@ -1195,7 +1195,7 @@ export default function ClaimsPreAuthOPDComponent(props) {
       setOpenSnack(true);
     }
   };
-  console.log("formik.values.contactNoOne", formik.values.contactNoOne);
+  
   return (
     <>
       <ClaimModal

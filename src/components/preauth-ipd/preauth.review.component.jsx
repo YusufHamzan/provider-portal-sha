@@ -302,7 +302,6 @@ export default function PreAuthReview(props) {
       let obj = { preAuth: data.preAuth };
       memberservice.getMember(pageRequest).subscribe((res) => {
         if (res.content?.length > 0) {
-          console.log(res);
           setMemberData(res.content[0]);
           const member = res.content[0];
           obj.member = member;
@@ -394,7 +393,6 @@ export default function PreAuthReview(props) {
       let obj = { preAuth: data.preAuth };
       memberservice.getMember(pageRequest).subscribe((res) => {
         if (res.content?.length > 0) {
-          console.log(res);
           setMemberData(res.content[0]);
           const member = res.content[0];
           obj.member = member;
@@ -546,7 +544,6 @@ export default function PreAuthReview(props) {
       let obj = { preAuth: data.preAuth };
       memberservice.getMember(pageRequest).subscribe((res) => {
         if (res.content?.length > 0) {
-          console.log(res);
           setMemberData(res.content[0]);
           const member = res.content[0];
           obj.member = member;
@@ -767,7 +764,6 @@ export default function PreAuthReview(props) {
     }
   }
 
-  console.log(decionData);
   const handleChangeOfDecitionText = (event) => {
     setCnfText(event.target.value);
   };
@@ -782,7 +778,6 @@ export default function PreAuthReview(props) {
     }
   }, [preAuthDetails]);
 
-  console.table(preAuthDetails);
   const showCommentBox = () => {
     if (
       preAuthDetails?.preAuth?.preAuthStatus == "EVALUATION_INPROGRESS" ||
@@ -1687,7 +1682,6 @@ export default function PreAuthReview(props) {
             setOpen={setOpen}
             data={decionData?.benefitResponseDTO}
           /> */}
-          {console.log(decionData[indexD])}
           <DialogTable
             open={open}
             setOpen={setOpen}

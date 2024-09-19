@@ -139,7 +139,6 @@ export default function Dashboard() {
     let subscription = claimservice
       .getInterventionCount()
       .subscribe((result) => {
-        console.log(result);
         setInterventionData(result);
         // setStatusData(result[0]);
         // setAgeData(result);

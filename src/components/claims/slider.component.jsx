@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, IconButton, Typography } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import Carousel from "react-material-ui-carousel";

@@ -453,7 +453,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const handleChange = (event) => {
     setSearchType(event.target.value);
   };
-console.log(searchType,"searchType")
   const handleopenClientModal = () => {
     setOpenClientModal(true);
   };
@@ -1192,7 +1191,7 @@ console.log(searchType,"searchType")
       setOpenSnack(true);
     }
   };
-  console.log("formik.values.contactNoOne", formik.values.contactNoOne);
+  
   return (
     <>
       <ClaimModal

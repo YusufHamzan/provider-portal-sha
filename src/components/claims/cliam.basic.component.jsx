@@ -248,7 +248,7 @@ export default function ClaimsBasicComponent(props) {
     planScheme: "",
     productName: "",
   });
-  const [searchType, setSearchType] = React.useState("national_id");
+  const [searchType, setSearchType] = React.useState("MEMBERSHIP_NO");
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState("");
   const [selectSpecId, setSelectedSpecId] = React.useState("");
@@ -348,7 +348,6 @@ export default function ClaimsBasicComponent(props) {
   useObservable3(ad$, setDiagnosisList);
 
   const getBenefit = (id, policyNo) => {
-    console.log("called")
     let bts$ = benefitService.getAllBenefitWithChild({
       page: 0,
       size: 1000,
@@ -474,7 +473,6 @@ export default function ClaimsBasicComponent(props) {
     // if (prArr.length > 0) {
     //   setInvoiceDetailsList(prArr);
     // }
-    console.log("called, 777")
     getMemberDetails(res.memberShipNo);
     if (res.documents.length !== 0) {
       setSlideDocs(res.documents);
@@ -656,7 +654,6 @@ export default function ClaimsBasicComponent(props) {
     formik.setFieldValue("PrimaryDiagnosis", selectedBenifits);
   };
   const populateStepOne = (id) => {
-    console.log("this fuctui")
     reimbursementService
       .getReimbursementById(id, providerId)
       .subscribe((res) => {
@@ -686,7 +683,6 @@ export default function ClaimsBasicComponent(props) {
         if (res.invoices && res.invoices.length !== 0) {
           setInvoiceDetailsList(res.invoices);
         }
-        console.log("called")
         getMemberDetails(res.memberShipNo);
         if (source === "PRE_AUTH") {
           setSlideDocs(res.documents);
@@ -730,7 +726,6 @@ export default function ClaimsBasicComponent(props) {
   };
 
   const getMemberDetails = (id, policyNumber) => {
-    console.log("reached here")
     let pageRequest = {
       page: 0,
       size: 10,
@@ -750,7 +745,6 @@ export default function ClaimsBasicComponent(props) {
     }
 
     memberservice.getMember(pageRequest).subscribe((res) => {
-      console.log("here we are")
       if (res.content?.length > 0) {
         getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         if (searchType === "NAME") {
@@ -1765,9 +1759,9 @@ export default function ClaimsBasicComponent(props) {
                       onChange={handleChange}
                       fullWidth
                     >
-                      <MenuItem value="national_id">National ID</MenuItem>
                       <MenuItem value="MEMBERSHIP_NO">Membership No.</MenuItem>
                       <MenuItem value="NAME">Member Name</MenuItem>
+                      <MenuItem value="national_id">National ID</MenuItem>
                     </Select>
                   </Grid>
 

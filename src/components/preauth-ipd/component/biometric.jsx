@@ -46,7 +46,6 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
           BMPBase64: "",
           TemplateBase64: "",
         });
-        console.log("err ", err);
         alert("Could not get biometric details!");
       },
     });
@@ -118,7 +117,6 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
     setScanning1(true);
     setMatchData({});
 
-    console.log("click 1");
     callSGIFPGetData(
       (data) => {
         setScanning1(false);
@@ -133,7 +131,6 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
   const scan2Handler = () => {
     setScanning2(true);
     setMatchData({});
-    console.log("click 2");
     callSGIFPGetData(
       (data) => {
         setScanning2(false);
@@ -145,10 +142,6 @@ const BiometricComponent = ({ matchResult, id, handleClose }) => {
       }
     );
   };
-
-  console.log("scan1: ", fingerprintData1);
-  console.log("scan2: ", fingerprintData2);
-  console.log("matchData: ", matchData);
 
   const matchHandler = () => {
     if (

@@ -64,7 +64,6 @@ export default function AppCurrentVisits({
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
         // // const title = w.globals.labels[dataPointIndex];
         // // const value = series[seriesIndex][dataPointIndex];
-        // console.log(title, value);
         // let tooltipContent = "";
 
         // // if (series && series.length > seriesIndex) {

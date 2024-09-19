@@ -73,7 +73,6 @@ const Claims = () => {
     token = window["getToken"] && window["getToken"]();
     const decoded = jwtDecode(token);
     name = decoded.name;
-    console.log(name);
   } catch (error) {
     console.error('Error decoding token:', error);
   }

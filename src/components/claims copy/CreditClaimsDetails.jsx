@@ -221,7 +221,7 @@ export default function CreditClaimsDetails(props) {
       return newSkipped;
     });
   };
-console.log("asdfghjkl")
+
   const getStepContent = (step) => {
     switch (step) {
       case 0:

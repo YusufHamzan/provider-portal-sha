@@ -600,6 +600,14 @@ const PreAuthIPDListComponent = () => {
     setReloadTable(true);
   };
 
+  const openReimbursement = preAuth => {
+    navigate(`/submit-claim?preId=${preAuth.id}&mode=create`);
+  };
+
+  const disableClaimReimburse = item => {
+    return item.preAuthStatus != 'WAITING_FOR_CLAIM';
+  };
+
   const configuration = {
     enableSelection: false,
     scrollHeight: "285px",
@@ -613,6 +621,14 @@ const PreAuthIPDListComponent = () => {
         // className: classes.categoryButton,
         onClick: openEditSection,
         tooltip: "Enhance",
+      },
+      {
+        key: 'claim_preauth',
+        icon: 'pi pi-money-bill',
+        // className: classes.categoryButton,
+        disabled: disableClaimReimburse,
+        onClick: openReimbursement,
+        tooltip: 'Claim',
       },
       // {
       //   key: "timeleine_preauth",

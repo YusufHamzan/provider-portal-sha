@@ -144,8 +144,6 @@ export default function ProviderDetails(props) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
-
-    console.log(activeStep);
     setActiveStep(param);
     setSkipped(newSkipped);
   };
