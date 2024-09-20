@@ -49,7 +49,6 @@ import dayjs from "dayjs";
 import ClaimModal from "./claim.modal.component";
 import { CheckCircle, Fingerprint } from "@mui/icons-material";
 import BioModal from "./component/bio-modal";
-
 const useStyles = makeStyles((theme) => ({
   input1: {
     width: "50%",
@@ -1603,6 +1602,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   border: "none",
                   textAlign: "center",
                   justifyContent: "center",
+                  display: "none",
                 }}
                 disabled={Validated ? true : false}
                 className={classes.buttonSecondary}
