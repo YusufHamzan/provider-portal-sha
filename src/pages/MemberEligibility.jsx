@@ -31,6 +31,7 @@ import {
   Select,
   Snackbar,
   Table,
+  IconButton,
   TableBody,
   TableCell,
   TableContainer,
@@ -53,6 +54,9 @@ import { Eo2v2DataGrid } from "../components/eo2v2.data.grid";
 import { Observable, map } from "rxjs";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
+import { CheckCircle, Fingerprint } from "@mui/icons-material";
+// import BioModal from "../../components/preauth-ipd/component/bio-modal";
+import BioModal from "../components/preauth-ipd/component/bio-modal";
 
 const memberService = new MemberService();
 const benefitService = new BenefitService();
@@ -118,10 +122,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-      // onClick={() => {
-      //   setShowServices(false);
-      //   getClaimsByBenefit(rowData?.benefitId);
-      // }}
+        // onClick={() => {
+        //   setShowServices(false);
+        //   getClaimsByBenefit(rowData?.benefitId);
+        // }}
       >
         {rowData.consumed}
       </span>
@@ -150,6 +154,7 @@ export default function MemberEligibility() {
   const [severity, setSeverity] = React.useState();
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedDocument, setSelectedDocument] = React.useState(null);
+  const [biomodalopen, setBioModalopen] = React.useState(false);
   const [memberName, setMemberName] = React.useState({
     name: "",
     policyNumber: "",
@@ -212,6 +217,8 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
+  const matchResult = (result) => {};
+
   const handleSelect = (data) => {
     setMemberData(data);
     getImage(data?.id);
@@ -256,6 +263,7 @@ export default function MemberEligibility() {
       };
     });
   };
+  console.log(memberData);
 
   const getMemberDetails = (id) => {
     let pageRequest = {
@@ -462,7 +470,6 @@ export default function MemberEligibility() {
                 )}
               </Button>
 
-              {/* Dialog component goes here */}
               {openClientModal && (
                 <Dialog
                   open={openClientModal}
@@ -474,7 +481,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -570,7 +577,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -617,8 +624,30 @@ export default function MemberEligibility() {
               )}
             </Grid>
           )}
+
+          <Grid item style={{ display: "flex" }}>
+            <IconButton
+              onClick={() => setBioModalopen(true)}
+              // size="large"
+              aria-label="fingerprint"
+              color="primary"
+            >
+              <Fingerprint sx={{ width: "2rem", height: "2rem" }} />
+            </IconButton>
+          </Grid>
         </Grid>
       </Paper>
+
+      {
+        <BioModal
+          matchResult={matchResult}
+          open={biomodalopen}
+          setOpen={setBioModalopen}
+          id={memberData?.memberId}
+          membershipNo={memberData?.membershipNo}
+        />
+      }
+
       {memberData && (
         <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
@@ -648,14 +677,14 @@ export default function MemberEligibility() {
                   )}
                 </Box>
               </Grid>
-              <Grid
+              {/* <Grid
                 item
                 xs={4}
                 sm={3}
                 container
                 justifyContent="center"
                 alignItems="center"
-              // style={{ position: "relative", width: "fit-content" }}
+                // style={{ position: "relative", width: "fit-content" }}
               >
                 <img
                   style={{
@@ -673,8 +702,8 @@ export default function MemberEligibility() {
                   accept="image/*"
                   style={{ display: "none" }}
                 />
-              </Grid>
-              <Grid
+              </Grid> */}
+              {/* <Grid
                 item
                 xs={4}
                 sm={3}
@@ -691,7 +720,7 @@ export default function MemberEligibility() {
                 >
                   Verify Image
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
             <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
               <Box
@@ -872,10 +901,11 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${parentBenefitName != undefined
-                                ? `${parentBenefitName} >`
-                                : ""
-                                } ${item?.benefitName}`}
+                              {` ${
+                                parentBenefitName != undefined
+                                  ? `${parentBenefitName} >`
+                                  : ""
+                              } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
