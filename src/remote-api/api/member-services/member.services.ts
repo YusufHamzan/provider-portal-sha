@@ -95,4 +95,16 @@ export class MemberService {
 			.patch<any>(`${this.COMMAND_CONTEXT}/${id}/otp/verify`, payload)
 			.pipe(map((response) => response.data));
 	}
+
+	initiateBiometric(payload: any): Observable<any> {
+		return http
+			.post<any>(`${this.COMMAND_CONTEXT}/sha-member/biometric`, payload)
+			.pipe(map((response) => response.data));
+	}
+
+	biometricStatus(id: any): Observable<any> {
+		return http
+			.get<any>(`${this.QUERY_CONTEXT}/sha-member/biometric?id:${id}`)
+			.pipe(map((response) => response.data));
+	}
 }
