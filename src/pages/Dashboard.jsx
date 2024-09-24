@@ -17,6 +17,7 @@ import { Box, Button, ButtonGroup } from "@mui/material";
 import ReactApexChart from "react-apexcharts";
 import preAuthImg from "../assets/ImageAuth.png";
 import preAuthImg2 from "../assets/ImageAuth_2.png";
+import { PRIMARY_MAGENTA, PRIMARY_YELLOW } from "../Layout/Sidebar";
 
 // ----------------------------------------------------------------------
 const claimservice = new ClaimService();
@@ -150,10 +151,10 @@ export default function Dashboard() {
     return activeIndex == 0
       ? "dailyData"
       : activeIndex == 1
-      ? "weeklyData"
-      : activeIndex == 2
-      ? "monthlyData"
-      : "yearlyData";
+        ? "weeklyData"
+        : activeIndex == 2
+          ? "monthlyData"
+          : "yearlyData";
   };
 
   const getStatusSeries = () => {
@@ -176,10 +177,10 @@ export default function Dashboard() {
     return activeIndex == 0
       ? "today"
       : activeIndex == 1
-      ? "thisWeek"
-      : activeIndex == 2
-      ? "thisMonth"
-      : "thisYear";
+        ? "thisWeek"
+        : activeIndex == 2
+          ? "thisMonth"
+          : "thisYear";
   };
 
   const ageSeriesData = () => {
@@ -231,10 +232,10 @@ export default function Dashboard() {
     return activeIndex == 0
       ? "today"
       : activeIndex == 1
-      ? "thisWeek"
-      : activeIndex == 2
-      ? "thisMonth"
-      : "thisYear";
+        ? "thisWeek"
+        : activeIndex == 2
+          ? "thisMonth"
+          : "thisYear";
   };
 
   return (
@@ -271,7 +272,7 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.ipdPreauthCount || "NA"}
             total2={dashCount[activeIndex]?.ipdPreauthAmount || "NA"}
             color="success"
-            style={{ backgroundColor: "#1976d2", color: "white" }}
+            style={{ backgroundColor: PRIMARY_MAGENTA, color: "white" }}
             icon={<img alt="icon" src={preAuthImg} style={{ width: "75px" }} />}
           />
         </Grid>
@@ -283,8 +284,8 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.opdPreauthCount || "NA"}
             total2={dashCount[activeIndex]?.opdPreauthAmount || "NA"}
             color="info"
-            style={{ backgroundColor: "#ed6c02", color: "white" }}
-            // style={{ backgroundColor: "#1976d2", color: "white" }}
+            style={{ backgroundColor: PRIMARY_YELLOW, color: "white" }}
+            // style={{ backgroundColor: PRIMARY_MAGENTA, color: "white" }}
             icon={
               <img alt="icon" src={preAuthImg2} style={{ width: "75px" }} />
             }
@@ -297,7 +298,7 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.ipdClaimCount || "NA"}
             total2={dashCount[activeIndex]?.ipdClaimAmount || "NA"}
             color="warning"
-            style={{ backgroundColor: "#1976d2", color: "white" }}
+            style={{ backgroundColor: PRIMARY_MAGENTA, color: "white" }}
             icon={<img alt="icon" src={preAuthImg} style={{ width: "75px" }} />}
           />
         </Grid>
@@ -309,7 +310,7 @@ export default function Dashboard() {
             total={dashCount[activeIndex]?.opdClaimCount || "NA"}
             total2={dashCount[activeIndex]?.opdClaimAmount || "NA"}
             color="error"
-            style={{ backgroundColor: "#ed6c02", color: "white" }}
+            style={{ backgroundColor: PRIMARY_YELLOW, color: "white" }}
             icon={
               <img alt="icon" src={preAuthImg2} style={{ width: "75px" }} />
             }
@@ -433,12 +434,12 @@ export default function Dashboard() {
               ageSeriesData()[0]?.label == "No Data Found"
                 ? ["No Data Found"]
                 : [
-                    "Age: 0-5",
-                    "Age: 6-20",
-                    "Age: 20-40",
-                    "Age: 40-60",
-                    "Above-60",
-                  ]
+                  "Age: 0-5",
+                  "Age: 6-20",
+                  "Age: 20-40",
+                  "Age: 40-60",
+                  "Above-60",
+                ]
             }
           />
           <AppCurrentVisits
@@ -451,10 +452,10 @@ export default function Dashboard() {
               getStatusSeries()[0]?.label == "No Data Found"
                 ? ["No Data Found"]
                 : Object.entries(statusData[getCurrentActive()])?.map(
-                    ([key]) => {
-                      return key;
-                    }
-                  )
+                  ([key]) => {
+                    return key;
+                  }
+                )
             }
           />
           {/* <ReactApexChart

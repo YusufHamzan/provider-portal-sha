@@ -22,6 +22,10 @@ import { drawerWidth } from '.';
 import Drawer from '@mui/material/Drawer';
 import { Box } from '@mui/material';
 
+export const PRIMARY_MAGENTA = '#00539b'
+export const PRIMARY_YELLOW = '#8dc63e'
+export const PRIMARY_CYAN = '#27aae1'
+
 
 const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
   const [openSubmenu, setOpenSubmenu] = React.useState(false);
@@ -33,7 +37,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
-    backgroundColor: '#002776',
+    backgroundColor: '#00539b',
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   }));
@@ -116,17 +120,17 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
                   minWidth: 0,
                   mr: 3,
                   justifyContent: 'center',
-                  color: clickedMenu === index ? '#ffffff' : '#9DA0CD',
+                  color: clickedMenu === index ? '#ffffff' : '#27aae1',
                 }}>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText primary={item.text} sx={{
                   opacity: 1,
-                  color: clickedMenu === index ? '#ffffff' : '#9DA0CD'
+                  color: clickedMenu === index ? '#ffffff' : '#27aae1'
                 }} />
                 {openSubmenu ?
-                  <ExpandLess sx={{ color: clickedMenu === index ? '#ffffff' : '#9DA0CD' }} /> :
-                  <ExpandMore sx={{ color: clickedMenu === index ? '#ffffff' : '#9DA0CD' }} />}
+                  <ExpandLess sx={{ color: clickedMenu === index ? '#ffffff' : '#27aae1' }} /> :
+                  <ExpandMore sx={{ color: clickedMenu === index ? '#ffffff' : '#27aae1' }} />}
               </ListItemButton>
             ) : (
               <ListItemButton
@@ -148,12 +152,12 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
                   minWidth: 0,
                   mr: 3,
                   justifyContent: 'center',
-                  color: clickedMenu === index ? '#ffffff' : '#9da0cd',
+                  color: clickedMenu === index ? '#ffffff' : '#27aae1',
                 }}>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text}
                   sx={{
                     opacity: 1,
-                    color: clickedMenu === index ? '#ffffff' : '#9da0cd',
+                    color: clickedMenu === index ? '#ffffff' : '#27aae1',
                   }} />
               </ListItemButton>
             )}
@@ -168,7 +172,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
                       to={submenu.path}
                       sx={{
                         background: clickeSubdMenu === subIndex ? '#303c95' : '',
-                        color: clickeSubdMenu === subIndex ? '#ffffff' : '#9da0cd',
+                        color: clickeSubdMenu === subIndex ? '#ffffff' : '#27aae1',
                         ":hover": {
                           background: clickeSubdMenu === subIndex ? '#303c95' : '',
                         },
@@ -184,7 +188,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
                         minWidth: 0,
                         mr: 3,
                         justifyContent: 'center',
-                        color: clickeSubdMenu === subIndex ? '#ffffff' : '#9da0cd',
+                        color: clickeSubdMenu === subIndex ? '#ffffff' : '#27aae1',
                       }}>
                         {submenu.icon}
                       </ListItemIcon>
@@ -192,7 +196,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
                         primary={submenu.text}
                         sx={{
                           opacity: 1,
-                          color: clickeSubdMenu === subIndex ? '#ffffff' : '#9da0cd',
+                          color: clickeSubdMenu === subIndex ? '#ffffff' : '#27aae1',
                         }}
                       />
                     </ListItemButton>
@@ -222,7 +226,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
         }}
         sx={{
           display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, backgroundColor: '#002776' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, backgroundColor: '#00539b' },
 
         }}
       >
@@ -235,7 +239,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
         }}
         open
-        PaperProps={{ sx: { backgroundColor: '#002776' } }}>
+        PaperProps={{ sx: { backgroundColor: '#00539b' } }}>
         <DrawerHeader>
           {/* <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <i className="pi pi-angle-double-left" style={{ marginRight: '0.5rem', opacity: open ? 1 : 0, color: 'white' }}></i>}
@@ -245,7 +249,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
         {drawer()}
       </Drawer >
     </Box>
-    // <Drawer variant="permanent" open={open} PaperProps={{ sx: { backgroundColor: '#002776' } }}>
+    // <Drawer variant="permanent" open={open} PaperProps={{ sx: { backgroundColor: '#00539b' } }}>
     //   <DrawerHeader>
     //     <IconButton onClick={handleDrawerClose}>
     //       {theme.direction === 'rtl' ? <ChevronRightIcon /> : <i className="pi pi-angle-double-left" style={{ marginRight: '0.5rem', opacity: open ? 1 : 0, color: 'white' }}></i>}

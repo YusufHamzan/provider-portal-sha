@@ -45,7 +45,7 @@ const getColor = (status) => {
       };
     case "Requested for evaluation":
       return {
-        background: "#002776",
+        background: "#00539b",
         border: "rgba(4, 59, 92, 1)",
         color: "#f1f1f1",
       };

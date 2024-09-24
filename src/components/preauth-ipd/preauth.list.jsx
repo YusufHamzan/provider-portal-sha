@@ -22,6 +22,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import moment from "moment/moment";
+import { PRIMARY_CYAN, PRIMARY_MAGENTA, PRIMARY_YELLOW } from "../../Layout/Sidebar";
 
 const modalStyle = {
   position: "absolute",
@@ -45,7 +46,7 @@ const getColor = (status) => {
       };
     case "Requested for evaluation":
       return {
-        background: "#002776",
+        background: "#00539b",
         border: "rgba(4, 59, 92, 1)",
         color: "#f1f1f1",
       };
@@ -710,7 +711,7 @@ const PreAuthIPDListComponent = () => {
             sx={{
               borderRadius: "8px",
               background:
-                "linear-gradient(90deg, rgba(49, 60, 150, 0.9) 0%, rgba(49, 60, 150, 0.8) 100%)",
+                `linear-gradient(90deg, ${PRIMARY_MAGENTA} 98%, ${PRIMARY_CYAN} 100%)`,
               boxShadow: "0px 1px 1px 2px rgba(128,128,128,0.15)",
               width: "100%",
               height: "100%",
@@ -751,7 +752,7 @@ const PreAuthIPDListComponent = () => {
             sx={{
               borderRadius: "8px",
               background:
-                "linear-gradient(90deg, rgba(1, 222, 116, 0.9) 0%, rgba(1, 222, 116,0.8) 100%)",
+                `linear-gradient(90deg, ${PRIMARY_YELLOW} 98%, ${PRIMARY_CYAN} 100%)`,
               boxShadow: "0px 1px 1px 2px rgba(128,128,128,0.15)",
               width: "100%",
               height: "100%",
@@ -791,7 +792,7 @@ const PreAuthIPDListComponent = () => {
             sx={{
               borderRadius: "8px",
               background:
-                "linear-gradient(90deg, rgba(255,50,67,0.9) 0%, rgba(255,50,67,0.8) 100%)",
+                `linear-gradient(90deg, rgba(255,50,67,0.9) 99%, ${PRIMARY_CYAN} 100%)`,
               boxShadow: "0px 1px 1px 2px rgba(128,128,128,0.15)",
               color: "#ffffff",
               display: "flex",
@@ -831,7 +832,7 @@ const PreAuthIPDListComponent = () => {
             sx={{
               borderRadius: "8px",
               background:
-                "linear-gradient(90deg, rgba(4, 59, 92, 0.9) 0%, rgba(4, 59, 92, 0.8) 100%)",
+                `linear-gradient(90deg, rgba(4, 59, 92, 0.9) 98%, ${PRIMARY_CYAN}  100%)`,
               boxShadow: "0px 1px 1px 2px rgba(128,128,128,0.15)",
               color: "#ffffff",
               display: "flex",
@@ -901,7 +902,7 @@ const PreAuthIPDListComponent = () => {
             sx={{
               borderRadius: "8px",
               background:
-                "linear-gradient(90deg, rgba(149,48,55,0.9) 0%, rgba(149,48,55, 0.8) 100%)",
+                `linear-gradient(90deg, rgba(149,48,55,0.9) 98%, ${PRIMARY_CYAN} 100%)`,
               boxShadow: "0px 1px 1px 2px rgba(128,128,128,0.15)",
               color: "#ffffff",
               display: "flex",
