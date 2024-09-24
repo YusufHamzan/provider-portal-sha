@@ -54,9 +54,9 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
         { text: 'Credit Claims', path: '/credit-claims', icon: <CreditCardIcon /> },
       ],
     },
-    { text: 'Payment History', icon: <PolicyIcon />, path: '/paymenthistory' },
-    { text: 'Provider Statement', icon: <DomainAddIcon />, path: '/providerstatement' },
-    { text: 'Total Payable Amount', icon: <DomainAddIcon />, path: '/totalpayableamount' },
+    // { text: 'Payment History', icon: <PolicyIcon />, path: '/paymenthistory' },
+    // { text: 'Provider Statement', icon: <DomainAddIcon />, path: '/providerstatement' },
+    // { text: 'Total Payable Amount', icon: <DomainAddIcon />, path: '/totalpayableamount' },
   ];
 
   const handleSubmenuClick = () => {
