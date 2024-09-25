@@ -1595,7 +1595,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Grid>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
+          {/* <Grid item xs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
             <span style={{ color: "#4472C4", fontWeight: "bold" }}>
               DEPENDENT DETAILS
             </span>
@@ -1707,8 +1707,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   },
                 }}
               />
-            </Grid>
-          </Grid>
+            </Grid> */}
+          {/* </Grid> */}
 
           <Grid item xs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
             <span style={{ color: "#4472C4", fontWeight: "bold" }}>
