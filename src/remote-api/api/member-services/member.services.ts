@@ -6,6 +6,7 @@ import { Page } from '../../models/page';
 export class MemberService {
 	readonly COMMAND_CONTEXT = `/member-command-service/v1`;
 	readonly QUERY_CONTEXT = `/member-query-service/v1/members`;
+	readonly QUERY_CONTEXT2 = `/member-query-service/v1`;
 
 	getMember(pageRequest: any): Observable<Page<any>> {
 		return http
@@ -93,6 +94,18 @@ export class MemberService {
 	verifyOTP(payload: any, id: string): Observable<any> {
 		return http
 			.patch<any>(`${this.COMMAND_CONTEXT}/${id}/otp/verify`, payload)
+			.pipe(map((response) => response.data));
+	}
+
+	initiateBiometric(payload: any): Observable<any> {
+		return http
+			.post<any>(`${this.COMMAND_CONTEXT}/sha-member/biometric`, payload)
+			.pipe(map((response) => response.data));
+	}
+
+	biometricStatus(id: any): Observable<any> {
+		return http
+			.get<any>(`${this.QUERY_CONTEXT2}/sha-member/biometric?id=${id}`)
 			.pipe(map((response) => response.data));
 	}
 }

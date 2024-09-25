@@ -1,6 +1,6 @@
 import { makeStyles } from "@mui/styles";
 import { useFormik } from "formik";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import CheckBoxOutlineBlankOutlinedIcon from "@mui/icons-material/CheckBoxOutlineBlankOutlined";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -38,6 +38,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -47,7 +48,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import ClaimModal from "./claim.modal.component";
-import { CheckCircle, Fingerprint } from "@mui/icons-material";
+// import { CheckCircle, ErrorIcon } from "@mui/icons-material";
+import CheckCircle from "@mui/icons-material/CheckCircle";
+// import ErrorIcon from "@mui/icons-material/ErrorIcon";
+import ErrorIcon from "@mui/icons-material/Error";
 import BioModal from "./component/bio-modal";
 const useStyles = makeStyles((theme) => ({
   input1: {
@@ -168,6 +172,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
       referalTicketRequired: false,
       contactNoOne: "",
       contactNoTwo: "",
+      dependentRelations: "",
+      dependentDOB: "",
+      dependentGender: "",
+      dependentName: "",
+      dependentShaMemberId: "",
+      dependentShaNumber: "",
     },
     onSubmit: (values, { setSubmitting }) => {
       handleSubmit();
@@ -206,6 +216,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     mobileNo: "",
     nationalDocId: "",
     email: "",
+    dependentRelations: "",
+    dependentDOB: "",
+    dependentGender: "",
+    dependentName: "",
+    dependentShaMemberId: "",
+    dependentShaNumber: "",
   });
   const [memberName, setMemberName] = React.useState({
     name: "",
@@ -232,6 +248,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     mobileNo: "",
     nationalDocId: "",
     email: "",
+    dependentRelations: "",
+    dependentDOB: "",
+    dependentGender: "",
+    dependentName: "",
+    dependentShaMemberId: "",
+    dependentShaNumber: "",
   });
   const [providerDetailsList, setProviderDetailsList] = React.useState([
     {
@@ -362,9 +384,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -650,6 +671,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             email: res.content[0].email,
           });
           setShowViewDetails(true);
+          setMemberIdentified(true);
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         }
       } else {
@@ -764,6 +786,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     formik.setFieldValue("expectedDOA", timestamp);
   };
 
+  const handleDependentDOB = (date) => {
+    setSelectedDOA(date);
+    const timestamp = new Date(date).getTime();
+    formik.setFieldValue("dependentDOB", timestamp);
+  };
+
   const handleFieldChecked = (e) => {
     const { name, checked } = e.target;
     formik.setFieldValue(name, checked);
@@ -859,7 +887,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -991,6 +1019,35 @@ export default function ClaimsPreAuthIPDComponent(props) {
     },
     [intervention, serviceList, serviceDetailsList]
   );
+  const [memberIdentified, setMemberIdentified] = useState(false);
+  const [biometricVerified, setBiometricVerified] = useState(false);
+  const [contributionPaid, setContributionPaid] = useState(false);
+  const [biometricInitiated, setBiometricInitiated] = useState(false);
+  const [biometricResponseId, setbiometricResponseId] = useState("");
+
+  const handleCheckStatus = () => {
+    memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
+      console.log(data);
+      setBiometricVerified(true);
+    });
+  };
+
+  const handleInitiate = () => {
+    setBiometricInitiated(true);
+    const payload = {
+      subject_id_number: "ekyc9000",
+      relying_party_agent_id_number: "ekyc9000",
+      notification_callback_url:
+        "https://api.eoxegen.com/member-command-service/v1/public/sha-member/biometric/callback",
+      reason: "reason for creating the request",
+      total_attempts: 5,
+      expiry_in_seconds: 3600,
+      service_id: "medical-care",
+    };
+    memberservice.initiateBiometric(payload).subscribe((data) => {
+      setbiometricResponseId(data.id);
+    });
+  };
 
   return (
     <>
@@ -1017,195 +1074,193 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Alert>
           </Snackbar>
 
-          <form>
-            <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                style={{ display: "flex", alignItems: "flex-end" }}
+          {/* <form> */}
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              style={{ display: "flex", alignItems: "flex-end" }}
+            >
+              <Select
+                label="Select"
+                variant="standard"
+                value={searchType}
+                onChange={handleChange}
+                fullWidth
               >
-                <Select
-                  label="Select"
+                <MenuItem value="membership_no">Membership No.</MenuItem>
+                <MenuItem value="national_id">National ID</MenuItem>
+                <MenuItem value="name">Member Name</MenuItem>
+              </Select>
+            </Grid>
+
+            {searchType === "national_id" && (
+              <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
+                <TextField
+                  id="standard-basic"
                   variant="standard"
-                  value={searchType}
-                  onChange={handleChange}
-                  fullWidth
-                >
-                  <MenuItem value="membership_no">Membership No.</MenuItem>
-                  <MenuItem value="national_id">National ID</MenuItem>
-                  <MenuItem value="name">Member Name</MenuItem>
-                </Select>
-              </Grid>
-
-              {searchType === "national_id" && (
-                <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
-                  <TextField
-                    id="standard-basic"
-                    variant="standard"
-                    value={formik.values.memberShipNo}
-                    onChange={onMemberShipNumberChange}
-                    name="searchCode"
-                    label="National ID"
-                    style={{ flex: "1", marginRight: "5px" }}
-                  />
-
-                  <Button
-                    className={`responsiveButton ${classes.buttonPrimary}`}
-                    variant="contained"
-                    onClick={() => {
-                      setIsLoading(true);
-                      populateMemberFromSearch("number");
-                    }}
-                    color="#313c96"
-                    type="button"
-                    style={{ borderRadius: "10px" }}
-                  >
-                    {isLoading ? (
-                      <CircularProgress
-                        sx={{ color: "white", width: "20px", height: "20px" }}
-                      />
-                    ) : (
-                      "Search"
-                    )}
-                  </Button>
-                </Grid>
-              )}
-
-              {searchType === "membership_no" && (
-                <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
-                  <TextField
-                    id="standard-basic"
-                    variant="standard"
-                    value={formik.values.memberShipNo}
-                    onChange={onMemberShipNumberChange}
-                    name="searchCode"
-                    label="Membership Code"
-                    style={{ flex: "1", marginRight: "5px" }}
-                  />
-
-                  <Button
-                    className={`responsiveButton ${classes.buttonPrimary}`}
-                    variant="contained"
-                    onClick={() => {
-                      setIsLoading(true);
-                      populateMemberFromSearch("number");
-                    }}
-                    color="#313c96"
-                    type="button"
-                    style={{ borderRadius: "10px" }}
-                  >
-                    {isLoading ? (
-                      <CircularProgress
-                        sx={{ color: "white", width: "20px", height: "20px" }}
-                      />
-                    ) : (
-                      "Search"
-                    )}
-                  </Button>
-                </Grid>
-              )}
-
-              {searchType === "name" && (
-                <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
-                  <TextField
-                    id="standard-basic"
-                    value={formik.values.memberShipNo}
-                    onChange={onMemberShipNumberChange}
-                    variant="standard"
-                    name="searchCode"
-                    style={{ marginLeft: "10px", flex: "1" }}
-                    label="Member Name"
-                  />
-
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setIsLoading(true);
-                      populateMemberFromSearch("name");
-                    }}
-                    className={classes.buttonPrimary}
-                    color="primary"
-                    type="button"
-                    style={{ marginLeft: "3%", borderRadius: "10px" }}
-                  >
-                    {isLoading ? (
-                      <CircularProgress
-                        sx={{ color: "white", width: "20px", height: "20px" }}
-                      />
-                    ) : (
-                      "Search"
-                    )}
-                  </Button>
-                  {openClientModal && (
-                    <Dialog
-                      open={openClientModal}
-                      onClose={handleClosed}
-                      aria-labelledby="form-dialog-title"
-                      disableEnforceFocus
-                    >
-                      <DialogTitle id="form-dialog-title">Members</DialogTitle>
-
-                      <DialogContent>
-                        {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
-                          <TableContainer>
-                            <Table>
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell>Membership No</TableCell>
-                                  <TableCell>Name</TableCell>
-                                  <TableCell>Mobile No</TableCell>
-                                  <TableCell>Action</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {memberName?.res?.content?.map((item) => (
-                                  <TableRow key={item.membershipNo}>
-                                    <TableCell>{item.membershipNo}</TableCell>
-                                    <TableCell>{item.name}</TableCell>
-                                    <TableCell>{item.mobileNo}</TableCell>
-                                    <TableCell>
-                                      <Button
-                                        onClick={() => handleSelect(item)}
-                                        className={classes.buttonPrimary}
-                                      >
-                                        Select
-                                      </Button>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                        ) : (
-                          <p>No Data Found</p>
-                        )}
-                      </DialogContent>
-
-                      <DialogActions>
-                        <Button
-                          onClick={handleClosed}
-                          className="p-button-text"
-                        >
-                          Cancel
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-                  )}
-                </Grid>
-              )}
-              {
-                <BioModal
-                  matchResult={matchResult}
-                  open={biomodalopen}
-                  setOpen={setBioModalopen}
-                  id={memberBasic.memberId}
-                  membershipNo={memberBasic.membershipNo}
+                  value={formik.values.memberShipNo}
+                  onChange={onMemberShipNumberChange}
+                  name="searchCode"
+                  label="National ID"
+                  style={{ flex: "1", marginRight: "5px" }}
                 />
-              }
-              {
+
+                <Button
+                  className={`responsiveButton ${classes.buttonPrimary}`}
+                  variant="contained"
+                  onClick={() => {
+                    setIsLoading(true);
+                    populateMemberFromSearch("number");
+                  }}
+                  color="#313c96"
+                  type="button"
+                  style={{ borderRadius: "10px" }}
+                >
+                  {isLoading ? (
+                    <CircularProgress
+                      sx={{ color: "white", width: "20px", height: "20px" }}
+                    />
+                  ) : (
+                    "Search"
+                  )}
+                </Button>
+              </Grid>
+            )}
+
+            {searchType === "membership_no" && (
+              <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
+                <TextField
+                  id="standard-basic"
+                  variant="standard"
+                  value={formik.values.memberShipNo}
+                  onChange={onMemberShipNumberChange}
+                  name="searchCode"
+                  label="Membership Code"
+                  style={{ flex: "1", marginRight: "5px" }}
+                />
+
+                <Button
+                  className={`responsiveButton ${classes.buttonPrimary}`}
+                  variant="contained"
+                  onClick={() => {
+                    setIsLoading(true);
+                    populateMemberFromSearch("number");
+                  }}
+                  color="#313c96"
+                  type="button"
+                  style={{ borderRadius: "10px" }}
+                >
+                  {isLoading ? (
+                    <CircularProgress
+                      sx={{ color: "white", width: "20px", height: "20px" }}
+                    />
+                  ) : (
+                    "Search"
+                  )}
+                </Button>
+              </Grid>
+            )}
+
+            {searchType === "name" && (
+              <Grid item xs={12} sm={6} md={4} style={{ display: "flex" }}>
+                <TextField
+                  id="standard-basic"
+                  value={formik.values.memberShipNo}
+                  onChange={onMemberShipNumberChange}
+                  variant="standard"
+                  name="searchCode"
+                  style={{ marginLeft: "10px", flex: "1" }}
+                  label="Member Name"
+                />
+
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setIsLoading(true);
+                    populateMemberFromSearch("name");
+                  }}
+                  className={classes.buttonPrimary}
+                  color="primary"
+                  type="button"
+                  style={{ marginLeft: "3%", borderRadius: "10px" }}
+                >
+                  {isLoading ? (
+                    <CircularProgress
+                      sx={{ color: "white", width: "20px", height: "20px" }}
+                    />
+                  ) : (
+                    "Search"
+                  )}
+                </Button>
+                {openClientModal && (
+                  <Dialog
+                    open={openClientModal}
+                    onClose={handleClosed}
+                    aria-labelledby="form-dialog-title"
+                    disableEnforceFocus
+                  >
+                    <DialogTitle id="form-dialog-title">Members</DialogTitle>
+
+                    <DialogContent>
+                      {memberName?.res?.content &&
+                        memberName?.res?.content?.length > 0 ? (
+                        <TableContainer>
+                          <Table>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>Membership No</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Mobile No</TableCell>
+                                <TableCell>Action</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {memberName?.res?.content?.map((item) => (
+                                <TableRow key={item.membershipNo}>
+                                  <TableCell>{item.membershipNo}</TableCell>
+                                  <TableCell>{item.name}</TableCell>
+                                  <TableCell>{item.mobileNo}</TableCell>
+                                  <TableCell>
+                                    <Button
+                                      onClick={() => handleSelect(item)}
+                                      className={classes.buttonPrimary}
+                                    >
+                                      Select
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      ) : (
+                        <p>No Data Found</p>
+                      )}
+                    </DialogContent>
+
+                    <DialogActions>
+                      <Button onClick={handleClosed} className="p-button-text">
+                        Cancel
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                )}
+              </Grid>
+            )}
+            {
+              <BioModal
+                matchResult={matchResult}
+                open={biomodalopen}
+                setOpen={setBioModalopen}
+                id={memberBasic.memberId}
+                membershipNo={memberBasic.membershipNo}
+              />
+            }
+            {/* temporary hidden */}
+            {/* {
                 <Grid item style={{ display: "flex" }}>
                   <IconButton
                     onClick={() => setBioModalopen(true)}
@@ -1216,430 +1271,669 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     <Fingerprint sx={{ width: "2rem", height: "2rem" }} />
                   </IconButton>
                 </Grid>
-              }
-            </Grid>
-
-            <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-              <Grid item xs={12}>
-                <span style={{ color: "#4472C4", fontWeight: "bold" }}>
-                  BASIC DETAILS
-                </span>
-              </Grid>
-
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <TextField
-                  id="standard-basic"
-                  name="memberName"
-                  variant="standard"
-                  value={memberBasic.name}
-                  disabled
-                  label="Name"
-                  InputProps={{
-                    classes: {
-                      root: classes.inputRoot,
-                      disabled: classes.disabled,
-                    },
-                  }}
-                />
-                {showViewDetails && (
-                  <a
-                    style={{ color: "#4472C4", cursor: "pointer" }}
-                    onClick={viewUserDetails}
-                  >
-                    View Details
-                  </a>
-                )}
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  id="standard-basic"
-                  name="policyNumber"
-                  disabled
-                  variant="standard"
-                  value={memberBasic.policyNumber}
-                  label="Policy Number"
-                  InputProps={{
-                    classes: {
-                      root: classes.inputRoot,
-                      disabled: classes.disabled,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  id="standard-multiline-flexible"
-                  variant="standard"
-                  name="membershipNo"
-                  value={memberBasic.membershipNo}
-                  label="Membership No"
-                  readonly
-                  disabled
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <TextField
-                  id="standard-basic"
-                  variant="standard"
-                  name="age"
-                  type="number"
-                  value={memberBasic.age}
-                  disabled
-                  label="Age"
-                  InputProps={{
-                    classes: {
-                      root: classes.inputRoot,
-                      disabled: classes.disabled,
-                    },
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  id="standard-basic"
-                  name="relation"
-                  value={memberBasic.relations}
-                  disabled
-                  variant="standard"
-                  label="Relation"
-                  InputProps={{
-                    classes: {
-                      root: classes.inputRoot,
-                      disabled: classes.disabled,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  id="standard-basic"
-                  name="gender"
-                  value={memberBasic.gender}
-                  disabled
-                  variant="standard"
-                  label="Gender"
-                  InputProps={{
-                    classes: {
-                      root: classes.inputRoot,
-                      disabled: classes.disabled,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Enrolment Date"
-                    autoOk={true}
-                    disabled
-                    value={dayjs(memberBasic.enrolmentDate)}
-                    onChange={handleDOA}
-                    KeyboardButtonProps={{
-                      "aria-label": "change ing date",
-                    }}
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
-            <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Policy From Date"
-                    autoOk={true}
-                    disabled
-                    value={dayjs(memberBasic.enrolmentFromDate)}
-                    onChange={handleDOA}
-                    KeyboardButtonProps={{
-                      "aria-label": "change ing date",
-                    }}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Policy To Date"
-                    autoOk={true}
-                    disabled
-                    value={dayjs(memberBasic.enrolentToDate)}
-                    onChange={handleDOA}
-                    KeyboardButtonProps={{
-                      "aria-label": "change ing date",
-                    }}
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              style={{ marginTop: "20px", marginBottom: "15px" }}
-            >
-              <Divider />
-            </Grid>
-
-            <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-              <Grid item xs={12} sm={3}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Expected/Actual DOA"
-                    autoOk={true}
-                    value={dayjs(selectedDOA)}
-                    onChange={handleDOA}
-                    KeyboardButtonProps={{
-                      "aria-label": "change ing date",
-                    }}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Expected/Actual DOD"
-                    autoOk={true}
-                    value={dayjs(selectedDOD)}
-                    onChange={handleDODDate}
-                    KeyboardButtonProps={{
-                      "aria-label": "change ing date",
-                    }}
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+              } */}
+          </Grid>
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid item xs={12} container spacing={2}>
               <Grid item xs={12} sm={4}>
-                <TextField
-                  id="standard-basic"
-                  name="contactNoOne"
-                  type="number"
-                  value={formik.values.contactNoOne}
-                  variant="standard"
-                  onChange={formik.handleChange}
-                  label="Contact No. 1"
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  variant="standard"
-                  id="standard-basic"
-                  name="contactNoTwo"
-                  type="number"
-                  value={memberBasic.contactNoTwo}
-                  onChange={formik.handleChange}
-                  label="Contact No. 2"
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formik.values.referalTicketRequired}
-                      onChange={(e) => handleFieldChecked(e)}
-                      name="referalTicketRequired"
-                      color="primary"
+                <Box
+                  sx={{
+                    position: "relative",
+                    p: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="subtitle1">
+                    Member Identification
+                  </Typography>
+                  {memberIdentified ? (
+                    <CheckCircle
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "green",
+                      }}
                     />
-                  }
-                  label="Referral Ticket Required"
-                />
+                  ) : (
+                    <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  )}
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    p: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Grid container alignItems="center">
+                    <Typography
+                      variant="subtitle1"
+                      style={{ marginRight: "12px" }}
+                    >
+                      Member Biometric
+                    </Typography>
+                    {!biometricVerified && (
+                      biometricInitiated && biometricResponseId ? (
+                        <Button
+                          label="Check status"
+                          severity="help"
+                          text
+                          onClick={handleCheckStatus}
+                        />
+                      ) : (
+                        <Button
+                          label="Initiate"
+                          severity="help"
+                          text
+                          onClick={handleInitiate}
+                        />
+                      )
+                    )}
+                    {biometricVerified ? (
+                      <CheckCircle
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "green",
+                        }}
+                      />
+                    ) : (
+                      <ErrorIcon
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      />
+                    )}
+                  </Grid>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    p: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="subtitle1">
+                    Member Contribution
+                  </Typography>
+                  {contributionPaid ? (
+                    <CheckCircle
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "green",
+                      }}
+                    />
+                  ) : (
+                    <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  )}
+                </Box>
               </Grid>
             </Grid>
+          </Grid>
 
-            <Grid itemxs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} style={{ marginTop: "10px" }}>
               <span style={{ color: "#4472C4", fontWeight: "bold" }}>
-                SERVICE DETAILS
+                BASIC DETAILS
               </span>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} style={{ marginBottom: "15px" }}>
+            <Grid item xs={12} sm={12} md={12}>
               <Divider />
             </Grid>
-
-            {serviceDetailsList?.map((x, i) => {
-              return (
-                <Grid container spacing={3} key={i}>
-                  <Grid item xs={12} sm={12} md={12}>
-                    <Grid
-                      container
-                      spacing={3}
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <Grid item xs={12} sm={6} md={3}>
-                        <FormControl className={classes.formControl} fullWidth>
-                          <Autocomplete
-                            name="benefitId"
-                            defaultValue={
-                              x?.benefitStructureId
-                                ? x?.benefitStructureId
-                                : null
-                            }
-                            value={
-                              x?.benefitStructureId
-                                ? x?.benefitStructureId
-                                : undefined
-                            }
-                            onChange={(e, val) => {
-                              setIntervention([]);
-                              getIntervemntions(val, i);
-                              handleBenefitChangeInService(val, i);
-                              setBenefitId(val.benefitStructureId);
-                              handleChangeIntervention("", i);
-                            }}
-                            id="checkboxes-tags-demo"
-                            filterOptions={autocompleteFilterChange}
-                            options={benefitOptions}
-                            getOptionLabel={(option) =>
-                              option.label ??
-                              benefitOptions.find(
-                                (benefit) => benefit?.value == option
-                              )?.label
-                            }
-                            getOptionSelected={(option, value) =>
-                              option?.value === value
-                            }
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Benefit"
-                                variant="standard"
-                              />
-                            )}
-                          />
-                        </FormControl>
-                      </Grid>
-                      {serviceSection(x, i)}
-                    </Grid>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    {serviceDetailsList.length !== 1 && (
-                      <Button
-                        className={`mr10 ${classes.buttonDanger}`}
-                        onClick={() => handleRemoveServicedetails(i)}
-                        variant="contained"
-                        color="error"
-                        style={{ marginLeft: "5px" }}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    )}
-                    {serviceDetailsList.length - 1 === i && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.buttonPrimary}
-                        style={{ marginLeft: "5px" }}
-                        onClick={handleAddServicedetails}
-                        disabled={Validated ? true : false}
-                      >
-                        <AddIcon />
-                      </Button>
-                    )}
-                  </Grid>
-                </Grid>
-              );
-            })}
 
             <Grid
               item
               xs={12}
-              sm={12}
-              md={12}
-              style={{ marginBottom: "15px", marginTop: "10px" }}
+              sm={6}
+              md={3}
+              style={{ display: "flex", flexDirection: "column" }}
             >
-              <Divider />
+              <TextField
+                id="standard-basic"
+                name="memberName"
+                variant="standard"
+                value={memberBasic.name}
+                disabled
+                label="Name"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
+                }}
+              />
+              {showViewDetails && (
+                <a
+                  style={{ color: "#4472C4", cursor: "pointer" }}
+                  onClick={viewUserDetails}
+                >
+                  View Details
+                </a>
+              )}
             </Grid>
 
-            <Grid item xs={12} className={classes.actionContainer}>
-              <Button
-                variant="contained"
-                color="primary"
-                type="button"
-                style={{
-                  minWidth: "70px",
-                  border: "none",
-                  textAlign: "center",
-                  justifyContent: "center",
-                  display: "none",
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                id="standard-basic"
+                name="ShaNumber"
+                disabled
+                variant="standard"
+                value={memberBasic.ShaNumber}
+                label="SHA Number"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
                 }}
-                disabled={Validated ? true : false}
-                className={classes.buttonSecondary}
-                onClick={handleMultipleValid}
-              >
-                {isLoadingValidate ? (
-                  <CircularProgress size={"15px"} sx={{ color: "white" }} />
-                ) : Validated ? (
-                  <>
-                    Success
-                    <CheckCircle sx={{ color: "blue", cursor: "pointer" }} />
-                  </>
-                ) : (
-                  "Validate"
-                )}
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                // type="submit"
-                onClick={(e) => {
-                  handleSubmit(e);
-                }}
-                style={{ marginLeft: "10px" }}
-                className={classes.buttonPrimary}
-              >
-                Save and Next
-              </Button>
-              <Button
-                className={`p-button-text ${classes.saveBtn}`}
-                style={{ marginLeft: "10px" }}
-                variant="contained"
-              >
-                Close
-              </Button>
+              />
             </Grid>
-          </form>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                id="standard-multiline-flexible"
+                variant="standard"
+                name="shaMemberId"
+                value={memberBasic.shaMemberId}
+                label="Member ID"
+                readonly
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                id="standard-multiline-flexible"
+                variant="standard"
+                name="employeeId"
+                value={memberBasic.employeeId}
+                label="Household Id"
+                readonly
+                disabled
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <TextField
+                id="standard-basic"
+                variant="standard"
+                name="age"
+                type="number"
+                value={memberBasic.age}
+                disabled
+                label="Age"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                id="standard-basic"
+                name="relation"
+                value={memberBasic.relations}
+                disabled
+                variant="standard"
+                label="Relation"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                id="standard-basic"
+                name="gender"
+                value={memberBasic.gender}
+                disabled
+                variant="standard"
+                label="Gender"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  margin="normal"
+                  id="date-picker-inline"
+                  label="Enrolment Date"
+                  autoOk={true}
+                  disabled
+                  value={dayjs(memberBasic.enrolmentDate)}
+                  onChange={handleDOA}
+                  KeyboardButtonProps={{
+                    "aria-label": "change ing date",
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  margin="normal"
+                  id="date-picker-inline"
+                  label="Policy From Date"
+                  autoOk={true}
+                  disabled
+                  value={dayjs(memberBasic.enrolmentFromDate)}
+                  onChange={handleDOA}
+                  KeyboardButtonProps={{
+                    "aria-label": "change ing date",
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  margin="normal"
+                  id="date-picker-inline"
+                  label="Policy To Date"
+                  autoOk={true}
+                  disabled
+                  value={dayjs(memberBasic.enrolentToDate)}
+                  onChange={handleDOA}
+                  KeyboardButtonProps={{
+                    "aria-label": "change ing date",
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+          </Grid>
+
+          {/* <Grid item xs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
+            <span style={{ color: "#4472C4", fontWeight: "bold" }}>
+              DEPENDENT DETAILS
+            </span>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} style={{ marginBottom: "25px" }}>
+            <Divider />
+          </Grid>
+
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <TextField
+                id="standard-basic"
+                name="dependentName"
+                variant="standard"
+                value={formik.values.dependentName}
+                onChange={formik.handleChange}
+                label="Name"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                id="standard-basic"
+                name="dependentShaNumber"
+                variant="standard"
+                value={formik.values.dependentShaNumber}
+                onChange={formik.handleChange}
+                label="SHA Number"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                id="standard-multiline-flexible"
+                variant="standard"
+                name="dependentShaMemberId"
+                value={formik.values.dependentShaMemberId}
+                onChange={formik.handleChange}
+                label="Member ID"
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid item xs={12} sm={6} md={3}>
+              <InputLabel
+                id="demo-simple-select-label"
+                style={{ marginBottom: "0px" }}
+              >
+                Gender
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="dependentGender"
+                variant="standard"
+                fullWidth
+                value={formik.values.dependentGender}
+                onChange={formik.handleChange}
+              >
+                <MenuItem value="male">Male</MenuItem>
+                <MenuItem value="female">Female</MenuItem>
+              </Select>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  margin="normal"
+                  id="date-picker-inline"
+                  label="DOB"
+                  autoOk={true}
+                  value={dayjs(formik.values.dependentDOB)}
+                  onChange={handleDependentDOB}
+                  KeyboardButtonProps={{
+                    "aria-label": "change ing date",
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                id="standard-basic"
+                name="relation"
+                value={formik.values.dependentRelations}
+                variant="standard"
+                onChange={formik.handleChange}
+                label="Relation"
+                InputProps={{
+                  classes: {
+                    root: classes.inputRoot,
+                    disabled: classes.disabled,
+                  },
+                }}
+              />
+            </Grid> */}
+          {/* </Grid> */}
+
+          <Grid item xs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
+            <span style={{ color: "#4472C4", fontWeight: "bold" }}>
+              PRE-AUTH DETAILS
+            </span>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} style={{ marginBottom: "25px" }}>
+            <Divider />
+          </Grid>
+
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid item xs={12} sm={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  margin="normal"
+                  id="date-picker-inline"
+                  label="Expected/Actual DOA"
+                  autoOk={true}
+                  value={dayjs(selectedDOA)}
+                  onChange={handleDOA}
+                  KeyboardButtonProps={{
+                    "aria-label": "change ing date",
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  margin="normal"
+                  id="date-picker-inline"
+                  label="Expected/Actual DOD"
+                  autoOk={true}
+                  value={dayjs(selectedDOD)}
+                  onChange={handleDODDate}
+                  KeyboardButtonProps={{
+                    "aria-label": "change ing date",
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="standard-basic"
+                name="contactNoOne"
+                type="number"
+                value={formik.values.contactNoOne}
+                variant="standard"
+                onChange={formik.handleChange}
+                label="Contact No. 1"
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                variant="standard"
+                id="standard-basic"
+                name="contactNoTwo"
+                type="number"
+                value={memberBasic.contactNoTwo}
+                onChange={formik.handleChange}
+                label="Contact No. 2"
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formik.values.referalTicketRequired}
+                    onChange={(e) => handleFieldChecked(e)}
+                    name="referalTicketRequired"
+                    color="primary"
+                  />
+                }
+                label="Referral Ticket Required"
+              />
+            </Grid>
+          </Grid>
+
+          {serviceDetailsList?.map((x, i) => {
+            return (
+              <Grid container spacing={3} key={i}>
+                <Grid item xs={12} sm={12} md={12}>
+                  <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <FormControl className={classes.formControl} fullWidth>
+                        <Autocomplete
+                          name="benefitId"
+                          defaultValue={
+                            x?.benefitStructureId ? x?.benefitStructureId : null
+                          }
+                          value={
+                            x?.benefitStructureId
+                              ? x?.benefitStructureId
+                              : undefined
+                          }
+                          onChange={(e, val) => {
+                            setIntervention([]);
+                            getIntervemntions(val, i);
+                            handleBenefitChangeInService(val, i);
+                            setBenefitId(val.benefitStructureId);
+                            handleChangeIntervention("", i);
+                          }}
+                          id="checkboxes-tags-demo"
+                          filterOptions={autocompleteFilterChange}
+                          options={benefitOptions}
+                          getOptionLabel={(option) =>
+                            option.label ??
+                            benefitOptions.find(
+                              (benefit) => benefit?.value == option
+                            )?.label
+                          }
+                          getOptionSelected={(option, value) =>
+                            option?.value === value
+                          }
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Benefit"
+                              variant="standard"
+                            />
+                          )}
+                        />
+                      </FormControl>
+                    </Grid>
+                    {serviceSection(x, i)}
+                  </Grid>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  {serviceDetailsList.length !== 1 && (
+                    <Button
+                      className={`mr10 ${classes.buttonDanger}`}
+                      onClick={() => handleRemoveServicedetails(i)}
+                      variant="contained"
+                      color="error"
+                      style={{ marginLeft: "5px" }}
+                    >
+                      <DeleteIcon />
+                    </Button>
+                  )}
+                  {serviceDetailsList.length - 1 === i && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={classes.buttonPrimary}
+                      style={{ marginLeft: "5px" }}
+                      onClick={handleAddServicedetails}
+                      disabled={Validated ? true : false}
+                    >
+                      <AddIcon />
+                    </Button>
+                  )}
+                </Grid>
+              </Grid>
+            );
+          })}
+
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={12}
+            style={{ marginBottom: "15px", marginTop: "10px" }}
+          >
+            <Divider />
+          </Grid>
+
+          <Grid item xs={12} className={classes.actionContainer}>
+            <Button
+              variant="contained"
+              color="primary"
+              type="button"
+              style={{
+                minWidth: "70px",
+                border: "none",
+                textAlign: "center",
+                justifyContent: "center",
+                display: "none",
+              }}
+              disabled={Validated ? true : false}
+              className={classes.buttonSecondary}
+              onClick={handleMultipleValid}
+            >
+              {isLoadingValidate ? (
+                <CircularProgress size={"15px"} sx={{ color: "white" }} />
+              ) : Validated ? (
+                <>
+                  Success
+                  <CheckCircle sx={{ color: "blue", cursor: "pointer" }} />
+                </>
+              ) : (
+                "Validate"
+              )}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              // type="submit"
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+              style={{ marginLeft: "10px" }}
+              className={classes.buttonPrimary}
+            >
+              Save and Next
+            </Button>
+            <Button
+              className={`p-button-text ${classes.saveBtn}`}
+              style={{ marginLeft: "10px" }}
+              variant="contained"
+            >
+              Close
+            </Button>
+          </Grid>
+          {/* </form> */}
         </Box>
       </Paper>
     </>

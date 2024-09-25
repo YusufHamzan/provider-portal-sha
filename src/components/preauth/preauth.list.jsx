@@ -590,7 +590,7 @@ const PreAuthIPDListComponent = () => {
       addCreateButton: true,
       createBtnText: "Preauth",
       onCreateButtonClick: handleOpen,
-      text: "Pre-Auth - IPD",
+      text: "Pre-Auth",
       enableGlobalSearch: true,
       searchText:
         "Search by Claim No, Membership No, Name, Policy id or Status",

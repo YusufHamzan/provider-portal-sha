@@ -44,7 +44,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
 
   const menuItems = [
     { text: 'Dashboard', icon: <SpaceDashboardIcon />, path: '/' },
-    { text: 'Member Eligibility', icon: <PeopleIcon />, path: '/membereligibility' },
+    { text: 'Member Enquiry', icon: <PeopleIcon />, path: '/membereligibility' },
     {
       text: 'Claims',
       icon: <CategoryIcon />,
