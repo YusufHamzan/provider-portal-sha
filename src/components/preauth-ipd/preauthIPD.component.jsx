@@ -1035,7 +1035,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const handleInitiate = () => {
     setBiometricInitiated(true);
     const payload = {
-      subject_id_number: "31746114",
+      subject_id_number: "26263348",
       relying_party_agent_id_number: "27759855",
       notification_callback_url:
         "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
