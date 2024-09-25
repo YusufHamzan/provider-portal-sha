@@ -145,6 +145,7 @@ export default function MemberEligibility() {
   const [openSnack, setOpenSnack] = React.useState(false);
   const [claimTableData, setClaimTableData] = React.useState();
   const [memberData, setMemberData] = React.useState();
+  const [dependentData, setDependentData] = React.useState();
   const [benefitData, setBenefitData] = React.useState();
   const [showServices, setShowServices] = React.useState(false);
   const [diagnosisList, setDiagnosisList] = React.useState([]);
@@ -896,7 +897,6 @@ export default function MemberEligibility() {
                   style={{
                     color: "#4472C4",
                     fontSize: "14px",
-                    marginBottom: "10px",
                     marginTop: "10px",
                   }}
                 >
@@ -904,66 +904,120 @@ export default function MemberEligibility() {
                 </Typography>
                 <Divider />
               </Grid>
-              <Grid item xs={12} sm={6} md={4} style={{ marginTop: "8px" }}>
-                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                  <Typography style={TypographyStyle1}>Name</Typography>
-                  &nbsp;
-                  <span>:</span>&nbsp;
-                  <Typography style={TypographyStyle2}>
-                    {memberData?.dependentName || ""}
-                  </Typography>
-                </Box>
-
-                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                  <Typography style={TypographyStyle1}>SHA Number</Typography>
-                  &nbsp;
-                  <span>:</span>&nbsp;
-                  <Typography style={TypographyStyle2}>
-                    {memberData?.dependentShaNumber || ""}
-                  </Typography>
-                </Box>
-
-                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                  <Typography style={TypographyStyle1}>Member ID</Typography>
-                  &nbsp;
-                  <span>:</span>&nbsp;
-                  <Typography style={TypographyStyle2}>
-                    {memberData?.dependentShaMemberId || ""}
-                  </Typography>
-                </Box>
+              <Grid item xs={12}>
+                <Paper elevation={0} style={{ padding: 15 }}>
+                  <TableContainer component={Paper}>
+                    <Table size="small" aria-label="a dense table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>SHA Number</TableCell>
+                          <TableCell>Member ID</TableCell>
+                          <TableCell>Gender</TableCell>
+                          <TableCell>DOB</TableCell>
+                          <TableCell>Relation</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {memberData?.dependentData ? (
+                          memberData?.dependentData.map((item) => {
+                            return (
+                              <TableRow key={item.id}>
+                                <TableCell>{item?.dependentName}</TableCell>
+                                <TableCell>
+                                  {item?.dependentShaNumber}
+                                </TableCell>
+                                <TableCell>
+                                  {item?.dependentShaMemberId}
+                                </TableCell>
+                                <TableCell>{item?.dependentGender}</TableCell>
+                                <TableCell>
+                                  {moment(el.dependentDOB).format("DD/MM/YYYY")}
+                                </TableCell>
+                                <TableCell>
+                                  {item?.dependentRelations}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={6} align="center">
+                              No Data Found
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Paper>
               </Grid>
-              <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
-                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                  <Typography style={TypographyStyle1}>Gender</Typography>
-                  &nbsp;
-                  <span>:</span>&nbsp;
-                  <Typography style={TypographyStyle2}>
-                    {memberData?.dependentGender || ""}
-                  </Typography>
-                </Box>
-
-                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                  <Typography style={TypographyStyle1}>
-                    Date of Birth
-                  </Typography>
-                  &nbsp;
-                  <span>:</span>&nbsp;
-                  <Typography style={TypographyStyle2}>
-                    {memberData?.dependentDOB
-                      ? moment(memberData.dependentDOB).format("DD/MM/YYYY")
-                      : ""}
-                  </Typography>
-                </Box>
-
-                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                  <Typography style={TypographyStyle1}>Relation</Typography>
-                  &nbsp;
-                  <span>:</span>&nbsp;
-                  <Typography style={TypographyStyle2}>
-                    {memberData?.dependentRelations || ""}
-                  </Typography>
-                </Box>
-              </Grid>
+              {/* <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Box display={"flex"} marginLeft={"10%"}>
+                    <Typography style={TypographyStyle1}>Name</Typography>
+                    &nbsp;
+                    <span>:</span>&nbsp;
+                    <Typography style={TypographyStyle2}>
+                      {memberData?.dependentName || ""}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Box display={"flex"} marginLeft={"10%"}>
+                    <Typography style={TypographyStyle1}>SHA Number</Typography>
+                    &nbsp;
+                    <span>:</span>&nbsp;
+                    <Typography style={TypographyStyle2}>
+                      {memberData?.dependentShaNumber || ""}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Box display={"flex"} marginLeft={"10%"}>
+                    <Typography style={TypographyStyle1}>Member ID</Typography>
+                    &nbsp;
+                    <span>:</span>&nbsp;
+                    <Typography style={TypographyStyle2}>
+                      {memberData?.dependentShaMemberId || ""}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
+                  <Box display={"flex"} marginLeft={"10%"}>
+                    <Typography style={TypographyStyle1}>Gender</Typography>
+                    &nbsp;
+                    <span>:</span>&nbsp;
+                    <Typography style={TypographyStyle2}>
+                      {memberData?.dependentGender || ""}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Box display={"flex"} marginLeft={"10%"}>
+                    <Typography style={TypographyStyle1}>
+                      Date of Birth
+                    </Typography>
+                    &nbsp;
+                    <span>:</span>&nbsp;
+                    <Typography style={TypographyStyle2}>
+                      {memberData?.dependentDOB
+                        ? moment(memberData.dependentDOB).format("DD/MM/YYYY")
+                        : ""}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Box display={"flex"} marginLeft={"10%"}>
+                    <Typography style={TypographyStyle1}>Relation</Typography>
+                    &nbsp;
+                    <span>:</span>&nbsp;
+                    <Typography style={TypographyStyle2}>
+                      {memberData?.dependentRelations || ""}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
 
@@ -1028,8 +1082,8 @@ export default function MemberEligibility() {
                     ) : (
                       <TableRow>
                         <TableCell colSpan={2} align="center">
-                          {/* <LinearProgress /> */}
-                          <CircularProgress
+                          No Data Found
+                          {/* <CircularProgress
                             sx={
                               {
                                 // color: "white",
@@ -1037,7 +1091,7 @@ export default function MemberEligibility() {
                                 // height: "20px",
                               }
                             }
-                          />
+                          /> */}
                         </TableCell>
                       </TableRow>
                     )}
