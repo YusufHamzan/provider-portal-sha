@@ -6,6 +6,7 @@ import { Page } from '../../models/page';
 export class MemberService {
 	readonly COMMAND_CONTEXT = `/member-command-service/v1`;
 	readonly QUERY_CONTEXT = `/member-query-service/v1/members`;
+	readonly QUERY_CONTEXT2 = `/member-query-service/v1`;
 
 	getMember(pageRequest: any): Observable<Page<any>> {
 		return http
@@ -104,7 +105,7 @@ export class MemberService {
 
 	biometricStatus(id: any): Observable<any> {
 		return http
-			.get<any>(`${this.QUERY_CONTEXT}/sha-member/biometric?id:${id}`)
+			.get<any>(`${this.QUERY_CONTEXT2}/sha-member/biometric?id=${id}`)
 			.pipe(map((response) => response.data));
 	}
 }
