@@ -384,8 +384,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -887,7 +888,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1035,10 +1036,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const handleInitiate = () => {
     setBiometricInitiated(true);
     const payload = {
-      subject_id_number: "ekyc9000",
-      relying_party_agent_id_number: "ekyc9000",
+      subject_id_number: "26263348",
+      relying_party_agent_id_number: "27759855",
       notification_callback_url:
-        "https://api.eoxegen.com/member-command-service/v1/public/sha-member/biometric/callback",
+        "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
       reason: "reason for creating the request",
       total_attempts: 5,
       expiry_in_seconds: 3600,
@@ -1206,7 +1207,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1324,8 +1325,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     >
                       Member Biometric
                     </Typography>
-                    {!biometricVerified && (
-                      biometricInitiated && biometricResponseId ? (
+                    {!biometricVerified &&
+                      (biometricInitiated && biometricResponseId ? (
                         <Button
                           label="Check status"
                           severity="help"
@@ -1339,8 +1340,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           text
                           onClick={handleInitiate}
                         />
-                      )
-                    )}
+                      ))}
                     {biometricVerified ? (
                       <CheckCircle
                         sx={{
