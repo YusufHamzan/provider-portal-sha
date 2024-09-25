@@ -656,7 +656,8 @@ export default function MemberEligibility() {
               {/* <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
                 <Avatar sizes="400"></Avatar>
               </Box> */}
-              <Grid
+              {/* image hide as directed */}
+              {/* <Grid
                 item
                 xs={4}
                 sm={3}
@@ -677,7 +678,7 @@ export default function MemberEligibility() {
                     />
                   )}
                 </Box>
-              </Grid>
+              </Grid> */}
               {/* <Grid
                 item
                 xs={4}
