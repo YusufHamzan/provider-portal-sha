@@ -650,7 +650,7 @@ export default function MemberEligibility() {
         />
       } */}
 
-      {!memberData && (
+      {memberData && (
         <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} container>
