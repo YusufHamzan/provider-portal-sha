@@ -40,6 +40,7 @@ import {
   TextField,
   Typography,
   useTheme,
+  Divider,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import moment from "moment/moment";
@@ -122,10 +123,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-        // onClick={() => {
-        //   setShowServices(false);
-        //   getClaimsByBenefit(rowData?.benefitId);
-        // }}
+      // onClick={() => {
+      //   setShowServices(false);
+      //   getClaimsByBenefit(rowData?.benefitId);
+      // }}
       >
         {rowData.consumed}
       </span>
@@ -217,7 +218,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -481,7 +482,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -577,7 +578,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -625,7 +626,7 @@ export default function MemberEligibility() {
             </Grid>
           )}
 
-          <Grid item style={{ display: "flex" }}>
+          {/* <Grid item style={{ display: "flex" }}>
             <IconButton
               onClick={() => setBioModalopen(true)}
               // size="large"
@@ -634,11 +635,11 @@ export default function MemberEligibility() {
             >
               <Fingerprint sx={{ width: "2rem", height: "2rem" }} />
             </IconButton>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Paper>
 
-      {
+      {/* {
         <BioModal
           matchResult={matchResult}
           open={biomodalopen}
@@ -646,7 +647,7 @@ export default function MemberEligibility() {
           id={memberData?.memberId}
           membershipNo={memberData?.membershipNo}
         />
-      }
+      } */}
 
       {memberData && (
         <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
@@ -871,6 +872,73 @@ export default function MemberEligibility() {
                 </Typography>
               </Box>
             </Grid>
+
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography style={{ color: "#4472C4", fontSize: '14px', marginBottom: "10px", marginTop: '10px' }}>
+                  DEPENDENT DETAILS
+                </Typography>
+                <Divider />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} style={{ marginTop: "8px" }}>
+                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                  <Typography style={TypographyStyle1}>Name</Typography>
+                  &nbsp;
+                  <span>:</span>&nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.dependentName || ""}
+                  </Typography>
+                </Box>
+
+                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                  <Typography style={TypographyStyle1}>SHA Number</Typography>
+                  &nbsp;
+                  <span>:</span>&nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.dependentShaNumber || ""}
+                  </Typography>
+                </Box>
+
+                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                  <Typography style={TypographyStyle1}>Member ID</Typography>
+                  &nbsp;
+                  <span>:</span>&nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.dependentShaMemberId || ""}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
+
+                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                  <Typography style={TypographyStyle1}>Gender</Typography>
+                  &nbsp;
+                  <span>:</span>&nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.dependentGender || ""}
+                  </Typography>
+                </Box>
+
+                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                  <Typography style={TypographyStyle1}>Date of Birth</Typography>
+                  &nbsp;
+                  <span>:</span>&nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.dependentDOB ? moment(memberData.dependentDOB).format("DD/MM/YYYY") : ""}
+                  </Typography>
+                </Box>
+
+                <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                  <Typography style={TypographyStyle1}>Relation</Typography>
+                  &nbsp;
+                  <span>:</span>&nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.dependentRelations || ""}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+
           </Grid>
 
           <Paper elevation={0} style={{ padding: 15, marginTop: "10px" }}>
@@ -901,11 +969,10 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${
-                                parentBenefitName != undefined
-                                  ? `${parentBenefitName} >`
-                                  : ""
-                              } ${item?.benefitName}`}
+                              {` ${parentBenefitName != undefined
+                                ? `${parentBenefitName} >`
+                                : ""
+                                } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
@@ -954,6 +1021,7 @@ export default function MemberEligibility() {
           </Paper>
         </Paper>
       )}
+
 
       {/* {showServices && (
         <Paper elevation="none" style={{ padding: "15px 30px", marginTop: '10px' }}>
