@@ -123,10 +123,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-      // onClick={() => {
-      //   setShowServices(false);
-      //   getClaimsByBenefit(rowData?.benefitId);
-      // }}
+        // onClick={() => {
+        //   setShowServices(false);
+        //   getClaimsByBenefit(rowData?.benefitId);
+        // }}
       >
         {rowData.consumed}
       </span>
@@ -218,7 +218,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -482,7 +482,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -578,7 +578,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -653,6 +653,19 @@ export default function MemberEligibility() {
         <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} container>
+              <Grid item xs={12}>
+                <Typography
+                  style={{
+                    color: "#4472C4",
+                    fontSize: "14px",
+                    marginBottom: "10px",
+                    marginTop: "10px",
+                  }}
+                >
+                  MEMBER DETAILS
+                </Typography>
+                <Divider />
+              </Grid>
               {/* <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
                 <Avatar sizes="400"></Avatar>
               </Box> */}
@@ -791,14 +804,14 @@ export default function MemberEligibility() {
                   {memberData?.gender}
                 </Typography>
               </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Policy Type</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
                   {memberData?.clientType}
                 </Typography>
-              </Box>
+              </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Contact No</Typography>
                 &nbsp;
@@ -814,9 +827,10 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {(memberData?.dateOfJoining &&
+                  {/* {(memberData?.dateOfJoining &&
                     moment(memberData?.dateOfJoining).format("DD/MM/YYYY")) ||
-                    "No Data"}
+                    "No Data"} */}
+                  {moment(memberData?.policyStartDate).format("DD/MM/YYYY")}
                 </Typography>
               </Box>
             </Grid>
@@ -847,16 +861,18 @@ export default function MemberEligibility() {
                   {memberData?.age}
                 </Typography>
               </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+              {/*  <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Policy No.</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
                   {memberData?.policyNumber}
                 </Typography>
-              </Box>
+              </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>policy period</Typography>
+                <Typography style={TypographyStyle1}>
+                  Coverage period
+                </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
@@ -876,7 +892,14 @@ export default function MemberEligibility() {
 
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Typography style={{ color: "#4472C4", fontSize: '14px', marginBottom: "10px", marginTop: '10px' }}>
+                <Typography
+                  style={{
+                    color: "#4472C4",
+                    fontSize: "14px",
+                    marginBottom: "10px",
+                    marginTop: "10px",
+                  }}
+                >
                   DEPENDENT DETAILS
                 </Typography>
                 <Divider />
@@ -910,7 +933,6 @@ export default function MemberEligibility() {
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
-
                 <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                   <Typography style={TypographyStyle1}>Gender</Typography>
                   &nbsp;
@@ -921,11 +943,15 @@ export default function MemberEligibility() {
                 </Box>
 
                 <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                  <Typography style={TypographyStyle1}>Date of Birth</Typography>
+                  <Typography style={TypographyStyle1}>
+                    Date of Birth
+                  </Typography>
                   &nbsp;
                   <span>:</span>&nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberData?.dependentDOB ? moment(memberData.dependentDOB).format("DD/MM/YYYY") : ""}
+                    {memberData?.dependentDOB
+                      ? moment(memberData.dependentDOB).format("DD/MM/YYYY")
+                      : ""}
                   </Typography>
                 </Box>
 
@@ -939,7 +965,6 @@ export default function MemberEligibility() {
                 </Box>
               </Grid>
             </Grid>
-
           </Grid>
 
           <Paper elevation={0} style={{ padding: 15, marginTop: "10px" }}>
@@ -970,10 +995,11 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${parentBenefitName != undefined
-                                ? `${parentBenefitName} >`
-                                : ""
-                                } ${item?.benefitName}`}
+                              {` ${
+                                parentBenefitName != undefined
+                                  ? `${parentBenefitName} >`
+                                  : ""
+                              } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
@@ -1022,7 +1048,6 @@ export default function MemberEligibility() {
           </Paper>
         </Paper>
       )}
-
 
       {/* {showServices && (
         <Paper elevation="none" style={{ padding: "15px 30px", marginTop: '10px' }}>
