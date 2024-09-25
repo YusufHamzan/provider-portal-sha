@@ -9,7 +9,12 @@ import { MemberService } from "../../remote-api/api/member-services";
 import { ProvidersService } from "../../remote-api/api/provider-services";
 import { makeStyles } from "@mui/styles";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import React, { useEffect } from "react";
+import ErrorIcon from "@mui/icons-material/Error";
+import CheckCircle from "@mui/icons-material/CheckCircle";
+import React, { useEffect, useState } from "react";
+
+import { Button as PButton } from 'primereact/button';
+
 import { useFormik } from "formik";
 import {
   Alert,
@@ -38,6 +43,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -728,6 +734,7 @@ export default function CreditClaimsBasicComponent(props) {
             productName: res.content[0].productName,
           });
         }
+        setMemberIdentified(true)
         getBenefit(res.content[0].memberId, res.content[0].policyNumber);
       } else {
         alert(`No Data found for ${id}`);
@@ -957,6 +964,37 @@ export default function CreditClaimsBasicComponent(props) {
   const handleMsgErrorClose = () => {
     setOpenSnack(false);
     alert("");
+  };
+
+  const [memberIdentified, setMemberIdentified] = useState(false);
+  const [biometricVerified, setBiometricVerified] = useState(false);
+  const [contributionPaid, setContributionPaid] = useState(false);
+  const [biometricInitiated, setBiometricInitiated] = useState(false);
+  const [biometricResponseId, setbiometricResponseId] = useState("");
+
+  const handleCheckStatus = () => {
+    memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
+      console.log(data);
+      setBiometricVerified(true);
+    });
+  };
+
+  const handleInitiate = () => {
+    setBiometricInitiated(true);
+    const payload = {
+      subject_id_number: "26263348",
+      // subject_id_number: "31746114",  //DO NOT REMOVE
+      relying_party_agent_id_number: "27759855",
+      notification_callback_url:
+        "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
+      reason: "reason for creating the request",
+      total_attempts: 5,
+      expiry_in_seconds: 3600,
+      service_id: "medical-care",
+    };
+    memberservice.initiateBiometric(payload).subscribe((data) => {
+      setbiometricResponseId(data.id);
+    });
   };
 
   return (
@@ -1868,7 +1906,7 @@ export default function CreditClaimsBasicComponent(props) {
 
                           <DialogContent>
                             {memberName?.res?.content &&
-                            memberName?.res?.content?.length > 0 ? (
+                              memberName?.res?.content?.length > 0 ? (
                               <TableContainer>
                                 <Table>
                                   <TableHead>
@@ -1922,6 +1960,130 @@ export default function CreditClaimsBasicComponent(props) {
                       )}
                     </Grid>
                   )}
+                </Grid>
+                <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+                  <Grid item xs={12} container spacing={2}>
+                    <Grid item xs={12} sm={4}>
+                      <Box
+                        sx={{
+                          position: "relative",
+                          p: 2,
+                          border: "1px solid #ccc",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Typography variant="subtitle1">
+                          Member Identification
+                        </Typography>
+                        {memberIdentified ? (
+                          <CheckCircle
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "green",
+                            }}
+                          />
+                        ) : (
+                          <ErrorIcon
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "red",
+                            }}
+                          />
+                        )}
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Box
+                        sx={{
+                          position: "relative",
+                          p: 2,
+                          border: "1px solid #ccc",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Grid container alignItems="center">
+                          <Typography
+                            variant="subtitle1"
+                            style={{ marginRight: "12px" }}
+                          >
+                            Member Biometric
+                          </Typography>
+                          {!biometricVerified &&
+                            (biometricInitiated && biometricResponseId ? (
+                              <PButton
+                                label="Check status"
+                                severity="help"
+                                text
+                                onClick={handleCheckStatus}
+                              />
+                            ) : (
+                              <PButton
+                                label="Initiate"
+                                severity="help"
+                                text
+                                onClick={handleInitiate}
+                              />
+                            ))}
+                          {biometricVerified ? (
+                            <CheckCircle
+                              sx={{
+                                position: "absolute",
+                                top: 8,
+                                right: 8,
+                                color: "green",
+                              }}
+                            />
+                          ) : (
+                            <ErrorIcon
+                              sx={{
+                                position: "absolute",
+                                top: 8,
+                                right: 8,
+                                color: "red",
+                              }}
+                            />
+                          )}
+                        </Grid>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Box
+                        sx={{
+                          position: "relative",
+                          p: 2,
+                          border: "1px solid #ccc",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Typography variant="subtitle1">
+                          Member Contribution
+                        </Typography>
+                        {contributionPaid ? (
+                          <CheckCircle
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "green",
+                            }}
+                          />
+                        ) : (
+                          <ErrorIcon
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "red",
+                            }}
+                          />
+                        )}
+                      </Box>
+                    </Grid>
+                  </Grid>
                 </Grid>
                 <Grid container spacing={3} style={{ marginBottom: "20px" }}>
                   <Grid item xs={12}>

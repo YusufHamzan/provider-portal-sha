@@ -48,9 +48,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import ClaimModal from "./claim.modal.component";
-// import { CheckCircle, ErrorIcon } from "@mui/icons-material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
-// import ErrorIcon from "@mui/icons-material/ErrorIcon";
 import ErrorIcon from "@mui/icons-material/Error";
 import BioModal from "./component/bio-modal";
 const useStyles = makeStyles((theme) => ({
