@@ -53,6 +53,13 @@ import CheckCircle from "@mui/icons-material/CheckCircle";
 // import ErrorIcon from "@mui/icons-material/ErrorIcon";
 import ErrorIcon from "@mui/icons-material/Error";
 import BioModal from "./component/bio-modal";
+import {
+  CancelOutlined,
+  ErrorOutlineOutlined,
+  PendingActionsOutlined,
+  PendingRounded,
+  PunchClock,
+} from "@mui/icons-material";
 const useStyles = makeStyles((theme) => ({
   input1: {
     width: "50%",
@@ -1025,11 +1032,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [contributionPaid, setContributionPaid] = useState(false);
   const [biometricInitiated, setBiometricInitiated] = useState(false);
   const [biometricResponseId, setbiometricResponseId] = useState("");
+  const [bioMetricStatus, setBioMetricStatus] = useState("");
 
   const handleCheckStatus = () => {
     memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
       console.log(data);
       setBiometricVerified(true);
+      setBioMetricStatus(data?.status);
     });
   };
 
@@ -1050,6 +1059,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     });
   };
 
+  console.log(bioMetricStatus);
   return (
     <>
       <ClaimModal
@@ -1325,8 +1335,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     >
                       Member Biometric
                     </Typography>
-                    {!biometricVerified &&
-                      (biometricInitiated && biometricResponseId ? (
+
+                    {console.log(!biometricVerified)}
+                    {!biometricVerified ? (
+                      biometricInitiated && biometricResponseId ? (
                         <Button
                           label="Check status"
                           severity="help"
@@ -1340,14 +1352,40 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           text
                           onClick={handleInitiate}
                         />
-                      ))}
-                    {biometricVerified ? (
+                      )
+                    ) : bioMetricStatus === "IN_PROGRESS" ? (
+                      <Button
+                        label="Check status"
+                        severity="help"
+                        text
+                        onClick={handleCheckStatus}
+                      />
+                    ) : null}
+                    {bioMetricStatus === "IN_PROGRESS" ? (
+                      <PunchClock
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "orange",
+                        }}
+                      />
+                    ) : bioMetricStatus === "match" ? (
                       <CheckCircle
                         sx={{
                           position: "absolute",
                           top: 8,
                           right: 8,
                           color: "green",
+                        }}
+                      />
+                    ) : bioMetricStatus === "no_match" ? (
+                      <CancelOutlined
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
                         }}
                       />
                     ) : (
