@@ -1355,6 +1355,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         onClick={handleCheckStatus}
                       />
                     ) : null}
+
+
                     {bioMetricStatus === "IN_PROGRESS" ? (
                       <PunchClock
                         sx={{
@@ -1382,16 +1384,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           color: "red",
                         }}
                       />
-                    ) : (
-                      <ErrorIcon
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "red",
-                        }}
-                      />
-                    )}
+                    ) : null}
+
                   </Grid>
                 </Box>
               </Grid>
