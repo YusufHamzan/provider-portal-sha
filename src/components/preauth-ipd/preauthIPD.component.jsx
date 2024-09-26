@@ -1030,7 +1030,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         return
       }
 
-      setBioMetricStatus(data?.result);
+      setBioMetricStatus(data?.status);
     });
   };
 
