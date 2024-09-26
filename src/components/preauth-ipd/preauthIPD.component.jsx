@@ -1025,7 +1025,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
       console.log(data);
 
-      if (data.status === 'SUCCESS' && data?.result === 'no_mathch') {
+      if (data.status === 'SUCCESS' && data?.result === 'no_match') {
         setBioMetricStatus('FAILED');
         return
       }
