@@ -1016,7 +1016,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     [intervention, serviceList, serviceDetailsList]
   );
   const [memberIdentified, setMemberIdentified] = useState(false);
-  const [biometricVerified, setBiometricVerified] = useState(false);
   const [contributionPaid, setContributionPaid] = useState(false);
   const [biometricInitiated, setBiometricInitiated] = useState(false);
   const [biometricResponseId, setbiometricResponseId] = useState("");
@@ -1025,8 +1024,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const handleCheckStatus = () => {
     memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
       console.log(data);
-      setBiometricVerified(true);
-      setBioMetricStatus(data?.status);
+
+      if (data.status === 'SUCCESS' && data?.result === 'no_mathch') {
+        setBioMetricStatus('FAILED');
+        return
+      }
+
+      setBioMetricStatus(data?.result);
     });
   };
 
@@ -1327,8 +1331,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       Member Biometric
                     </Typography>
 
-                    {console.log(!biometricVerified)}
-                    {!biometricVerified ? (
+                    {!bioMetricStatus ? (
                       biometricInitiated && biometricResponseId ? (
                         <Button
                           label="Check status"
@@ -1344,7 +1347,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           onClick={handleInitiate}
                         />
                       )
-                    ) : bioMetricStatus === "IN_PROGRESS" ? (
+                    ) : bioMetricStatus === "IN_PROGRESS" || 'FAILED' ? (
                       <Button
                         label="Check status"
                         severity="help"
@@ -1361,7 +1364,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           color: "orange",
                         }}
                       />
-                    ) : bioMetricStatus === "match" ? (
+                    ) : bioMetricStatus === "SUCCESS" ? (
                       <CheckCircle
                         sx={{
                           position: "absolute",
@@ -1370,7 +1373,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           color: "green",
                         }}
                       />
-                    ) : bioMetricStatus === "no_match" ? (
+                    ) : bioMetricStatus === "FAILED" ? (
                       <CancelOutlined
                         sx={{
                           position: "absolute",
