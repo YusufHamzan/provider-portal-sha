@@ -389,9 +389,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -884,7 +883,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1034,9 +1033,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const handleInitiate = () => {
     setBiometricInitiated(true);
     const payload = {
-      subject_id_number: "26263348",
+      subject_id_number: formik.values.memberShipNo,
+      // subject_id_number: "26263348",
       // subject_id_number: "31746114",  //DO NOT REMOVE
-      relying_party_agent_id_number: "27759855",
+      // relying_party_agent_id_number: "27759855",
+      relying_party_agent_id_number: "27976806",
       notification_callback_url:
         "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
       reason: "reason for creating the request",
@@ -1207,7 +1208,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
