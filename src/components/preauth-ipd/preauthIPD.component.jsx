@@ -382,8 +382,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -871,21 +872,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleEstimateCostInService = (e, index) => {
     const { name, value } = e.target;
-    const isValAlreadyPresent = serviceDetailsList.some(
-      (item) => item.providerId === value
-    );
-
-    if (!isValAlreadyPresent) {
-      const list = [...serviceDetailsList];
-      list[index][name] = value;
-      setServiceDetailsList(list);
-    } else {
-      setAlertMsg(`Provider already selected!!!`);
-      setOpenSnack(true);
-    }
+    const list = [...serviceDetailsList];
+    list[index][name] = value;
+    setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1205,7 +1197,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
