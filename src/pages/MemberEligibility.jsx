@@ -961,7 +961,7 @@ export default function MemberEligibility() {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberData.shaMemberId}
+                    {memberData.memberId}
                   </Typography>
                 </Box>
               </Box>
@@ -970,7 +970,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.dob}(Age:{memberData?.age})
+                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberData?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -994,7 +994,7 @@ export default function MemberEligibility() {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberData?.nationalId}
+                    {memberData?.identificationDocType === "NationalId" &&  memberData?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -1076,7 +1076,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberData?.relation}
+                  {memberData?.relations}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>

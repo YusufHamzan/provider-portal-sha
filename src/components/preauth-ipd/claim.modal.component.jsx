@@ -118,7 +118,7 @@ export default function ClaimModal(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberBasic.shaMemberId}
+                    {memberBasic.memberId}
                   </Typography>
                 </Box>
               </Box>
@@ -127,7 +127,7 @@ export default function ClaimModal(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberBasic?.dob}(Age:{memberBasic?.age})
+                {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberBasic?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -151,7 +151,7 @@ export default function ClaimModal(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberBasic?.nationalId}
+                  {memberBasic?.identificationDocType === "NationalId" &&  memberBasic?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -233,7 +233,7 @@ export default function ClaimModal(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {memberBasic?.relation}
+                  {memberBasic?.relations}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>

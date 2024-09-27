@@ -674,25 +674,26 @@ export default function ClaimsPreAuthIPDComponent(props) {
           formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           setMemberBasic({
             ...memberBasic,
-            name: res.content[0].name,
-            clientType: res.content[0].clientType,
-            age: res.content[0].age,
-            gender: res.content[0].gender,
-            membershipNo: res.content[0].membershipNo,
-            memberId: res.content[0].memberId,
-            relations: res.content[0].relations,
-            contactNoOne: res.content[0].mobileNo,
-            policyNumber: res.content[0].policyNumber,
-            enrolentToDate: new Date(res.content[0].policyEndDate),
-            enrolmentFromDate: new Date(res.content[0].policyStartDate),
-            planName: res.content[0].planName,
-            planScheme: res.content[0].planScheme,
-            productName: res.content[0].productName,
-            active: res.content[0].active,
-            dateOfBirth: res.content[0].dateOfBirth,
-            mobileNo: res.content[0].mobileNo,
-            nationalDocId: res.content[0].identificationDocNumber,
-            email: res.content[0].email,
+            ...res?.content[0]
+            // name: res.content[0].name,
+            // clientType: res.content[0].clientType,
+            // age: res.content[0].age,
+            // gender: res.content[0].gender,
+            // membershipNo: res.content[0].membershipNo,
+            // memberId: res.content[0].memberId,
+            // relations: res.content[0].relations,
+            // contactNoOne: res.content[0].mobileNo,
+            // policyNumber: res.content[0].policyNumber,
+            // enrolentToDate: new Date(res.content[0].policyEndDate),
+            // enrolmentFromDate: new Date(res.content[0].policyStartDate),
+            // planName: res.content[0].planName,
+            // planScheme: res.content[0].planScheme,
+            // productName: res.content[0].productName,
+            // active: res.content[0].active,
+            // dateOfBirth: res.content[0].dateOfBirth,
+            // mobileNo: res.content[0].mobileNo,
+            // nationalDocId: res.content[0].identificationDocNumber,
+            // email: res.content[0].email,
           });
           setShowViewDetails(true);
           setMemberIdentified(true);
@@ -710,23 +711,24 @@ export default function ClaimsPreAuthIPDComponent(props) {
     formik.setFieldValue("contactNoOne", data.mobileNo);
     setMemberBasic({
       ...memberBasic,
-      name: data.name,
-      age: data.age,
-      gender: data.gender,
-      membershipNo: data.membershipNo,
-      memberId: data.memberId,
-      relations: data.relations,
-      policyNumber: data.policyNumber,
-      enrolentToDate: new Date(data.policyEndDate),
-      enrolmentFromDate: new Date(data.policyStartDate),
-      planName: data.planName,
-      planScheme: data.planScheme,
-      productName: data.productName,
-      active: data.active,
-      dateOfBirth: data.dateOfBirth,
-      mobileNo: data.mobileNo,
-      nationalDocId: data.identificationDocNumber,
-      email: data.email,
+      ...data
+      // name: data.name,
+      // age: data.age,
+      // gender: data.gender,
+      // membershipNo: data.membershipNo,
+      // memberId: data.memberId,
+      // relations: data.relations,
+      // policyNumber: data.policyNumber,
+      // enrolentToDate: new Date(data.policyEndDate),
+      // enrolmentFromDate: new Date(data.policyStartDate),
+      // planName: data.planName,
+      // planScheme: data.planScheme,
+      // productName: data.productName,
+      // active: data.active,
+      // dateOfBirth: data.dateOfBirth,
+      // mobileNo: data.mobileNo,
+      // nationalDocId: data.identificationDocNumber,
+      // email: data.email,
     });
     setShowViewDetails(true);
     getBenefit(data?.memberId, data?.policyNumber);
@@ -1518,7 +1520,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.dob}(Age:{memberBasic?.age})
+                {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberBasic?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -1544,7 +1546,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                    {memberBasic?.nationalId}
+                  {memberBasic?.identificationDocType === "NationalId" &&  memberBasic?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -1638,7 +1640,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.relation}
+                  {memberBasic?.relations}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
