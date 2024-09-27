@@ -218,7 +218,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     policyNumber: "",
     age: "",
     relations: "",
-    relation:'',
+    relation: '',
     enrolmentDate: new Date(),
     enrolentToDate: new Date(),
     enrolmentFromDate: new Date(),
@@ -407,9 +407,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -904,7 +903,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1233,7 +1232,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1353,25 +1352,16 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     >
                       Member Biometric
                     </Typography>
-                    {memberIdentified ? (
-                    <CheckCircle
-                      sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        color: "green",
-                      }}
-                    />
-                  ) : (
-                    <ErrorIcon
-                      sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        color: "red",
-                      }}
-                    />
-                  )}
+                    {!bioMetricStatus ? (
+                      <ErrorIcon
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      />
+                    ) : null}
                     {!bioMetricStatus ? (
                       biometricInitiated && biometricResponseId ? (
                         <Button
@@ -1520,7 +1510,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberBasic?.age})
+                  {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")} (Age: {memberBasic?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -1546,7 +1536,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.identificationDocType === "NationalId" &&  memberBasic?.identificationDocNumber}
+                    {memberBasic?.identificationDocType === "NationalId" && memberBasic?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -1604,7 +1594,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.active === true ? (
+                    {memberBasic?.active === true ? (
                       <Button
                         style={{
                           background: "green",

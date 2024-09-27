@@ -125,10 +125,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-        // onClick={() => {
-        //   setShowServices(false);
-        //   getClaimsByBenefit(rowData?.benefitId);
-        // }}
+      // onClick={() => {
+      //   setShowServices(false);
+      //   getClaimsByBenefit(rowData?.benefitId);
+      // }}
       >
         {rowData.consumed}
       </span>
@@ -221,7 +221,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -524,7 +524,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -620,7 +620,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -746,16 +746,7 @@ export default function MemberEligibility() {
                     >
                       Member Biometric
                     </Typography>
-                    {memberIdentified ? (
-                      <CheckCircle
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "green",
-                        }}
-                      />
-                    ) : (
+                    {!bioMetricStatus ? (
                       <ErrorIcon
                         sx={{
                           position: "absolute",
@@ -764,7 +755,7 @@ export default function MemberEligibility() {
                           color: "red",
                         }}
                       />
-                    )}
+                    ) : null}
                     {!bioMetricStatus ? (
                       biometricInitiated && biometricResponseId ? (
                         <PButton
@@ -970,7 +961,7 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberData?.age})
+                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")} (Age:{memberData?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -994,7 +985,7 @@ export default function MemberEligibility() {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberData?.identificationDocType === "NationalId" &&  memberData?.identificationDocNumber}
+                    {memberData?.identificationDocType === "NationalId" && memberData?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -1247,11 +1238,10 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${
-                                parentBenefitName != undefined
-                                  ? `${parentBenefitName} >`
-                                  : ""
-                              } ${item?.benefitName}`}
+                              {` ${parentBenefitName != undefined
+                                ? `${parentBenefitName} >`
+                                : ""
+                                } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
