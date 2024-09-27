@@ -50,7 +50,7 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
       icon: <CategoryIcon />,
       submenus: [
         { text: 'Pre-Auth', path: '/preauths', icon: <AssistantIcon /> },
-        { text: 'Final Claim', path: '/claims', icon: <RequestQuoteIcon /> },
+        { text: 'Claim Submission', path: '/claims', icon: <RequestQuoteIcon /> },
         // { text: 'Credit Claims', path: '/credit-claims', icon: <CreditCardIcon /> },
       ],
     },
