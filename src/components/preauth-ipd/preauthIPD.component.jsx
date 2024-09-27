@@ -218,6 +218,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     policyNumber: "",
     age: "",
     relations: "",
+    relation:'',
     enrolmentDate: new Date(),
     enrolentToDate: new Date(),
     enrolmentFromDate: new Date(),
@@ -1059,7 +1060,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       // subject_id_number: "26263348",
       // subject_id_number: "31746114",  //DO NOT REMOVE
       // relying_party_agent_id_number: "27759855",
-      relying_party_agent_id_number: "27976806",
+      relying_party_agent_id_number: "P6592234",
       notification_callback_url:
         "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
       reason: "reason for creating the request",
@@ -1350,7 +1351,25 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     >
                       Member Biometric
                     </Typography>
-
+                    {memberIdentified ? (
+                    <CheckCircle
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "green",
+                      }}
+                    />
+                  ) : (
+                    <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  )}
                     {!bioMetricStatus ? (
                       biometricInitiated && biometricResponseId ? (
                         <Button
@@ -1494,13 +1513,51 @@ export default function ClaimsPreAuthIPDComponent(props) {
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
-                  Age
+                  DOB
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.age}
+                  {memberBasic?.dob}(Age:{memberBasic?.age})
                 </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  Coverage period
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {moment(memberBasic?.policyStartDate).format("DD/MM/YYYY")} -{" "}
+                  {moment(memberBasic?.policyEndDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography className={classes.TypographyStyle1}>
+                    National Id
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                    {memberBasic?.nationalId}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography className={classes.TypographyStyle1}>
+                    Household No
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                    {memberBasic.employeeId}
+                  </Typography>
+                </Box>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
@@ -1514,12 +1571,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
-                  Policy From Date
+                  Contact No
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.enrolmentFromDate).format("DD/MM/YYYY")}
+                  {memberBasic?.mobileNo}
                 </Typography>
               </Box>
             </Grid>
@@ -1528,7 +1585,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
               <Box display="flex" flexDirection="column" marginLeft="10%">
                 <Box display="flex" alignItems="center">
                   <Typography className={classes.TypographyStyle1}>
-                    SHA Number
+                    SHA No
                   </Typography>
                   &nbsp;
                   <span>:</span>
@@ -1539,13 +1596,38 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
                   <Typography className={classes.TypographyStyle1}>
-                    Household Id
+                    Status
                   </Typography>
                   &nbsp;
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                    {memberBasic.employeeId}
+                  {memberBasic?.active === true ? (
+                      <Button
+                        style={{
+                          background: "green",
+                          color: "#fff",
+                          padding: "0px",
+                          margin: "5px",
+                          height: "19px",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Active
+                      </Button>
+                    ) : (
+                      <Button
+                        style={{
+                          background: "red",
+                          color: "#fff",
+                          padding: "2px",
+                          margin: "0px",
+                          height: "18px",
+                        }}
+                      >
+                        InActive
+                      </Button>
+                    )}
                   </Typography>
                 </Box>
               </Box>
@@ -1561,22 +1643,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
-                  Enrolment Date
+                  Email
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.enrolmentDate).format("DD/MM/YYYY")}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography className={classes.TypographyStyle1}>
-                  Policy To Date
-                </Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.enrolentToDate).format("DD/MM/YYYY")}
+                  {memberBasic?.email}
                 </Typography>
               </Box>
             </Grid>

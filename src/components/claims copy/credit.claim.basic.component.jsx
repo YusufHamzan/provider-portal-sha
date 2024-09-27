@@ -1114,7 +1114,7 @@ export default function CreditClaimsBasicComponent(props) {
       // subject_id_number: "26263348",
       // subject_id_number: "31746114",  //DO NOT REMOVE
       // relying_party_agent_id_number: "27759855",
-      relying_party_agent_id_number: "27976806",
+      relying_party_agent_id_number: "P6592234",
       notification_callback_url:
         "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
       reason: "reason for creating the request",

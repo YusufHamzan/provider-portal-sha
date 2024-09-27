@@ -27,6 +27,7 @@ import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
 export default function ClaimModal(props) {
+  const { memberBasic } = props;
   const [state, setState] = React.useState({
     insuranceCompany: "",
     corporateName: "",
@@ -100,20 +101,96 @@ export default function ClaimModal(props) {
       <DialogContent>
         <Paper elevation="3" style={{ padding: 15, marginTop: "15px" }}>
           <Grid container>
-            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                marginLeft="10%"
-                marginY="10px"
-              >
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
                 <Box display="flex" alignItems="center">
-                  <Typography style={TypographyStyle1}>Member Name</Typography>
+                  <Typography style={TypographyStyle1}>Name</Typography>
                   &nbsp;
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {props?.memberBasic?.name}
+                    {memberBasic?.name}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography style={TypographyStyle1}>Member ID</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberBasic.shaMemberId}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>DOB</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {memberBasic?.dob}(Age:{memberBasic?.age})
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>
+                  Coverage period
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {moment(memberBasic?.policyStartDate).format("DD/MM/YYYY")} -{" "}
+                  {moment(memberBasic?.policyEndDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography style={TypographyStyle1}>National Id</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberBasic?.nationalId}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography style={TypographyStyle1}>Household No</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberBasic.employeeId}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>gender</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {memberBasic?.gender}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>Contact No</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {memberBasic?.mobileNo}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography style={TypographyStyle1}>SHA No</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberBasic?.shaNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -122,7 +199,7 @@ export default function ClaimModal(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {props?.memberBasic?.active === true ? (
+                    {memberBasic?.active === true ? (
                       <Button
                         style={{
                           background: "green",
@@ -152,94 +229,11 @@ export default function ClaimModal(props) {
                 </Box>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>DOB</Typography>
+                <Typography style={TypographyStyle1}>Relation</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {moment(props?.memberBasic?.dateOfBirth).format("DD/MM/YYYY")}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>gender</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {props?.memberBasic?.gender}
-                </Typography>
-              </Box>
-              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Policy Type</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {props?.memberBasic?.clientType}
-                </Typography>
-              </Box> */}
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Contact No</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {props?.memberBasic?.mobileNo}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>
-                  First Enrollment Date
-                </Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {(memberData?.dateOfJoining &&
-                    moment(props?.memberBasic?.enrolmentDate).format(
-                      "DD/MM/YYYY"
-                    )) ||
-                    "No Data"}
-                </Typography>
-              </Box>
-            </Grid>
-
-            <Grid xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Membership No.</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {props?.memberBasic?.membershipNo}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>National Id</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {/* {memberData?.email} */}
-                  {props?.memberBasic?.nationalDocId}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Age</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {props?.memberBasic?.age}
-                </Typography>
-              </Box>
-              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Policy No.</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {props?.memberBasic?.policyNumber}
-                </Typography>
-              </Box> */}
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Coverage period</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                {moment(memberData?.policyStartDate).format("DD/MM/YYYY")} -{" "}
-                  {moment(memberData?.policyEndDate).format("DD/MM/YYYY")}
+                  {memberBasic?.relation}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -247,7 +241,7 @@ export default function ClaimModal(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {props?.memberBasic?.email}
+                  {memberBasic?.email}
                 </Typography>
               </Box>
             </Grid>
@@ -338,15 +332,15 @@ export default function ClaimModal(props) {
                       memberData.map((item) => {
                         const parentBenefitName =
                           benefitLookup[item.parentBenefitStructureId];
-                        return(
-                        <TableRow key={item.id}>
-                          <TableCell>
-                          {` ${
+                        return (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              {` ${
                                 parentBenefitName != undefined
                                   ? `${parentBenefitName} >`
                                   : ""
                               } ${item?.benefitName}`}
-                            {/* {(item?.benefitName === "IN-PATIENT" &&
+                              {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
                                 "1245370764554674176" &&
@@ -356,20 +350,21 @@ export default function ClaimModal(props) {
                               (item?.benefitStructureId ===
                                 "1245640606146895872" &&
                                 " OUT-PATIENT >  MATERNAL HEALTH  ")} */}
-                          </TableCell>
-                          <TableCell>
-                            {item?.balance > 0 ? (
-                              <CheckOutlinedIcon style={{ color: "green" }} />
-                            ) : (
-                              <ClearOutlinedIcon style={{ color: "red" }} />
-                            )}
-                          </TableCell>
-                          {/* <TableCell>{item?.waitingPeriod}</TableCell>
+                            </TableCell>
+                            <TableCell>
+                              {item?.balance > 0 ? (
+                                <CheckOutlinedIcon style={{ color: "green" }} />
+                              ) : (
+                                <ClearOutlinedIcon style={{ color: "red" }} />
+                              )}
+                            </TableCell>
+                            {/* <TableCell>{item?.waitingPeriod}</TableCell>
                         <TableCell>{item?.maxLimit}</TableCell>
                         <TableCell>{item?.consumed}</TableCell>
                         <TableCell>{item?.balance}</TableCell> */}
-                        </TableRow>
-                      )})}
+                          </TableRow>
+                        );
+                      })}
                   </TableBody>
                 </Table>
               </TableContainer>
