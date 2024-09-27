@@ -56,9 +56,11 @@ import { Observable, map } from "rxjs";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import { CheckCircle, Fingerprint } from "@mui/icons-material";
+import ErrorIcon from "@mui/icons-material/Error";
 // import BioModal from "../../components/preauth-ipd/component/bio-modal";
 import BioModal from "../components/preauth-ipd/component/bio-modal";
-
+import { useState } from "react";
+import { Button as PButton } from "primereact/button";
 const memberService = new MemberService();
 const benefitService = new BenefitService();
 const providerService = new ProvidersService();
@@ -123,10 +125,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-        // onClick={() => {
-        //   setShowServices(false);
-        //   getClaimsByBenefit(rowData?.benefitId);
-        // }}
+      // onClick={() => {
+      //   setShowServices(false);
+      //   getClaimsByBenefit(rowData?.benefitId);
+      // }}
       >
         {rowData.consumed}
       </span>
@@ -219,7 +221,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -361,6 +363,45 @@ export default function MemberEligibility() {
     return acc;
   }, {});
 
+  const [memberIdentified, setMemberIdentified] = useState(false);
+  const [contributionPaid, setContributionPaid] = useState(false);
+  const [biometricInitiated, setBiometricInitiated] = useState(false);
+  const [biometricResponseId, setbiometricResponseId] = useState("");
+  const [bioMetricStatus, setBioMetricStatus] = useState("");
+
+  const handleCheckStatus = () => {
+    memberService.biometricStatus(biometricResponseId).subscribe((data) => {
+      console.log(data);
+
+      if (data.status === 'SUCCESS' && data?.result === 'no_match') {
+        setBioMetricStatus('FAILED');
+        return
+      }
+
+      setBioMetricStatus(data?.status);
+    });
+  };
+
+  const handleInitiate = () => {
+    setBiometricInitiated(true);
+    const payload = {
+      subject_id_number: formik.values.memberShipNo,
+      // subject_id_number: "26263348",
+      // subject_id_number: "31746114",  //DO NOT REMOVE
+      // relying_party_agent_id_number: "27759855",
+      relying_party_agent_id_number: "27976806",
+      notification_callback_url:
+        "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
+      reason: "reason for creating the request",
+      total_attempts: 5,
+      expiry_in_seconds: 3600,
+      service_id: "medical-care",
+    };
+    memberService.initiateBiometric(payload).subscribe((data) => {
+      setbiometricResponseId(data.id);
+    });
+  };
+
   return (
     <>
       <Snackbar
@@ -483,7 +524,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -579,7 +620,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -650,8 +691,156 @@ export default function MemberEligibility() {
         />
       } */}
 
+
+
       {memberData && (
         <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid item xs={12} container spacing={2}>
+              <Grid item xs={12} sm={4}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    p: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="subtitle1">
+                    Member Identification
+                  </Typography>
+                  {memberIdentified ? (
+                    <CheckCircle
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "green",
+                      }}
+                    />
+                  ) : (
+                    <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  )}
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    p: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Grid container alignItems="center">
+                    <Typography
+                      variant="subtitle1"
+                      style={{ marginRight: "12px" }}
+                    >
+                      Member Biometric
+                    </Typography>
+
+                    {!bioMetricStatus ? (
+                      biometricInitiated && biometricResponseId ? (
+                        <PButton
+                          label="Check status"
+                          severity="help"
+                          text
+                          onClick={handleCheckStatus}
+                        />
+                      ) : (
+                        <PButton
+                          label="Initiate"
+                          severity="help"
+                          text
+                          onClick={handleInitiate}
+                        />
+                      )
+                    ) : bioMetricStatus === "IN_PROGRESS" || 'FAILED' ? (
+                      <PButton
+                        label="Check status"
+                        severity="help"
+                        text
+                        onClick={handleCheckStatus}
+                      />
+                    ) : null}
+
+
+                    {bioMetricStatus === "IN_PROGRESS" ? (
+                      <PunchClock
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "orange",
+                        }}
+                      />
+                    ) : bioMetricStatus === "SUCCESS" ? (
+                      <CheckCircle
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "green",
+                        }}
+                      />
+                    ) : bioMetricStatus === "FAILED" ? (
+                      <CancelOutlined
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      />
+                    ) : null}
+
+                  </Grid>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    p: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="subtitle1">
+                    Member Contribution
+                  </Typography>
+                  {contributionPaid ? (
+                    <CheckCircle
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "green",
+                      }}
+                    />
+                  ) : (
+                    <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+          </Grid>
+
           <Grid container>
             <Grid item xs={12} sm={12} md={12} container>
               <Grid item xs={12}>
@@ -1049,11 +1238,10 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${
-                                parentBenefitName != undefined
-                                  ? `${parentBenefitName} >`
-                                  : ""
-                              } ${item?.benefitName}`}
+                              {` ${parentBenefitName != undefined
+                                ? `${parentBenefitName} >`
+                                : ""
+                                } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
