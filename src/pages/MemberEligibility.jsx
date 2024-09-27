@@ -125,10 +125,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-      // onClick={() => {
-      //   setShowServices(false);
-      //   getClaimsByBenefit(rowData?.benefitId);
-      // }}
+        // onClick={() => {
+        //   setShowServices(false);
+        //   getClaimsByBenefit(rowData?.benefitId);
+        // }}
       >
         {rowData.consumed}
       </span>
@@ -221,7 +221,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -368,6 +368,7 @@ export default function MemberEligibility() {
   const [biometricInitiated, setBiometricInitiated] = useState(false);
   const [biometricResponseId, setbiometricResponseId] = useState("");
   const [bioMetricStatus, setBioMetricStatus] = useState("");
+  const [contributionResponseId, setContributionResponseId] = useState("");
 
   const handleCheckStatus = () => {
     memberService.biometricStatus(biometricResponseId).subscribe((data) => {
@@ -401,6 +402,26 @@ export default function MemberEligibility() {
       setbiometricResponseId(data.id);
     });
   };
+
+  const handleContributionInitiate = () => {
+    memberservice
+      .initiateContribution(
+        memberData?.memberId,
+        memberData?.identificationDocNumber
+      )
+      .subscribe((data) => {
+        setContributionPaid(true);
+        setContributionResponseId(data.id);
+      });
+  };
+
+  console.log(
+    "popopo",
+    !contributionPaid &&
+      memberData?.memberId &&
+      memberData?.identificationDocNumber &&
+      "tureee"
+  );
 
   return (
     <>
@@ -524,7 +545,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -620,7 +641,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -820,6 +841,7 @@ export default function MemberEligibility() {
                     border: "1px solid #ccc",
                     borderRadius: 2,
                     height: "60px",
+                    display:"flex"
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -844,6 +866,15 @@ export default function MemberEligibility() {
                       }}
                     />
                   )}
+                  {!contributionPaid && memberData?.memberId &&
+                    memberData?.identificationDocNumber && (
+                      <PButton
+                        label="Initiate"
+                        severity="help"
+                        text
+                        onClick={handleContributionInitiate}
+                      />
+                    )}
                 </Box>
               </Grid>
             </Grid>
@@ -961,7 +992,8 @@ export default function MemberEligibility() {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")} (Age:{memberData?.age})
+                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")} (Age:
+                  {memberData?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -985,7 +1017,8 @@ export default function MemberEligibility() {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberData?.identificationDocType === "NationalId" && memberData?.identificationDocNumber}
+                    {memberData?.identificationDocType === "NationalId" &&
+                      memberData?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -1238,10 +1271,11 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${parentBenefitName != undefined
-                                ? `${parentBenefitName} >`
-                                : ""
-                                } ${item?.benefitName}`}
+                              {` ${
+                                parentBenefitName != undefined
+                                  ? `${parentBenefitName} >`
+                                  : ""
+                              } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===

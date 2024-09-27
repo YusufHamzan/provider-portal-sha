@@ -108,4 +108,10 @@ export class MemberService {
 			.get<any>(`${this.QUERY_CONTEXT2}/sha-member/biometric?id=${id}`)
 			.pipe(map((response) => response.data));
 	}
+
+	initiateContribution(memberId, nationalId): Observable<any> {
+		return http
+			.patch<any>(`${this.COMMAND_CONTEXT}/member-plan-update/${memberId}/${nationalId}/contribution`, {})
+			.pipe(map((response) => response.data));
+	}
 }
