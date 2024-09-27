@@ -125,10 +125,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-      // onClick={() => {
-      //   setShowServices(false);
-      //   getClaimsByBenefit(rowData?.benefitId);
-      // }}
+        // onClick={() => {
+        //   setShowServices(false);
+        //   getClaimsByBenefit(rowData?.benefitId);
+        // }}
       >
         {rowData.consumed}
       </span>
@@ -221,7 +221,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -373,9 +373,9 @@ export default function MemberEligibility() {
     memberService.biometricStatus(biometricResponseId).subscribe((data) => {
       console.log(data);
 
-      if (data.status === 'SUCCESS' && data?.result === 'no_match') {
-        setBioMetricStatus('FAILED');
-        return
+      if (data.status === "SUCCESS" && data?.result === "no_match") {
+        setBioMetricStatus("FAILED");
+        return;
       }
 
       setBioMetricStatus(data?.status);
@@ -389,7 +389,7 @@ export default function MemberEligibility() {
       // subject_id_number: "26263348",
       // subject_id_number: "31746114",  //DO NOT REMOVE
       // relying_party_agent_id_number: "27759855",
-      relying_party_agent_id_number: "27976806",
+      relying_party_agent_id_number: "P6592234",
       notification_callback_url:
         "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
       reason: "reason for creating the request",
@@ -524,7 +524,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -620,7 +620,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -691,8 +691,6 @@ export default function MemberEligibility() {
         />
       } */}
 
-
-
       {memberData && (
         <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
           <Grid container spacing={3} style={{ marginBottom: "20px" }}>
@@ -704,6 +702,7 @@ export default function MemberEligibility() {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
+                    height: "60px",
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -737,6 +736,7 @@ export default function MemberEligibility() {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
+                    height: "60px",
                   }}
                 >
                   <Grid container alignItems="center">
@@ -746,7 +746,25 @@ export default function MemberEligibility() {
                     >
                       Member Biometric
                     </Typography>
-
+                    {memberIdentified ? (
+                      <CheckCircle
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "green",
+                        }}
+                      />
+                    ) : (
+                      <ErrorIcon
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      />
+                    )}
                     {!bioMetricStatus ? (
                       biometricInitiated && biometricResponseId ? (
                         <PButton
@@ -763,7 +781,7 @@ export default function MemberEligibility() {
                           onClick={handleInitiate}
                         />
                       )
-                    ) : bioMetricStatus === "IN_PROGRESS" || 'FAILED' ? (
+                    ) : bioMetricStatus === "IN_PROGRESS" || "FAILED" ? (
                       <PButton
                         label="Check status"
                         severity="help"
@@ -771,7 +789,6 @@ export default function MemberEligibility() {
                         onClick={handleCheckStatus}
                       />
                     ) : null}
-
 
                     {bioMetricStatus === "IN_PROGRESS" ? (
                       <PunchClock
@@ -801,7 +818,6 @@ export default function MemberEligibility() {
                         }}
                       />
                     ) : null}
-
                   </Grid>
                 </Box>
               </Grid>
@@ -812,6 +828,7 @@ export default function MemberEligibility() {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
+                    height: "60px",
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -927,20 +944,96 @@ export default function MemberEligibility() {
                 </Button>
               </Grid> */}
             </Grid>
-            <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                marginLeft="10%"
-                marginY="10px"
-              >
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
                 <Box display="flex" alignItems="center">
-                  <Typography style={TypographyStyle1}>Member Name</Typography>
+                  <Typography style={TypographyStyle1}>Name</Typography>
                   &nbsp;
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
                     {memberData?.name}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography style={TypographyStyle1}>Member ID</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData.memberId}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>DOB</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberData?.age})
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>
+                  Coverage period
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {moment(memberData?.policyStartDate).format("DD/MM/YYYY")} -{" "}
+                  {moment(memberData?.policyEndDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography style={TypographyStyle1}>National Id</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.identificationDocType === "NationalId" &&  memberData?.identificationDocNumber}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography style={TypographyStyle1}>Household No</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData.employeeId}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>gender</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {memberData?.gender}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography style={TypographyStyle1}>Contact No</Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography style={TypographyStyle2}>
+                  {memberData?.mobileNo}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography style={TypographyStyle1}>SHA No</Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography style={TypographyStyle2}>
+                    {memberData?.shaNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -979,95 +1072,11 @@ export default function MemberEligibility() {
                 </Box>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>DOB</Typography>
+                <Typography style={TypographyStyle1}>Relation</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {moment(memberData?.dateOfBirth).format("DD/MM/YYYY")}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>gender</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.gender}
-                </Typography>
-              </Box>
-              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Policy Type</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.clientType}
-                </Typography>
-              </Box> */}
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Contact No</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.mobileNo}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>
-                  First Enrollment Date
-                </Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {/* {(memberData?.dateOfJoining &&
-                    moment(memberData?.dateOfJoining).format("DD/MM/YYYY")) ||
-                    "No Data"} */}
-                  {moment(memberData?.policyStartDate).format("DD/MM/YYYY")}
-                </Typography>
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} sm={6} md={4} style={{ marginTop: "19px" }}>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Membership No.</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.membershipNo}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>National Id</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {/* {memberData?.email} */}
-                  {memberData?.identificationDocNumber}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Age</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.age}
-                </Typography>
-              </Box>
-              {/*  <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>Policy No.</Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {memberData?.policyNumber}
-                </Typography>
-              </Box> */}
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>
-                  Coverage period
-                </Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography style={TypographyStyle2}>
-                  {moment(memberData?.policyStartDate).format("DD/MM/YYYY")} -{" "}
-                  {moment(memberData?.policyEndDate).format("DD/MM/YYYY")}
+                  {memberData?.relations}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -1238,10 +1247,11 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${parentBenefitName != undefined
-                                ? `${parentBenefitName} >`
-                                : ""
-                                } ${item?.benefitName}`}
+                              {` ${
+                                parentBenefitName != undefined
+                                  ? `${parentBenefitName} >`
+                                  : ""
+                              } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===

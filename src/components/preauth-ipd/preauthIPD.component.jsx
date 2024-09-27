@@ -218,6 +218,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     policyNumber: "",
     age: "",
     relations: "",
+    relation:'',
     enrolmentDate: new Date(),
     enrolentToDate: new Date(),
     enrolmentFromDate: new Date(),
@@ -673,25 +674,26 @@ export default function ClaimsPreAuthIPDComponent(props) {
           formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           setMemberBasic({
             ...memberBasic,
-            name: res.content[0].name,
-            clientType: res.content[0].clientType,
-            age: res.content[0].age,
-            gender: res.content[0].gender,
-            membershipNo: res.content[0].membershipNo,
-            memberId: res.content[0].memberId,
-            relations: res.content[0].relations,
-            contactNoOne: res.content[0].mobileNo,
-            policyNumber: res.content[0].policyNumber,
-            enrolentToDate: new Date(res.content[0].policyEndDate),
-            enrolmentFromDate: new Date(res.content[0].policyStartDate),
-            planName: res.content[0].planName,
-            planScheme: res.content[0].planScheme,
-            productName: res.content[0].productName,
-            active: res.content[0].active,
-            dateOfBirth: res.content[0].dateOfBirth,
-            mobileNo: res.content[0].mobileNo,
-            nationalDocId: res.content[0].identificationDocNumber,
-            email: res.content[0].email,
+            ...res?.content[0]
+            // name: res.content[0].name,
+            // clientType: res.content[0].clientType,
+            // age: res.content[0].age,
+            // gender: res.content[0].gender,
+            // membershipNo: res.content[0].membershipNo,
+            // memberId: res.content[0].memberId,
+            // relations: res.content[0].relations,
+            // contactNoOne: res.content[0].mobileNo,
+            // policyNumber: res.content[0].policyNumber,
+            // enrolentToDate: new Date(res.content[0].policyEndDate),
+            // enrolmentFromDate: new Date(res.content[0].policyStartDate),
+            // planName: res.content[0].planName,
+            // planScheme: res.content[0].planScheme,
+            // productName: res.content[0].productName,
+            // active: res.content[0].active,
+            // dateOfBirth: res.content[0].dateOfBirth,
+            // mobileNo: res.content[0].mobileNo,
+            // nationalDocId: res.content[0].identificationDocNumber,
+            // email: res.content[0].email,
           });
           setShowViewDetails(true);
           setMemberIdentified(true);
@@ -709,23 +711,24 @@ export default function ClaimsPreAuthIPDComponent(props) {
     formik.setFieldValue("contactNoOne", data.mobileNo);
     setMemberBasic({
       ...memberBasic,
-      name: data.name,
-      age: data.age,
-      gender: data.gender,
-      membershipNo: data.membershipNo,
-      memberId: data.memberId,
-      relations: data.relations,
-      policyNumber: data.policyNumber,
-      enrolentToDate: new Date(data.policyEndDate),
-      enrolmentFromDate: new Date(data.policyStartDate),
-      planName: data.planName,
-      planScheme: data.planScheme,
-      productName: data.productName,
-      active: data.active,
-      dateOfBirth: data.dateOfBirth,
-      mobileNo: data.mobileNo,
-      nationalDocId: data.identificationDocNumber,
-      email: data.email,
+      ...data
+      // name: data.name,
+      // age: data.age,
+      // gender: data.gender,
+      // membershipNo: data.membershipNo,
+      // memberId: data.memberId,
+      // relations: data.relations,
+      // policyNumber: data.policyNumber,
+      // enrolentToDate: new Date(data.policyEndDate),
+      // enrolmentFromDate: new Date(data.policyStartDate),
+      // planName: data.planName,
+      // planScheme: data.planScheme,
+      // productName: data.productName,
+      // active: data.active,
+      // dateOfBirth: data.dateOfBirth,
+      // mobileNo: data.mobileNo,
+      // nationalDocId: data.identificationDocNumber,
+      // email: data.email,
     });
     setShowViewDetails(true);
     getBenefit(data?.memberId, data?.policyNumber);
@@ -1059,7 +1062,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       // subject_id_number: "26263348",
       // subject_id_number: "31746114",  //DO NOT REMOVE
       // relying_party_agent_id_number: "27759855",
-      relying_party_agent_id_number: "27976806",
+      relying_party_agent_id_number: "P6592234",
       notification_callback_url:
         "https://shaapi.eo2cloud.com/member-command-service/v1/public/sha-member/biometric/callback",
       reason: "reason for creating the request",
@@ -1350,7 +1353,25 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     >
                       Member Biometric
                     </Typography>
-
+                    {memberIdentified ? (
+                    <CheckCircle
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "green",
+                      }}
+                    />
+                  ) : (
+                    <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  )}
                     {!bioMetricStatus ? (
                       biometricInitiated && biometricResponseId ? (
                         <Button
@@ -1494,13 +1515,51 @@ export default function ClaimsPreAuthIPDComponent(props) {
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
-                  Age
+                  DOB
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.age}
+                {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberBasic?.age})
                 </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  Coverage period
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {moment(memberBasic?.policyStartDate).format("DD/MM/YYYY")} -{" "}
+                  {moment(memberBasic?.policyEndDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography className={classes.TypographyStyle1}>
+                    National Id
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                  {memberBasic?.identificationDocType === "NationalId" &&  memberBasic?.identificationDocNumber}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography className={classes.TypographyStyle1}>
+                    Household No
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                    {memberBasic.employeeId}
+                  </Typography>
+                </Box>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
@@ -1514,12 +1573,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
-                  Policy From Date
+                  Contact No
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.enrolmentFromDate).format("DD/MM/YYYY")}
+                  {memberBasic?.mobileNo}
                 </Typography>
               </Box>
             </Grid>
@@ -1528,7 +1587,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
               <Box display="flex" flexDirection="column" marginLeft="10%">
                 <Box display="flex" alignItems="center">
                   <Typography className={classes.TypographyStyle1}>
-                    SHA Number
+                    SHA No
                   </Typography>
                   &nbsp;
                   <span>:</span>
@@ -1539,13 +1598,38 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
                   <Typography className={classes.TypographyStyle1}>
-                    Household Id
+                    Status
                   </Typography>
                   &nbsp;
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                    {memberBasic.employeeId}
+                  {memberBasic?.active === true ? (
+                      <Button
+                        style={{
+                          background: "green",
+                          color: "#fff",
+                          padding: "0px",
+                          margin: "5px",
+                          height: "19px",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Active
+                      </Button>
+                    ) : (
+                      <Button
+                        style={{
+                          background: "red",
+                          color: "#fff",
+                          padding: "2px",
+                          margin: "0px",
+                          height: "18px",
+                        }}
+                      >
+                        InActive
+                      </Button>
+                    )}
                   </Typography>
                 </Box>
               </Box>
@@ -1556,27 +1640,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.relation}
+                  {memberBasic?.relations}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography className={classes.TypographyStyle1}>
-                  Enrolment Date
+                  Email
                 </Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.enrolmentDate).format("DD/MM/YYYY")}
-                </Typography>
-              </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography className={classes.TypographyStyle1}>
-                  Policy To Date
-                </Typography>
-                &nbsp;
-                <span>:</span>&nbsp;
-                <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.enrolentToDate).format("DD/MM/YYYY")}
+                  {memberBasic?.email}
                 </Typography>
               </Box>
             </Grid>
