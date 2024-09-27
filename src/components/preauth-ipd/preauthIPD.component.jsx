@@ -58,6 +58,7 @@ import {
   PendingRounded,
   PunchClock,
 } from "@mui/icons-material";
+import moment from "moment";
 const useStyles = makeStyles((theme) => ({
   input1: {
     width: "50%",
@@ -114,6 +115,22 @@ const useStyles = makeStyles((theme) => ({
   buttonDanger: {
     backgroundColor: "#dc3545",
     color: "#f1f1f1",
+  },
+  TypographyStyle2: {
+    fontSize: "13px",
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans - serif',
+    fontWeight: "400",
+    alignItems: "end",
+    display: "flex",
+    textTransform: "capitalize",
+  },
+  TypographyStyle1: {
+    fontSize: "14px",
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans - serif',
+    alignItems: "end",
+    fontWeight: "600",
+    display: "flex",
+    textTransform: "capitalize",
   },
 }));
 
@@ -389,8 +406,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -680,7 +698,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         }
       } else {
-        setAlertMsg(`No Data found for ${id}`);
+        setAlertMsg("This member is not registered");
         setOpenSnack(true);
       }
       setIsLoading(false);
@@ -883,7 +901,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1025,9 +1043,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
       console.log(data);
 
-      if (data.status === 'SUCCESS' && data?.result === 'no_match') {
-        setBioMetricStatus('FAILED');
-        return
+      if (data.status === "SUCCESS" && data?.result === "no_match") {
+        setBioMetricStatus("FAILED");
+        return;
       }
 
       setBioMetricStatus(data?.status);
@@ -1212,7 +1230,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1288,6 +1306,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
+                    height: "60px",
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -1321,6 +1340,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
+                    height: "60px",
                   }}
                 >
                   <Grid container alignItems="center">
@@ -1347,7 +1367,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           onClick={handleInitiate}
                         />
                       )
-                    ) : bioMetricStatus === "IN_PROGRESS" || 'FAILED' ? (
+                    ) : bioMetricStatus === "IN_PROGRESS" || "FAILED" ? (
                       <Button
                         label="Check status"
                         severity="help"
@@ -1355,7 +1375,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         onClick={handleCheckStatus}
                       />
                     ) : null}
-
 
                     {bioMetricStatus === "IN_PROGRESS" ? (
                       <PunchClock
@@ -1385,7 +1404,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         }}
                       />
                     ) : null}
-
                   </Grid>
                 </Box>
               </Grid>
@@ -1396,6 +1414,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
+                    height: "60px",
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -1425,17 +1444,144 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Grid>
           </Grid>
 
-          <Grid container spacing={3}>
-            <Grid item xs={12} style={{ marginTop: "10px" }}>
-              <span style={{ color: "#4472C4", fontWeight: "bold" }}>
+          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+            <Grid item xs={12}>
+              <Typography
+                style={{
+                  color: "#4472C4",
+                  fontSize: "14px",
+                  marginBottom: "10px",
+                  marginTop: "10px",
+                }}
+              >
                 BASIC DETAILS
-              </span>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12}>
+              </Typography>
               <Divider />
             </Grid>
 
-            <Grid
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography className={classes.TypographyStyle1}>
+                    Name
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                    {memberBasic?.name}
+                    {showViewDetails && (
+                      <a
+                        style={{ color: "#4472C4", cursor: "pointer" }}
+                        onClick={viewUserDetails}
+                      >
+                        &nbsp;(View Details)
+                      </a>
+                    )}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography className={classes.TypographyStyle1}>
+                    Member ID
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                    {memberBasic.shaMemberId}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  Age
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {memberBasic?.age}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  gender
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {memberBasic?.gender}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  Policy From Date
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {moment(memberBasic?.enrolmentFromDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" flexDirection="column" marginLeft="10%">
+                <Box display="flex" alignItems="center">
+                  <Typography className={classes.TypographyStyle1}>
+                    SHA Number
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                    {memberBasic?.shaNumber}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" marginTop="10px">
+                  <Typography className={classes.TypographyStyle1}>
+                    Household Id
+                  </Typography>
+                  &nbsp;
+                  <span>:</span>
+                  &nbsp;
+                  <Typography className={classes.TypographyStyle2}>
+                    {memberBasic.employeeId}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  Relation
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {memberBasic?.relation}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  Enrolment Date
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {moment(memberBasic?.enrolmentDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+                <Typography className={classes.TypographyStyle1}>
+                  Policy To Date
+                </Typography>
+                &nbsp;
+                <span>:</span>&nbsp;
+                <Typography className={classes.TypographyStyle2}>
+                  {moment(memberBasic?.enrolentToDate).format("DD/MM/YYYY")}
+                </Typography>
+              </Box>
+            </Grid>
+
+            {/* <Grid
               item
               xs={12}
               sm={6}
@@ -1464,9 +1610,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   View Details
                 </a>
               )}
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={12} sm={6} md={3}>
+            {/* <Grid item xs={12} sm={6} md={3}>
               <TextField
                 id="standard-basic"
                 name="ShaNumber"
@@ -1481,8 +1627,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   },
                 }}
               />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            </Grid> */}
+            {/* <Grid item xs={12} sm={6} md={3}>
               <TextField
                 id="standard-multiline-flexible"
                 variant="standard"
@@ -1492,8 +1638,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 readonly
                 disabled
               />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            </Grid> */}
+            {/* <Grid item xs={12} sm={6} md={3}>
               <TextField
                 id="standard-multiline-flexible"
                 variant="standard"
@@ -1503,10 +1649,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 readonly
                 disabled
               />
-            </Grid>
+            </Grid> */}
           </Grid>
 
-          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+          {/* <Grid container spacing={3} style={{ marginBottom: "20px" }}>
             <Grid
               item
               xs={12}
@@ -1579,8 +1725,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 />
               </LocalizationProvider>
             </Grid>
-          </Grid>
-          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+          </Grid> */}
+          {/* <Grid container spacing={3} style={{ marginBottom: "20px" }}>
             <Grid
               item
               xs={12}
@@ -1619,7 +1765,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 />
               </LocalizationProvider>
             </Grid>
-          </Grid>
+          </Grid> */}
 
           {/* <Grid item xs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
             <span style={{ color: "#4472C4", fontWeight: "bold" }}>
@@ -1736,17 +1882,25 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </Grid> */}
           {/* </Grid> */}
 
-          <Grid item xs={12} sm={6} md={4} style={{ marginTop: "20px" }}>
-            <span style={{ color: "#4472C4", fontWeight: "bold" }}>
+          <Grid item xs={12}>
+            <Typography
+              style={{
+                color: "#4472C4",
+                fontSize: "14px",
+                marginBottom: "10px",
+                marginTop: "10px",
+              }}
+            >
               PRE-AUTH DETAILS
-            </span>
-          </Grid>
-
-          <Grid item xs={12} sm={12} md={12} style={{ marginBottom: "25px" }}>
+            </Typography>
             <Divider />
           </Grid>
 
-          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
+          <Grid
+            container
+            spacing={3}
+            style={{ marginTop: "20px", marginBottom: "20px" }}
+          >
             <Grid item xs={12} sm={3}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -1777,10 +1931,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 />
               </LocalizationProvider>
             </Grid>
-          </Grid>
-
-          <Grid container spacing={3} style={{ marginBottom: "20px" }}>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 id="standard-basic"
                 name="contactNoOne"
@@ -1792,7 +1943,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 variant="standard"
                 id="standard-basic"
@@ -1801,19 +1952,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 value={memberBasic.contactNoTwo}
                 onChange={formik.handleChange}
                 label="Contact No. 2"
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={formik.values.referalTicketRequired}
-                    onChange={(e) => handleFieldChecked(e)}
-                    name="referalTicketRequired"
-                    color="primary"
-                  />
-                }
-                label="Referral Ticket Required"
               />
             </Grid>
           </Grid>

@@ -44,14 +44,14 @@ const Sidebar = ({ open, handleDrawerClose, handleDrawerTransitionEnd }) => {
 
   const menuItems = [
     { text: 'Dashboard', icon: <SpaceDashboardIcon />, path: '/' },
-    { text: 'Member Enquiry', icon: <PeopleIcon />, path: '/membereligibility' },
+    { text: 'Member Eligibility', icon: <PeopleIcon />, path: '/membereligibility' },
     {
       text: 'Claims',
       icon: <CategoryIcon />,
       submenus: [
         { text: 'Pre-Auth', path: '/preauths', icon: <AssistantIcon /> },
-        { text: 'Claims', path: '/claims', icon: <RequestQuoteIcon /> },
-        { text: 'Credit Claims', path: '/credit-claims', icon: <CreditCardIcon /> },
+        { text: 'Final Claims', path: '/claims', icon: <RequestQuoteIcon /> },
+        // { text: 'Credit Claims', path: '/credit-claims', icon: <CreditCardIcon /> },
       ],
     },
     // { text: 'Payment History', icon: <PolicyIcon />, path: '/paymenthistory' },

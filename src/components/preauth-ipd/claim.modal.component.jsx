@@ -167,14 +167,14 @@ export default function ClaimModal(props) {
                   {props?.memberBasic?.gender}
                 </Typography>
               </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Policy Type</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
                   {props?.memberBasic?.clientType}
                 </Typography>
-              </Box>
+              </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Contact No</Typography>
                 &nbsp;
@@ -225,26 +225,21 @@ export default function ClaimModal(props) {
                   {props?.memberBasic?.age}
                 </Typography>
               </Box>
-              <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
+              {/* <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
                 <Typography style={TypographyStyle1}>Policy No.</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
                   {props?.memberBasic?.policyNumber}
                 </Typography>
-              </Box>
+              </Box> */}
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
-                <Typography style={TypographyStyle1}>policy period</Typography>
+                <Typography style={TypographyStyle1}>Coverage period</Typography>
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                  {moment(props?.memberBasic?.policyStartDate).format(
-                    "DD/MM/YYYY"
-                  )}{" "}
-                  -{" "}
-                  {moment(props?.memberBasic?.policyEndDate).format(
-                    "DD/MM/YYYY"
-                  )}
+                {moment(memberData?.policyStartDate).format("DD/MM/YYYY")} -{" "}
+                  {moment(memberData?.policyEndDate).format("DD/MM/YYYY")}
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -255,6 +250,68 @@ export default function ClaimModal(props) {
                   {props?.memberBasic?.email}
                 </Typography>
               </Box>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography
+                  style={{
+                    color: "#4472C4",
+                    fontSize: "14px",
+                    marginTop: "10px",
+                  }}
+                >
+                  DEPENDENT DETAILS
+                </Typography>
+                <Divider />
+              </Grid>
+              <Grid item xs={12}>
+                <Paper elevation={0} style={{ padding: 15 }}>
+                  <TableContainer component={Paper}>
+                    <Table size="small" aria-label="a dense table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>SHA Number</TableCell>
+                          <TableCell>Member ID</TableCell>
+                          <TableCell>Gender</TableCell>
+                          <TableCell>DOB</TableCell>
+                          <TableCell>Relation</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {memberData?.dependentData ? (
+                          memberData?.dependentData.map((item) => {
+                            return (
+                              <TableRow key={item.id}>
+                                <TableCell>{item?.dependentName}</TableCell>
+                                <TableCell>
+                                  {item?.dependentShaNumber}
+                                </TableCell>
+                                <TableCell>
+                                  {item?.dependentShaMemberId}
+                                </TableCell>
+                                <TableCell>{item?.dependentGender}</TableCell>
+                                <TableCell>
+                                  {moment(el.dependentDOB).format("DD/MM/YYYY")}
+                                </TableCell>
+                                <TableCell>
+                                  {item?.dependentRelations}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={6} align="center">
+                              No Data Found
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Paper>
+              </Grid>
             </Grid>
           </Grid>
           <Paper elevation="none" style={{ padding: 15, marginTop: "10px" }}>
