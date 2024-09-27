@@ -279,7 +279,7 @@ const PreAuthIPDListComponent = () => {
         return (
           <li>
             {ben.benefitName} | {ben.iname} | {ben.diagnosisName} :
-            <b>{ben.estimatedCost}</b>
+            Sha Approved Amount : <b>{ben?.shaApprovedCost}</b> | Estimated Amount <b>{ben.estimatedCost}</b>
           </li>
         );
       }
@@ -344,7 +344,7 @@ const PreAuthIPDListComponent = () => {
     // },
     {
       field: "benefitWithCost",
-      headerName: "Estimated Cost",
+      headerName: "Cost",
       // body: renderBenefitWithCost,
       body: rowData => <p style={{ width: '250px', whiteSpace: 'break-spaces' }}>{renderBenefitWithCost(rowData)}</p>,
     },
@@ -393,8 +393,7 @@ const PreAuthIPDListComponent = () => {
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
+              justifyContent: "flex-start",
               alignItems: "center",
             }}
           >
