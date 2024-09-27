@@ -218,7 +218,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     policyNumber: "",
     age: "",
     relations: "",
-    relation: '',
+    relation: "",
     enrolmentDate: new Date(),
     enrolentToDate: new Date(),
     enrolmentFromDate: new Date(),
@@ -407,8 +407,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -673,7 +674,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           setMemberBasic({
             ...memberBasic,
-            ...res?.content[0]
+            ...res?.content[0],
             // name: res.content[0].name,
             // clientType: res.content[0].clientType,
             // age: res.content[0].age,
@@ -710,7 +711,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     formik.setFieldValue("contactNoOne", data.mobileNo);
     setMemberBasic({
       ...memberBasic,
-      ...data
+      ...data,
       // name: data.name,
       // age: data.age,
       // gender: data.gender,
@@ -903,7 +904,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1021,16 +1022,18 @@ export default function ClaimsPreAuthIPDComponent(props) {
           </Grid>
           <Grid item xs={12} sm={6} md={2}>
             <Box>
-            <TextField
-              id="standard-basic"
-              type="number"
-              name="estimatedCost"
-              variant="standard"
-              value={x?.estimatedCost}
-              onChange={(e) => handleEstimateCostInService(e, i)}
-              label="Estimated Cost"
-            />
-            <span style={{fontSize:"12px", fontWeight:"bold"}}>Sha Approved Amount : 0</span>
+              <TextField
+                id="standard-basic"
+                type="number"
+                name="estimatedCost"
+                variant="standard"
+                value={x?.estimatedCost}
+                onChange={(e) => handleEstimateCostInService(e, i)}
+                label="Estimated Cost"
+              />
+              <span style={{ fontSize: "12px", fontWeight: "bold" }}>
+                Sha Approved Amount : 0
+              </span>
             </Box>
           </Grid>
         </>
@@ -1043,6 +1046,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [biometricInitiated, setBiometricInitiated] = useState(false);
   const [biometricResponseId, setbiometricResponseId] = useState("");
   const [bioMetricStatus, setBioMetricStatus] = useState("");
+  const [contributionResponseId, setContributionResponseId] = useState("");
 
   const handleCheckStatus = () => {
     memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
@@ -1075,6 +1079,18 @@ export default function ClaimsPreAuthIPDComponent(props) {
     memberservice.initiateBiometric(payload).subscribe((data) => {
       setbiometricResponseId(data.id);
     });
+  };
+
+  const handleContributionInitiate = () => {
+    memberservice
+      .initiateContribution(
+        memberBasic?.memberId,
+        memberBasic?.identificationDocNumber
+      )
+      .subscribe((data) => {
+        setContributionPaid(true)
+        setContributionResponseId(data.id);
+      });
   };
 
   console.log(bioMetricStatus);
@@ -1235,7 +1251,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1429,6 +1445,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     border: "1px solid #ccc",
                     borderRadius: 2,
                     height: "60px",
+                    display: "flex",
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -1453,6 +1470,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       }}
                     />
                   )}
+                  {!contributionPaid && memberBasic?.memberId &&
+                    memberBasic?.identificationDocNumber && (
+                      <Button
+                        label="Initiate"
+                        severity="help"
+                        text
+                        onClick={handleContributionInitiate}
+                      />
+                    )}
                 </Box>
               </Grid>
             </Grid>
@@ -1502,7 +1528,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                    {memberBasic.shaMemberId}
+                    {memberBasic.memberId}
                   </Typography>
                 </Box>
               </Box>
@@ -1513,7 +1539,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")} (Age: {memberBasic?.age})
+                  {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")} (Age:{" "}
+                  {memberBasic?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -1539,7 +1566,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                    {memberBasic?.identificationDocType === "NationalId" && memberBasic?.identificationDocNumber}
+                    {memberBasic?.identificationDocType === "NationalId" &&
+                      memberBasic?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
