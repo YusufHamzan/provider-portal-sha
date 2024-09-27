@@ -12,7 +12,7 @@ import Signup from "./pages/signup";
 import ThankYou from "./pages/thank-you";
 
 // https://api.eoxegen.com/client-query-service/v1/clients/search-by-mobile/9874561230
-//single co=
+//single co
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
