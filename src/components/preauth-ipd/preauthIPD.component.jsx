@@ -59,6 +59,8 @@ import {
   PunchClock,
 } from "@mui/icons-material";
 import moment from "moment";
+import MultipleStopIcon from '@mui/icons-material/MultipleStop';
+import { RetailUserService } from "../../remote-api/api/master-services/retail-users-service";
 const useStyles = makeStyles((theme) => ({
   input1: {
     width: "50%",
@@ -139,6 +141,7 @@ const providerService = new ProvidersService();
 const serviceDiagnosis = new ServiceTypeService();
 const preAuthService = new PreAuthService();
 const memberservice = new MemberService();
+const retailuserservice = new RetailUserService()
 
 let ps$ = providerService.getProviders();
 
@@ -649,62 +652,100 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
 
-    providerService
-      .getProviderDetailsAll(localStorage.getItem("providerId"))
-      .subscribe((res) => {
-        const response = res?.providerCategoryHistorys;
+    if (searchType === "national_id") {
+      retailuserservice.fetchAndSaveMemberDetails({ nationalId: id }).subscribe({
+        next: (res) => {
+          setTimeout(() => {
+            providerService
+              .getProviderDetailsAll(localStorage.getItem("providerId"))
+              .subscribe((res) => {
+                const response = res?.providerCategoryHistorys;
 
-        const level = response
-          ?.map((item) => {
-            if (item?.endDate == null) {
-              return item?.categoryName;
-            }
-            return null;
-          })
-          ?.filter((value) => value);
-        localStorage.setItem("levelID", level[0]);
-      });
+                const level = response
+                  ?.map((item) => {
+                    if (item?.endDate == null) {
+                      return item?.categoryName;
+                    }
+                    return null;
+                  })
+                  ?.filter((value) => value);
+                localStorage.setItem("levelID", level[0]);
+              });
 
-    memberservice.getMember(pageRequest).subscribe((res) => {
-      if (res.content?.length > 0) {
-        if (searchType === "name") {
-          setMemberName({ res });
-          handleopenClientModal();
+            memberservice.getMember(pageRequest).subscribe((res) => {
+              if (res.content?.length > 0) {
+                if (searchType === "name") {
+                  setMemberName({ res });
+                  handleopenClientModal();
+                } else {
+                  formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+                  setMemberBasic({
+                    ...memberBasic,
+                    ...res?.content[0]
+                  });
+                  setShowViewDetails(true);
+                  setMemberIdentified(true);
+                  getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+                }
+              } else {
+                setAlertMsg("This member is not registered");
+                setOpenSnack(true);
+              }
+              setIsLoading(false);
+            });
+          }, 1000 * 60)
+        },
+        error: (error) => {
+          console.error("Error fetching member details:", error);
+        }
+      })
+    } else {
+      providerService
+        .getProviderDetailsAll(localStorage.getItem("providerId"))
+        .subscribe((res) => {
+          const response = res?.providerCategoryHistorys;
+
+          const level = response
+            ?.map((item) => {
+              if (item?.endDate == null) {
+                return item?.categoryName;
+              }
+              return null;
+            })
+            ?.filter((value) => value);
+          localStorage.setItem("levelID", level[0]);
+        });
+
+      memberservice.getMember(pageRequest).subscribe((res) => {
+        if (res.content?.length > 0) {
+          if (searchType === "name") {
+            setMemberName({ res });
+            handleopenClientModal();
+          } else {
+            formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+            setMemberBasic({
+              ...memberBasic,
+              ...res?.content[0]
+            });
+            setShowViewDetails(true);
+            setMemberIdentified(true);
+            getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+          }
         } else {
           formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           setMemberBasic({
             ...memberBasic,
             ...res?.content[0],
-            // name: res.content[0].name,
-            // clientType: res.content[0].clientType,
-            // age: res.content[0].age,
-            // gender: res.content[0].gender,
-            // membershipNo: res.content[0].membershipNo,
-            // memberId: res.content[0].memberId,
-            // relations: res.content[0].relations,
-            // contactNoOne: res.content[0].mobileNo,
-            // policyNumber: res.content[0].policyNumber,
-            // enrolentToDate: new Date(res.content[0].policyEndDate),
-            // enrolmentFromDate: new Date(res.content[0].policyStartDate),
-            // planName: res.content[0].planName,
-            // planScheme: res.content[0].planScheme,
-            // productName: res.content[0].productName,
-            // active: res.content[0].active,
-            // dateOfBirth: res.content[0].dateOfBirth,
-            // mobileNo: res.content[0].mobileNo,
-            // nationalDocId: res.content[0].identificationDocNumber,
-            // email: res.content[0].email,
           });
           setShowViewDetails(true);
           setMemberIdentified(true);
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+          setAlertMsg("This member is not registered");
+          setOpenSnack(true);
         }
-      } else {
-        setAlertMsg("This member is not registered");
-        setOpenSnack(true);
-      }
-      setIsLoading(false);
-    });
+        setIsLoading(false);
+      });
+    }
   };
 
   const handleSelect = (data) => {
@@ -1062,6 +1103,20 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
 
   const handleInitiate = () => {
+    if (searchType !== "national_id") {
+      setAlertMsg(
+        `Biometric validation works with National ID only`
+      );
+      setOpenSnack(true);
+      return
+    }
+    if (!formik.values.memberShipNo) {
+      setAlertMsg(
+        `Please enter a valid National ID`
+      );
+      setOpenSnack(true);
+      return
+    }
     setBiometricInitiated(true);
     const payload = {
       subject_id_number: formik.values.memberShipNo,
@@ -1092,6 +1147,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
         setContributionResponseId(data.id);
       });
   };
+  useEffect(() => {
+    setMemberIdentified(false)
+    setContributionPaid(false)
+    setBiometricInitiated(false)
+    setbiometricResponseId("")
+    setBioMetricStatus("")
+  }, [searchType])
 
   console.log(bioMetricStatus);
   return (
@@ -1433,7 +1495,16 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           color: "red",
                         }}
                       />
-                    ) : null}
+
+                    ) : !bioMetricStatus && biometricInitiated ?
+                      <MultipleStopIcon
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      /> : null}
                   </Grid>
                 </Box>
               </Grid>
