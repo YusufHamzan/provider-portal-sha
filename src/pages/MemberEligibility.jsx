@@ -862,7 +862,7 @@ export default function MemberEligibility() {
                 >
                   MEMBER DETAILS
                 </Typography>
-                <Divider />
+                <Divider sx={{ mb: 3 }} />
               </Grid>
               {/* <Box display={"flex"} marginLeft={"4%"} marginY={"10px"}>
                 <Avatar sizes="400"></Avatar>
