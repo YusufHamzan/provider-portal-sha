@@ -1025,8 +1025,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
             sm={3}
             style={{
               display: "flex",
-              alignItems: "flex-end",
-              marginBottom: "8px",
+              // alignItems: "flex-end",
+              // marginBottom: "8px",
             }}
           >
             <FormControl className={classes.formControl} fullWidth>
@@ -1053,6 +1053,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} md={2}>
+            <Box>
             <TextField
               id="standard-basic"
               type="number"
@@ -1062,6 +1063,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
               onChange={(e) => handleEstimateCostInService(e, i)}
               label="Estimated Cost"
             />
+            <span style={{fontSize:"12px", fontWeight:"bold"}}>Sha Approved Amount : 0</span>
+            </Box>
           </Grid>
         </>
       );
