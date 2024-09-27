@@ -31,7 +31,7 @@ jobs:
 
       - name: Transfer build files to VPS
         run: |
-          scp -r ./dist/* ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/html/provider-portal
+          scp -r -o StrictHostKeyChecking=no ./dist/* ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/html/provider-portal
 
       - name: Reload Nginx
         run: |
