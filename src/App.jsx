@@ -12,7 +12,7 @@ import Signup from "./pages/signup";
 import ThankYou from "./pages/thank-you";
 
 // https://api.eoxegen.com/client-query-service/v1/clients/search-by-mobile/9874561230
-
+//single comment
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,12 +32,12 @@ function App() {
       access_details.push(...filteredArray);
     }
     const decode = jwtDecode(tokens.token);
-    
+
     localStorage.setItem("token", tokens.token);
     localStorage.setItem("providerId", decode.providerId);
     localStorage.setItem("provider", decode.name);
     localStorage.setItem("email", decode.email);
-    
+
 
     // TODO: Remove me
     access_details.push("CLAIM");
