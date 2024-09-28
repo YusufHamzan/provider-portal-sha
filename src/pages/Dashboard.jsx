@@ -151,10 +151,10 @@ export default function Dashboard() {
     return activeIndex == 0
       ? "dailyData"
       : activeIndex == 1
-        ? "weeklyData"
-        : activeIndex == 2
-          ? "monthlyData"
-          : "yearlyData";
+      ? "weeklyData"
+      : activeIndex == 2
+      ? "monthlyData"
+      : "yearlyData";
   };
 
   const getStatusSeries = () => {
@@ -177,10 +177,10 @@ export default function Dashboard() {
     return activeIndex == 0
       ? "today"
       : activeIndex == 1
-        ? "thisWeek"
-        : activeIndex == 2
-          ? "thisMonth"
-          : "thisYear";
+      ? "thisWeek"
+      : activeIndex == 2
+      ? "thisMonth"
+      : "thisYear";
   };
 
   const ageSeriesData = () => {
@@ -201,16 +201,44 @@ export default function Dashboard() {
   };
 
   const buttons = [
-    <Button key="four" onClick={() => setActiveIndex(0)}>
+    <Button
+      key="four"
+      onClick={() => setActiveIndex(0)}
+      style={{
+        background: activeIndex === 0 && PRIMARY_MAGENTA,
+        color: activeIndex === 0 && "white",
+      }}
+    >
       Day
     </Button>,
-    <Button key="three" onClick={() => setActiveIndex(1)}>
+    <Button
+      key="three"
+      onClick={() => setActiveIndex(1)}
+      style={{
+        background: activeIndex === 1 && PRIMARY_MAGENTA,
+        color: activeIndex === 1 && "white",
+      }}
+    >
       Weak
     </Button>,
-    <Button key="two" onClick={() => setActiveIndex(2)}>
+    <Button
+      key="two"
+      onClick={() => setActiveIndex(2)}
+      style={{
+        background: activeIndex === 2 && PRIMARY_MAGENTA,
+        color: activeIndex === 2 && "white",
+      }}
+    >
       Month
     </Button>,
-    <Button key="one" onClick={() => setActiveIndex(3)}>
+    <Button
+      key="one"
+      onClick={() => setActiveIndex(3)}
+      style={{
+        background: activeIndex === 3 && PRIMARY_MAGENTA,
+        color: activeIndex === 3 && "white",
+      }}
+    >
       Year
     </Button>,
   ];
@@ -223,6 +251,7 @@ export default function Dashboard() {
       .getAllDashboardCount(localStorage.getItem("providerId"))
       .subscribe((result) => {
         const resultResponse = convertToArray(result);
+        console.log("asdfghj", result, resultResponse);
         setDashCount(resultResponse);
       });
     return () => subscription.unsubscribe();
@@ -232,10 +261,10 @@ export default function Dashboard() {
     return activeIndex == 0
       ? "today"
       : activeIndex == 1
-        ? "thisWeek"
-        : activeIndex == 2
-          ? "thisMonth"
-          : "thisYear";
+      ? "thisWeek"
+      : activeIndex == 2
+      ? "thisMonth"
+      : "thisYear";
   };
 
   return (
@@ -265,7 +294,7 @@ export default function Dashboard() {
         </ButtonGroup> */}
       </Box>
       <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
             title="Last Claim"
             label={["IPD Auth Count", "IPD Auth Amount"]}
@@ -277,7 +306,7 @@ export default function Dashboard() {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        {/* <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="IPD Claims"
             label={["OPD Auth Count", "OPD Auth Amount"]}
@@ -290,20 +319,20 @@ export default function Dashboard() {
               <img alt="icon" src={preAuthImg2} style={{ width: "75px" }} />
             }
           />
-        </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        </Grid> */}
+        <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
             title="OPD Claims"
             label={["IPD Claim Count", "IPD Claim Amount"]}
             total={dashCount[activeIndex]?.ipdClaimCount || "NA"}
             total2={dashCount[activeIndex]?.ipdClaimAmount || "NA"}
             color="warning"
-            style={{ backgroundColor: PRIMARY_MAGENTA, color: "white" }}
+            style={{ backgroundColor: PRIMARY_YELLOW, color: "white" }}
             icon={<img alt="icon" src={preAuthImg} style={{ width: "75px" }} />}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        {/* <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Balance"
             label={["OPD Claim Count", "OPD Claim Amount"]}
@@ -315,7 +344,7 @@ export default function Dashboard() {
               <img alt="icon" src={preAuthImg2} style={{ width: "75px" }} />
             }
           />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
@@ -434,12 +463,12 @@ export default function Dashboard() {
               ageSeriesData()[0]?.label == "No Data Found"
                 ? ["No Data Found"]
                 : [
-                  "Age: 0-5",
-                  "Age: 6-20",
-                  "Age: 20-40",
-                  "Age: 40-60",
-                  "Above-60",
-                ]
+                    "Age: 0-5",
+                    "Age: 6-20",
+                    "Age: 20-40",
+                    "Age: 40-60",
+                    "Above-60",
+                  ]
             }
           />
           <AppCurrentVisits
@@ -452,10 +481,10 @@ export default function Dashboard() {
               getStatusSeries()[0]?.label == "No Data Found"
                 ? ["No Data Found"]
                 : Object.entries(statusData[getCurrentActive()])?.map(
-                  ([key]) => {
-                    return key;
-                  }
-                )
+                    ([key]) => {
+                      return key;
+                    }
+                  )
             }
           />
           {/* <ReactApexChart
