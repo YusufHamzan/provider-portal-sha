@@ -118,7 +118,7 @@ export default function ClaimModal(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberBasic.memberId}
+                    {memberBasic.shaMemberId}
                   </Typography>
                 </Box>
               </Box>
@@ -190,7 +190,7 @@ export default function ClaimModal(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberBasic?.shaNumber}
+                    {memberBasic?.shaMemberNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
