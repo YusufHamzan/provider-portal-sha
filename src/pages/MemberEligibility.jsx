@@ -102,7 +102,7 @@ const TypographyStyle1 = {
 
 // const providerService = new ProvidersService();
 const serviceDiagnosis = new ServiceTypeService();
-const retailuserservice = new RetailUserService()
+const retailuserservice = new RetailUserService();
 
 // let ps$ = providerService.getProviders();
 let ad$ = serviceDiagnosis.getServicesbyId("867854874246590464", {
@@ -269,7 +269,6 @@ export default function MemberEligibility() {
       };
     });
   };
-  console.log(memberData);
 
   const getMemberDetails = (id) => {
     let pageRequest = {
@@ -300,7 +299,6 @@ export default function MemberEligibility() {
     }
 
     if (searchType !== "national_id") {
-      console.log("Non national_id search type");
       setAlertMsg(`Currently National ID search type is allowed only`);
       setOpenSnack(true);
     } else {
@@ -310,26 +308,27 @@ export default function MemberEligibility() {
           //   setMemberName({ res });
           //   handleopenClientModal();
           // } else {
-            setMemberData(res.content[0]);
-            // getImage(res?.content[0]?.id);
-            memberService
-              .getMemberBalance(res?.content[0]?.membershipNo)
-              .subscribe((resesponse) => {
-                const temp = resesponse.map((item) => {
-                  const benefit = benefitData?.find(
-                    (ele) => ele.id === item.benefit
-                  );
-                  item.benefitId = benefit?.id;
-                  item.benefit = benefit?.name;
-                  item.consumed = item.maxLimit - item.balance;
-                  return item;
-                });
-                setTableData(temp);
-                setShowBalanceDetails(true);
+          setMemberData(res.content[0]);
+          setIsLoading(false);
+          // getImage(res?.content[0]?.id);
+          memberService
+            .getMemberBalance(res?.content[0]?.membershipNo)
+            .subscribe((resesponse) => {
+              const temp = resesponse.map((item) => {
+                const benefit = benefitData?.find(
+                  (ele) => ele.id === item.benefit
+                );
+                item.benefitId = benefit?.id;
+                item.benefit = benefit?.name;
+                item.consumed = item.maxLimit - item.balance;
+                return item;
               });
+              setTableData(temp);
+              setShowBalanceDetails(true);
+            });
           // }
         } else {
-          let pgreq = {}
+          let pgreq = {};
           if (searchType === "national_id") {
             pgreq.nationalId = id;
           } else if (searchType === "passport_number") {
@@ -337,34 +336,30 @@ export default function MemberEligibility() {
           } else if (searchType === "birth_certificate_number") {
             pgreq.birth_certificate_number = id;
           } else {
-            pgreq = {}
+            pgreq = {};
           }
 
           retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
             next: (res) => {
               setTimeout(() => {
-                memberservice.getMember(pageRequest).subscribe((res) => {
-
-                  formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-                  setMemberBasic({
-                    ...memberBasic,
-                    ...res?.content[0]
-                  });
-                  setShowViewDetails(true);
-                  setMemberIdentified(true);
-                  getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-
+                memberService.getMember(pageRequest).subscribe((res) => {
+                  if (res.content?.length > 0) {
+                    setMemberData(res.content[0]);
+                    setShowViewDetails(true);
+                    setMemberIdentified(true);
+                  } else {
+                    setAlertMsg("No Data Found!!!");
+                    setOpenSnack(true);
+                  }
                   setIsLoading(false);
                 });
-              }, 1000 * 60)
+              }, 1000 * 45);
             },
             error: (error) => {
               console.error("Error fetching member details:", error);
-            }
-          })
+            },
+          });
         }
-
-        setIsLoading(false);
       });
     }
   };
@@ -419,7 +414,6 @@ export default function MemberEligibility() {
 
   const handleCheckStatus = () => {
     memberService.biometricStatus(biometricResponseId).subscribe((data) => {
-      console.log(data);
 
       if (data.status === "SUCCESS" && data?.result === "no_match") {
         setBioMetricStatus("FAILED");
@@ -517,6 +511,7 @@ export default function MemberEligibility() {
                 className={`responsiveButton ${classes.buttonPrimary}`}
                 variant="contained"
                 onClick={() => {
+                  setMemberBasic({});
                   setIsLoading(true);
                   populateMemberFromSearch("number");
                 }}
@@ -648,6 +643,7 @@ export default function MemberEligibility() {
               <Button
                 variant="contained"
                 onClick={() => {
+                  setMemberData({});
                   setIsLoading(true);
                   populateMemberFromSearch("name");
                 }}
