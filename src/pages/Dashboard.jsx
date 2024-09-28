@@ -297,7 +297,7 @@ export default function Dashboard() {
         <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
             title="Last Claim"
-            label={["Auth Count", "Auth Amount"]}
+            label={["Pre-Auth Count", "Pre-Auth Amount"]}
             total={dashCount[activeIndex]?.ipdPreauthCount || "NA"}
             total2={dashCount[activeIndex]?.ipdPreauthAmount || "NA"}
             color="success"
@@ -323,7 +323,7 @@ export default function Dashboard() {
         <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
             title="OPD Claims"
-            label={["Claim Count", "Claim Amount"]}
+            label={["IPD Claim Count", "IPD Claim Amount"]}
             total={dashCount[activeIndex]?.ipdClaimCount || "NA"}
             total2={dashCount[activeIndex]?.ipdClaimAmount || "NA"}
             color="warning"
