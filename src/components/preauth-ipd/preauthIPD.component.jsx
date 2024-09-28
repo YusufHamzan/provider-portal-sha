@@ -59,7 +59,7 @@ import {
   PunchClock,
 } from "@mui/icons-material";
 import moment from "moment";
-import MultipleStopIcon from '@mui/icons-material/MultipleStop';
+import MultipleStopIcon from "@mui/icons-material/MultipleStop";
 import { RetailUserService } from "../../remote-api/api/master-services/retail-users-service";
 const useStyles = makeStyles((theme) => ({
   input1: {
@@ -141,7 +141,7 @@ const providerService = new ProvidersService();
 const serviceDiagnosis = new ServiceTypeService();
 const preAuthService = new PreAuthService();
 const memberservice = new MemberService();
-const retailuserservice = new RetailUserService()
+const retailuserservice = new RetailUserService();
 
 let ps$ = providerService.getProviders();
 
@@ -410,8 +410,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -658,7 +659,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
     // birth-certificate-number=31415161 display = Birth Certificate Number
 
-
     // shaMemberId
     // :
     // "CR5764836962337-9"
@@ -667,10 +667,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     // "SHA5764836962337-9"
 
     if (searchType !== "national_id") {
-      console.log('Non national_id search type')
-      setAlertMsg(
-        `Currently National ID search type is allowed only`
-      );
+      console.log("Non national_id search type");
+      setAlertMsg(`Currently National ID search type is allowed only`);
       setOpenSnack(true);
     } else {
       memberservice.getMember(pageRequest).subscribe((res) => {
@@ -694,12 +692,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
           formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           setMemberBasic({
             ...memberBasic,
-            ...res?.content[0]
+            ...res?.content[0],
           });
           setShowViewDetails(true);
           setMemberIdentified(true);
           getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-
         } else {
           // formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           // setMemberBasic({
@@ -713,7 +710,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           // setOpenSnack(true);
 
           //logic for if not available
-          let pgreq = {}
+          let pgreq = {};
           if (searchType === "national_id") {
             pgreq.nationalId = id;
           } else if (searchType === "passport_number") {
@@ -721,38 +718,38 @@ export default function ClaimsPreAuthIPDComponent(props) {
           } else if (searchType === "birth_certificate_number") {
             pgreq.birth_certificate_number = id;
           } else {
-            pgreq = {}
+            pgreq = {};
           }
 
           retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
             next: (res) => {
               setTimeout(() => {
                 memberservice.getMember(pageRequest).subscribe((res) => {
-
                   formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
                   setMemberBasic({
                     ...memberBasic,
-                    ...res?.content[0]
+                    ...res?.content[0],
                   });
                   setShowViewDetails(true);
                   setMemberIdentified(true);
-                  getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+                  getBenefit(
+                    res.content[0].memberId,
+                    res.content[0].policyNumber
+                  );
 
                   setIsLoading(false);
                 });
-              }, 1000 * 60)
+              }, 1000 * 60);
             },
             error: (error) => {
               console.error("Error fetching member details:", error);
-            }
-          })
-
+            },
+          });
         }
         setIsLoading(false);
       });
     }
-  }
-
+  };
 
   useEffect(() => {
     providerService
@@ -769,9 +766,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
           })
           ?.filter((value) => value);
         localStorage.setItem("levelID", level[0]);
-      })
-  }, [])
-
+      });
+  }, []);
 
   const handleSelect = (data) => {
     formik.setFieldValue("contactNoOne", data.mobileNo);
@@ -970,7 +966,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1129,18 +1125,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleInitiate = () => {
     if (searchType !== "national_id") {
-      setAlertMsg(
-        `Biometric validation works with National ID only`
-      );
+      setAlertMsg(`Biometric validation works with National ID only`);
       setOpenSnack(true);
-      return
+      return;
     }
     if (!formik.values.memberShipNo) {
-      setAlertMsg(
-        `Please enter a valid National ID`
-      );
+      setAlertMsg(`Please enter a valid National ID`);
       setOpenSnack(true);
-      return
+      return;
     }
     setBiometricInitiated(true);
     const payload = {
@@ -1168,17 +1160,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
         memberBasic?.identificationDocNumber
       )
       .subscribe((data) => {
-        setContributionPaid(true)
+        setContributionPaid(true);
         setContributionResponseId(data.id);
       });
   };
   useEffect(() => {
-    setMemberIdentified(false)
-    setContributionPaid(false)
-    setBiometricInitiated(false)
-    setbiometricResponseId("")
-    setBioMetricStatus("")
-  }, [searchType])
+    setMemberIdentified(false);
+    setContributionPaid(false);
+    setBiometricInitiated(false);
+    setbiometricResponseId("");
+    setBioMetricStatus("");
+  }, [searchType]);
 
   console.log(bioMetricStatus);
   return (
@@ -1224,7 +1216,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
               >
                 <MenuItem value="national_id">National ID</MenuItem>
                 <MenuItem value="passport_number">Passport Number</MenuItem>
-                <MenuItem value="birth_certificate_number">Birth Certificate Number</MenuItem>
+                <MenuItem value="birth_certificate_number">
+                  Birth Certificate Number
+                </MenuItem>
               </Select>
             </Grid>
 
@@ -1244,6 +1238,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   className={`responsiveButton ${classes.buttonPrimary}`}
                   variant="contained"
                   onClick={() => {
+                    setMemberBasic({});
                     setIsLoading(true);
                     populateMemberFromSearch("number");
                   }}
@@ -1338,7 +1333,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1520,8 +1515,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           color: "red",
                         }}
                       />
-
-                    ) : !bioMetricStatus && biometricInitiated ?
+                    ) : !bioMetricStatus && biometricInitiated ? (
                       <MultipleStopIcon
                         sx={{
                           position: "absolute",
@@ -1529,7 +1523,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                           right: 8,
                           color: "red",
                         }}
-                      /> : null}
+                      />
+                    ) : null}
                   </Grid>
                 </Box>
               </Grid>
@@ -1566,7 +1561,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       }}
                     />
                   )}
-                  {!contributionPaid && memberBasic?.memberId &&
+                  {!contributionPaid &&
+                    memberBasic?.memberId &&
                     memberBasic?.identificationDocNumber && (
                       <Button
                         label="Initiate"
@@ -1635,8 +1631,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.dateOfBirth && moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")} (Age:{" "}
-                  {memberBasic?.age})
+                  {memberBasic?.dateOfBirth &&
+                    moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")}{" "}
+                  (Age: {memberBasic?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -1646,8 +1643,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {memberBasic?.policyStartDate && moment(memberBasic?.policyStartDate).format("DD/MM/YYYY")} -{" "}
-                  {memberBasic?.policyEndDate && moment(memberBasic?.policyEndDate).format("DD/MM/YYYY")}
+                  {memberBasic?.policyStartDate &&
+                    moment(memberBasic?.policyStartDate).format(
+                      "DD/MM/YYYY"
+                    )}{" "}
+                  -{" "}
+                  {memberBasic?.policyEndDate &&
+                    moment(memberBasic?.policyEndDate).format("DD/MM/YYYY")}
                 </Typography>
               </Box>
             </Grid>
