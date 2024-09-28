@@ -173,6 +173,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [isLoadingValidate, setIsLoadingValidate] = React.useState(false);
   const [Validated, setValidated] = React.useState(false);
   const [biomodalopen, setBioModalopen] = React.useState(false);
+  const [teriffAmount, setTeriffAmount] = React.useState();
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -382,6 +383,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
     if (data == null) {
       setServiceList([]);
     } else {
+      console.log(data, i)
+      let pa$ = preAuthService.getPreauthTeriffAmount(benefitId, data.code.replace(/\s+/g, ''));
+      pa$.subscribe((response) => {
+        setTeriffAmount(response.terifs);
+      });
       let bts$ = benefitService.getServicesfromInterventions(
         data.value,
         benefitId
@@ -1100,7 +1106,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 label="Estimated Cost"
               />
               <span style={{ fontSize: "12px", fontWeight: "bold" }}>
-                Sha Approved Amount : 0
+                Sha Approved Amount : {teriffAmount}
               </span>
             </Box>
           </Grid>
@@ -1141,7 +1147,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     }
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res?.content[0].shaStatus === "Paid") setContributionStatus("Paid");
-      else if ((res?.content[0].shaStatus === "Unpaid")){
+      else if (res?.content[0].shaStatus === "Unpaid") {
         setContributionStatus("Unpaid");
         setAlertMsg(`Contribution Not Paid Yet.`);
         setOpenSnack(true);
