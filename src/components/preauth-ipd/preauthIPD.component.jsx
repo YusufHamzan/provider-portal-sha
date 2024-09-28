@@ -741,7 +741,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     );
                   } else {
                     setAlertMsg("This member is not registered!!!");
-                    setOpenSnack(true)
+                    setOpenSnack(true);
                   }
                   setIsLoading(false);
                 });
@@ -1115,10 +1115,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [biometricResponseId, setbiometricResponseId] = useState("");
   const [bioMetricStatus, setBioMetricStatus] = useState("");
   const [contributionResponseId, setContributionResponseId] = useState("");
+  const [contributionStatus, setContributionStatus] = useState("");
 
   const handleCheckStatus = () => {
     memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
-
       if (data.status === "SUCCESS" && data?.result === "no_match") {
         setBioMetricStatus("FAILED");
         return;
@@ -1127,6 +1127,34 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setBioMetricStatus(data?.status);
     });
   };
+
+  const handleCheckContributionStatus = () => {
+    let pageRequest = {
+      page: 0,
+      size: 10,
+      summary: true,
+      active: true,
+    };
+    if (searchType === "national_id") {
+      pageRequest.value = memberBasic?.identificationDocNumber;
+      pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
+    }
+    memberservice.getMember(pageRequest).subscribe((res) => {
+      if (res?.content[0].shaStatus === "paid") setContributionStatus("Paid");
+      else {
+        setContributionStatus("Unpaid");
+        setAlertMsg(`Contribution Not Paid Yet.`);
+        setOpenSnack(true);
+      }
+    });
+  };
+
+  console.log(
+    contributionResponseId &&
+      (!contributionStatus || contributionStatus === "Unpaid"),
+    contributionResponseId,
+    contributionStatus
+  );
 
   const handleInitiate = () => {
     if (searchType !== "national_id") {
@@ -1166,7 +1194,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       )
       .subscribe((data) => {
         setContributionPaid(true);
-        setContributionResponseId(data.id);
+        setContributionResponseId("0-01c");
       });
   };
   useEffect(() => {
@@ -1177,7 +1205,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setBioMetricStatus("");
   }, [searchType]);
 
-  
   return (
     <>
       <ClaimModal
@@ -1247,6 +1274,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     setMemberIdentified(false);
                     setIsLoading(true);
                     populateMemberFromSearch("number");
+                    setContributionResponseId("");
                   }}
                   color="#313c96"
                   type="button"
@@ -1548,7 +1576,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <Typography variant="subtitle1">
                     Member Contribution
                   </Typography>
-                  {contributionPaid ? (
+                  {contributionStatus === "paid" ? (
                     <CheckCircle
                       sx={{
                         position: "absolute",
@@ -1577,6 +1605,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         onClick={handleContributionInitiate}
                       />
                     )}
+                  {contributionResponseId &&
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
+                    <Button
+                      label="Check status"
+                      severity="help"
+                      text
+                      onClick={handleCheckContributionStatus}
+                    />
+                  ) : null}
                 </Box>
               </Grid>
             </Grid>
