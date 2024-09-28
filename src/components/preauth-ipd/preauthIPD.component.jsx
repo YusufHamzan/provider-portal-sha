@@ -667,7 +667,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     // "SHA5764836962337-9"
 
     if (searchType !== "national_id") {
-      console.log("Non national_id search type");
       setAlertMsg(`Currently National ID search type is allowed only`);
       setOpenSnack(true);
     } else {
@@ -688,7 +687,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           // }
 
           //logic for data avaiblable
-
+          setIsLoading(false);
           formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           setMemberBasic({
             ...memberBasic,
@@ -725,28 +724,35 @@ export default function ClaimsPreAuthIPDComponent(props) {
             next: (res) => {
               setTimeout(() => {
                 memberservice.getMember(pageRequest).subscribe((res) => {
-                  formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-                  setMemberBasic({
-                    ...memberBasic,
-                    ...res?.content[0],
-                  });
-                  setShowViewDetails(true);
-                  setMemberIdentified(true);
-                  getBenefit(
-                    res.content[0].memberId,
-                    res.content[0].policyNumber
-                  );
-
+                  if (res.content?.length > 0) {
+                    formik.setFieldValue(
+                      "contactNoOne",
+                      res.content[0].mobileNo
+                    );
+                    setMemberBasic({
+                      ...memberBasic,
+                      ...res?.content[0],
+                    });
+                    setShowViewDetails(true);
+                    setMemberIdentified(true);
+                    getBenefit(
+                      res.content[0].memberId,
+                      res.content[0].policyNumber
+                    );
+                  } else {
+                    setAlertMsg("No Data Found!!!");
+                    setOpenSnack(true)
+                  }
                   setIsLoading(false);
                 });
-              }, 1000 * 60);
+              }, 1000 * 45);
             },
             error: (error) => {
               console.error("Error fetching member details:", error);
             },
           });
         }
-        setIsLoading(false);
+        // setIsLoading(false);
       });
     }
   };
@@ -1112,7 +1118,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleCheckStatus = () => {
     memberservice.biometricStatus(biometricResponseId).subscribe((data) => {
-      console.log(data);
 
       if (data.status === "SUCCESS" && data?.result === "no_match") {
         setBioMetricStatus("FAILED");
@@ -1172,7 +1177,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setBioMetricStatus("");
   }, [searchType]);
 
-  console.log(bioMetricStatus);
+  
   return (
     <>
       <ClaimModal
