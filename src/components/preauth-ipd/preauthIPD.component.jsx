@@ -410,9 +410,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -640,44 +639,64 @@ export default function ClaimsPreAuthIPDComponent(props) {
       summary: true,
       active: true,
     };
-    if (searchType === "name") {
-      pageRequest.name = id;
-    }
-    if (searchType === "membership_no") {
-      pageRequest.value = id;
-      pageRequest.key = "MEMBERSHIP_NO";
-    }
     if (searchType === "national_id") {
       pageRequest.value = id;
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
 
-    if (searchType === "national_id") {
-      retailuserservice.fetchAndSaveMemberDetails({ nationalId: id }).subscribe({
-        next: (res) => {
-          setTimeout(() => {
-            providerService
-              .getProviderDetailsAll(localStorage.getItem("providerId"))
-              .subscribe((res) => {
-                const response = res?.providerCategoryHistorys;
+    if (searchType !== "national_id") {
+      console.log('Non national_id search type')
+      setAlertMsg(
+        `Currently National ID search type is allowed`
+      );
+      setOpenSnack(true);
+    } else {
+      memberservice.getMember(pageRequest).subscribe((res) => {
+        if (res.content?.length > 0) {
+          // if (searchType === "name") {
+          //   setMemberName({ res });
+          //   handleopenClientModal();
+          // } else {
+          //   formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+          //   setMemberBasic({
+          //     ...memberBasic,
+          //     ...res?.content[0]
+          //   });
+          //   setShowViewDetails(true);
+          //   setMemberIdentified(true);
+          //   getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+          // }
 
-                const level = response
-                  ?.map((item) => {
-                    if (item?.endDate == null) {
-                      return item?.categoryName;
-                    }
-                    return null;
-                  })
-                  ?.filter((value) => value);
-                localStorage.setItem("levelID", level[0]);
-              });
+          //logic for data avaiblable
 
-            memberservice.getMember(pageRequest).subscribe((res) => {
-              if (res.content?.length > 0) {
-                if (searchType === "name") {
-                  setMemberName({ res });
-                  handleopenClientModal();
-                } else {
+          formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+          setMemberBasic({
+            ...memberBasic,
+            ...res?.content[0]
+          });
+          setShowViewDetails(true);
+          setMemberIdentified(true);
+          getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+
+        } else {
+          // formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+          // setMemberBasic({
+          //   ...memberBasic,
+          //   ...res?.content[0],
+          // });
+          // setShowViewDetails(true);
+          // setMemberIdentified(true);
+          // getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+          // setAlertMsg("This member is not registered");
+          // setOpenSnack(true);
+
+          //logic for if not available
+
+          retailuserservice.fetchAndSaveMemberDetails({ nationalId: id }).subscribe({
+            next: (res) => {
+              setTimeout(() => {
+                memberservice.getMember(pageRequest).subscribe((res) => {
+
                   formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
                   setMemberBasic({
                     ...memberBasic,
@@ -686,67 +705,41 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   setShowViewDetails(true);
                   setMemberIdentified(true);
                   getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-                }
-              } else {
-                setAlertMsg("This member is not registered");
-                setOpenSnack(true);
-              }
-              setIsLoading(false);
-            });
-          }, 1000 * 60)
-        },
-        error: (error) => {
-          console.error("Error fetching member details:", error);
-        }
-      })
-    } else {
-      providerService
-        .getProviderDetailsAll(localStorage.getItem("providerId"))
-        .subscribe((res) => {
-          const response = res?.providerCategoryHistorys;
 
-          const level = response
-            ?.map((item) => {
-              if (item?.endDate == null) {
-                return item?.categoryName;
-              }
-              return null;
-            })
-            ?.filter((value) => value);
-          localStorage.setItem("levelID", level[0]);
-        });
+                  setIsLoading(false);
+                });
+              }, 1000 * 60)
+            },
+            error: (error) => {
+              console.error("Error fetching member details:", error);
+            }
+          })
 
-      memberservice.getMember(pageRequest).subscribe((res) => {
-        if (res.content?.length > 0) {
-          if (searchType === "name") {
-            setMemberName({ res });
-            handleopenClientModal();
-          } else {
-            formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-            setMemberBasic({
-              ...memberBasic,
-              ...res?.content[0]
-            });
-            setShowViewDetails(true);
-            setMemberIdentified(true);
-            getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-          }
-        } else {
-          formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-          setMemberBasic({
-            ...memberBasic,
-            ...res?.content[0],
-          });
-          setShowViewDetails(true);
-          setMemberIdentified(true);
-          getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-          setAlertMsg("This member is not registered");
-          setOpenSnack(true);
         }
         setIsLoading(false);
       });
     }
-  };
+  }
+
+
+  useEffect(() => {
+    providerService
+      .getProviderDetailsAll(localStorage.getItem("providerId"))
+      .subscribe((res) => {
+        const response = res?.providerCategoryHistorys;
+
+        const level = response
+          ?.map((item) => {
+            if (item?.endDate == null) {
+              return item?.categoryName;
+            }
+            return null;
+          })
+          ?.filter((value) => value);
+        localStorage.setItem("levelID", level[0]);
+      })
+  }, [])
+
 
   const handleSelect = (data) => {
     formik.setFieldValue("contactNoOne", data.mobileNo);
@@ -945,7 +938,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1313,7 +1306,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
