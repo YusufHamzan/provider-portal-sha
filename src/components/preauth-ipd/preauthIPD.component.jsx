@@ -740,7 +740,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       res.content[0].policyNumber
                     );
                   } else {
-                    setAlertMsg("No Data Found!!!");
+                    setAlertMsg("This member is not registered!!!");
                     setOpenSnack(true)
                   }
                   setIsLoading(false);
@@ -1244,6 +1244,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   variant="contained"
                   onClick={() => {
                     setMemberBasic({});
+                    setMemberIdentified(false);
                     setIsLoading(true);
                     populateMemberFromSearch("number");
                   }}

@@ -348,7 +348,7 @@ export default function MemberEligibility() {
                     setShowViewDetails(true);
                     setMemberIdentified(true);
                   } else {
-                    setAlertMsg("No Data Found!!!");
+                    setAlertMsg("This member is not registered!!!");
                     setOpenSnack(true);
                   }
                   setIsLoading(false);
@@ -512,6 +512,7 @@ export default function MemberEligibility() {
                 variant="contained"
                 onClick={() => {
                   setMemberBasic({});
+                  setMemberIdentified(false);
                   setIsLoading(true);
                   populateMemberFromSearch("number");
                 }}
