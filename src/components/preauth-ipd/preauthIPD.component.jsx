@@ -745,7 +745,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   }
                   setIsLoading(false);
                 });
-              }, 1000 * 45);
+              }, 1000 * 60);
             },
             error: (error) => {
               console.error("Error fetching member details:", error);
@@ -1140,21 +1140,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
     memberservice.getMember(pageRequest).subscribe((res) => {
-      if (res?.content[0].shaStatus === "paid") setContributionStatus("Paid");
-      else {
+      if (res?.content[0].shaStatus === "Paid") setContributionStatus("Paid");
+      else if ((res?.content[0].shaStatus === "Unpaid")){
         setContributionStatus("Unpaid");
         setAlertMsg(`Contribution Not Paid Yet.`);
+        setOpenSnack(true);
+      } else {
+        setAlertMsg(`Contribution status not found yet.`);
         setOpenSnack(true);
       }
     });
   };
-
-  console.log(
-    contributionResponseId &&
-      (!contributionStatus || contributionStatus === "Unpaid"),
-    contributionResponseId,
-    contributionStatus
-  );
 
   const handleInitiate = () => {
     if (searchType !== "national_id") {
@@ -1576,7 +1572,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <Typography variant="subtitle1">
                     Member Contribution
                   </Typography>
-                  {contributionStatus === "paid" ? (
+                  {contributionStatus === "Paid" ? (
                     <CheckCircle
                       sx={{
                         position: "absolute",
@@ -1585,8 +1581,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
                         color: "green",
                       }}
                     />
-                  ) : (
+                  ) : !contributionStatus ? (
                     <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  ) : (
+                    <CancelOutlined
                       sx={{
                         position: "absolute",
                         top: 8,

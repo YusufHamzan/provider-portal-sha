@@ -353,7 +353,7 @@ export default function MemberEligibility() {
                   }
                   setIsLoading(false);
                 });
-              }, 1000 * 45);
+              }, 1000 * 60);
             },
             error: (error) => {
               console.error("Error fetching member details:", error);
@@ -411,6 +411,7 @@ export default function MemberEligibility() {
   const [biometricResponseId, setbiometricResponseId] = useState("");
   const [bioMetricStatus, setBioMetricStatus] = useState("");
   const [contributionResponseId, setContributionResponseId] = useState("");
+  const [contributionStatus, setContributionStatus] = useState("");
 
   const handleCheckStatus = () => {
     memberService.biometricStatus(biometricResponseId).subscribe((data) => {
@@ -445,15 +446,39 @@ export default function MemberEligibility() {
   };
 
   const handleContributionInitiate = () => {
-    memberservice
+    memberService
       .initiateContribution(
-        memberData?.memberId,
-        memberData?.identificationDocNumber
+        memberBasic?.memberId,
+        memberBasic?.identificationDocNumber
       )
       .subscribe((data) => {
         setContributionPaid(true);
-        setContributionResponseId(data.id);
+        setContributionResponseId("0-01c");
       });
+  };
+
+  const handleCheckContributionStatus = () => {
+    let pageRequest = {
+      page: 0,
+      size: 10,
+      summary: true,
+      active: true,
+    };
+    if (searchType === "national_id") {
+      pageRequest.value = memberBasic?.identificationDocNumber;
+      pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
+    }
+    memberService.getMember(pageRequest).subscribe((res) => {
+      if (res?.content[0].shaStatus === "Paid") setContributionStatus("Paid");
+      else if ((res?.content[0].shaStatus === "Unpaid")){
+        setContributionStatus("Unpaid");
+        setAlertMsg(`Contribution Not Paid Yet.`);
+        setOpenSnack(true);
+      } else {
+        setAlertMsg(`Contribution status not found yet.`);
+        setOpenSnack(true);
+      }
+    });
   };
 
   return (
@@ -885,7 +910,7 @@ export default function MemberEligibility() {
                   <Typography variant="subtitle1">
                     Member Contribution
                   </Typography>
-                  {contributionPaid ? (
+                  {contributionStatus === "Paid" ? (
                     <CheckCircle
                       sx={{
                         position: "absolute",
@@ -894,8 +919,17 @@ export default function MemberEligibility() {
                         color: "green",
                       }}
                     />
-                  ) : (
+                  ) : !contributionStatus ? (
                     <ErrorIcon
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "red",
+                      }}
+                    />
+                  ) : (
+                    <CancelOutlined
                       sx={{
                         position: "absolute",
                         top: 8,
@@ -905,8 +939,8 @@ export default function MemberEligibility() {
                     />
                   )}
                   {!contributionPaid &&
-                    memberData?.memberId &&
-                    memberData?.identificationDocNumber && (
+                    memberBasic?.memberId &&
+                    memberBasic?.identificationDocNumber && (
                       <PButton
                         label="Initiate"
                         severity="help"
@@ -914,6 +948,15 @@ export default function MemberEligibility() {
                         onClick={handleContributionInitiate}
                       />
                     )}
+                  {contributionResponseId &&
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
+                    <PButton
+                      label="Check status"
+                      severity="help"
+                      text
+                      onClick={handleCheckContributionStatus}
+                    />
+                  ) : null}
                 </Box>
               </Grid>
             </Grid>
