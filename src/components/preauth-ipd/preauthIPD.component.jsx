@@ -165,7 +165,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [claimModal, setClaimModal] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState("");
   const [openSnack, setOpenSnack] = React.useState(false);
-  const [searchType, setSearchType] = React.useState("membership_no");
+  const [searchType, setSearchType] = React.useState("national_id");
   const [openClientModal, setOpenClientModal] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState([]);
   const [serviceTypeList, setServiceTypeList] = React.useState();
@@ -643,11 +643,33 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.value = id;
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
+    if (searchType === "passport_number") {
+      pageRequest.value = id;
+      pageRequest.key = "PASSPORT_NUMBER";
+    }
+    if (searchType === "birth_certificate_number") {
+      pageRequest.value = id;
+      pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
+    }
+
+    //     national-id=22214041   display = National ID
+
+    // passport=33445565   display = Passport
+
+    // birth-certificate-number=31415161 display = Birth Certificate Number
+
+
+    // shaMemberId
+    // :
+    // "CR5764836962337-9"
+    // shaMemberNumber
+    // :
+    // "SHA5764836962337-9"
 
     if (searchType !== "national_id") {
       console.log('Non national_id search type')
       setAlertMsg(
-        `Currently National ID search type is allowed`
+        `Currently National ID search type is allowed only`
       );
       setOpenSnack(true);
     } else {
@@ -691,8 +713,18 @@ export default function ClaimsPreAuthIPDComponent(props) {
           // setOpenSnack(true);
 
           //logic for if not available
+          let pgreq = {}
+          if (searchType === "national_id") {
+            pgreq.nationalId = id;
+          } else if (searchType === "passport_number") {
+            pgreq.passport_number = id;
+          } else if (searchType === "birth_certificate_number") {
+            pgreq.birth_certificate_number = id;
+          } else {
+            pgreq = {}
+          }
 
-          retailuserservice.fetchAndSaveMemberDetails({ nationalId: id }).subscribe({
+          retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
             next: (res) => {
               setTimeout(() => {
                 memberservice.getMember(pageRequest).subscribe((res) => {
@@ -1191,8 +1223,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 fullWidth
               >
                 <MenuItem value="national_id">National ID</MenuItem>
-                <MenuItem value="membership_no">Passport Number</MenuItem>
-                <MenuItem value="name">Birth Certificate Number</MenuItem>
+                <MenuItem value="passport_number">Passport Number</MenuItem>
+                <MenuItem value="birth_certificate_number">Birth Certificate Number</MenuItem>
               </Select>
             </Grid>
 
@@ -1592,7 +1624,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                    {memberBasic.memberId}
+                    {memberBasic.shaMemberId}
                   </Typography>
                 </Box>
               </Box>
@@ -1614,8 +1646,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.policyStartDate).format("DD/MM/YYYY")} -{" "}
-                  {moment(memberBasic?.policyEndDate).format("DD/MM/YYYY")}
+                  {memberBasic?.policyStartDate && moment(memberBasic?.policyStartDate).format("DD/MM/YYYY")} -{" "}
+                  {memberBasic?.policyEndDate && moment(memberBasic?.policyEndDate).format("DD/MM/YYYY")}
                 </Typography>
               </Box>
             </Grid>
@@ -1678,7 +1710,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography className={classes.TypographyStyle2}>
-                    {memberBasic?.shaNumber}
+                    {memberBasic?.shaMemberNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
