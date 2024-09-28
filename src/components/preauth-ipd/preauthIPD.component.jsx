@@ -1190,9 +1190,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 onChange={handleChange}
                 fullWidth
               >
-                <MenuItem value="membership_no">Membership No.</MenuItem>
                 <MenuItem value="national_id">National ID</MenuItem>
-                <MenuItem value="name">Member Name</MenuItem>
+                <MenuItem value="membership_no">Passport Number</MenuItem>
+                <MenuItem value="name">Birth Certificate Number</MenuItem>
               </Select>
             </Grid>
 
