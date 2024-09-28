@@ -61,6 +61,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 import BioModal from "../components/preauth-ipd/component/bio-modal";
 import { useState } from "react";
 import { Button as PButton } from "primereact/button";
+import { RetailUserService } from "../remote-api/api/master-services/retail-users-service";
 const memberService = new MemberService();
 const benefitService = new BenefitService();
 const providerService = new ProvidersService();
@@ -101,6 +102,7 @@ const TypographyStyle1 = {
 
 // const providerService = new ProvidersService();
 const serviceDiagnosis = new ServiceTypeService();
+const retailuserservice = new RetailUserService()
 
 // let ps$ = providerService.getProviders();
 let ad$ = serviceDiagnosis.getServicesbyId("867854874246590464", {
@@ -288,38 +290,83 @@ export default function MemberEligibility() {
       pageRequest.value = id;
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
+    if (searchType === "passport_number") {
+      pageRequest.value = id;
+      pageRequest.key = "PASSPORT_NUMBER";
+    }
+    if (searchType === "birth_certificate_number") {
+      pageRequest.value = id;
+      pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
+    }
 
-    memberService.getMember(pageRequest).subscribe((res) => {
-      if (res.content?.length > 0) {
-        if (searchType === "name") {
-          setMemberName({ res });
-          handleopenClientModal();
-        } else {
-          setMemberData(res.content[0]);
-          getImage(res?.content[0]?.id);
-          memberService
-            .getMemberBalance(res?.content[0]?.membershipNo)
-            .subscribe((resesponse) => {
-              const temp = resesponse.map((item) => {
-                const benefit = benefitData?.find(
-                  (ele) => ele.id === item.benefit
-                );
-                item.benefitId = benefit?.id;
-                item.benefit = benefit?.name;
-                item.consumed = item.maxLimit - item.balance;
-                return item;
+    if (searchType !== "national_id") {
+      console.log("Non national_id search type");
+      setAlertMsg(`Currently National ID search type is allowed only`);
+      setOpenSnack(true);
+    } else {
+      memberService.getMember(pageRequest).subscribe((res) => {
+        if (res.content?.length > 0) {
+          // if (searchType === "name") {
+          //   setMemberName({ res });
+          //   handleopenClientModal();
+          // } else {
+            setMemberData(res.content[0]);
+            // getImage(res?.content[0]?.id);
+            memberService
+              .getMemberBalance(res?.content[0]?.membershipNo)
+              .subscribe((resesponse) => {
+                const temp = resesponse.map((item) => {
+                  const benefit = benefitData?.find(
+                    (ele) => ele.id === item.benefit
+                  );
+                  item.benefitId = benefit?.id;
+                  item.benefit = benefit?.name;
+                  item.consumed = item.maxLimit - item.balance;
+                  return item;
+                });
+                setTableData(temp);
+                setShowBalanceDetails(true);
               });
-              setTableData(temp);
-              setShowBalanceDetails(true);
-            });
+          // }
+        } else {
+          let pgreq = {}
+          if (searchType === "national_id") {
+            pgreq.nationalId = id;
+          } else if (searchType === "passport_number") {
+            pgreq.passport_number = id;
+          } else if (searchType === "birth_certificate_number") {
+            pgreq.birth_certificate_number = id;
+          } else {
+            pgreq = {}
+          }
+
+          retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
+            next: (res) => {
+              setTimeout(() => {
+                memberservice.getMember(pageRequest).subscribe((res) => {
+
+                  formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+                  setMemberBasic({
+                    ...memberBasic,
+                    ...res?.content[0]
+                  });
+                  setShowViewDetails(true);
+                  setMemberIdentified(true);
+                  getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+
+                  setIsLoading(false);
+                });
+              }, 1000 * 60)
+            },
+            error: (error) => {
+              console.error("Error fetching member details:", error);
+            }
+          })
         }
-      } else {
-        setAlertMsg(`No Data found for ${id}`);
-        setSeverity("error");
-        setOpenSnack(true);
-      }
-      setIsLoading(false);
-    });
+
+        setIsLoading(false);
+      });
+    }
   };
 
   const onVerifyClick = () => {
@@ -415,14 +462,6 @@ export default function MemberEligibility() {
       });
   };
 
-  console.log(
-    "popopo",
-    !contributionPaid &&
-      memberData?.memberId &&
-      memberData?.identificationDocNumber &&
-      "tureee"
-  );
-
   return (
     <>
       <Snackbar
@@ -455,8 +494,10 @@ export default function MemberEligibility() {
               fullWidth
             >
               <MenuItem value="national_id">National ID</MenuItem>
-              <MenuItem value="membership_no">Membership No.</MenuItem>
-              <MenuItem value="name">Member Name</MenuItem>
+              <MenuItem value="passport_number">Passport Number</MenuItem>
+              <MenuItem value="birth_certificate_number">
+                Birth Certificate Number
+              </MenuItem>
             </Select>
           </Grid>
 
@@ -841,7 +882,7 @@ export default function MemberEligibility() {
                     border: "1px solid #ccc",
                     borderRadius: 2,
                     height: "60px",
-                    display:"flex"
+                    display: "flex",
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -866,7 +907,8 @@ export default function MemberEligibility() {
                       }}
                     />
                   )}
-                  {!contributionPaid && memberData?.memberId &&
+                  {!contributionPaid &&
+                    memberData?.memberId &&
                     memberData?.identificationDocNumber && (
                       <PButton
                         label="Initiate"
@@ -983,7 +1025,7 @@ export default function MemberEligibility() {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberData.memberId}
+                    {memberData.shaMemberId}
                   </Typography>
                 </Box>
               </Box>
@@ -1057,7 +1099,7 @@ export default function MemberEligibility() {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                    {memberData?.shaNumber}
+                    {memberData?.shaMemberNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
