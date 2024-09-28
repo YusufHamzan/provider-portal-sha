@@ -1635,7 +1635,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography className={classes.TypographyStyle2}>
-                  {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")} (Age:{" "}
+                  {memberBasic?.dateOfBirth && moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")} (Age:{" "}
                   {memberBasic?.age})
                 </Typography>
               </Box>
