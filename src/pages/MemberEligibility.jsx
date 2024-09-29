@@ -438,8 +438,8 @@ export default function MemberEligibility() {
   const handleContributionInitiate = () => {
     memberService
       .initiateContribution(
-        memberBasic?.memberId,
-        memberBasic?.identificationDocNumber
+        memberData?.memberId,
+        memberData?.identificationDocNumber
       )
       .subscribe((data) => {
         setContributionPaid(true);
@@ -455,7 +455,7 @@ export default function MemberEligibility() {
       active: true,
     };
     if (searchType === "national_id") {
-      pageRequest.value = memberBasic?.identificationDocNumber;
+      pageRequest.value = memberData?.identificationDocNumber;
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
     memberService.getMember(pageRequest).subscribe((res) => {
