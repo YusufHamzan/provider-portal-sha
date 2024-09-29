@@ -25,6 +25,9 @@ import { Button } from "primereact/button";
 import moment from "moment/moment";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
+import { RetailUserService } from "../../remote-api/api/master-services/retail-users-service";
+
+const retailuserservice = new RetailUserService();
 
 export default function ClaimModal(props) {
   const { memberBasic } = props;
@@ -44,6 +47,7 @@ export default function ClaimModal(props) {
   const [fullWidth, setFullWidth] = React.useState(true);
   const [maxWidth, setMaxWidth] = React.useState("xl");
   const [memberData, setMemberData] = React.useState([]);
+  const [dependentData, setDependentData] = React.useState();
   const handleClose = () => {
     props.handleCloseClaimModal();
   };
@@ -88,6 +92,17 @@ export default function ClaimModal(props) {
     acc[el.benefitStructureId] = el.benefitName;
     return acc;
   }, {});
+
+  React.useEffect(() => {
+    if (memberBasic?.identificationDocNumber) {
+      retailuserservice
+        .getDependentDetails(memberBasic?.identificationDocNumber)
+        .subscribe((res) => {
+          setDependentData(res);
+        });
+    }
+  }, [memberBasic?.identificationDocNumber]);
+
   return (
     <Dialog
       open={props.claimModal}
@@ -127,7 +142,8 @@ export default function ClaimModal(props) {
                 &nbsp;
                 <span>:</span>&nbsp;
                 <Typography style={TypographyStyle2}>
-                {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")}(Age:{memberBasic?.age})
+                  {moment(memberBasic?.dateOfBirth).format("DD/MM/YYYY")}(Age:
+                  {memberBasic?.age})
                 </Typography>
               </Box>
               <Box display={"flex"} marginLeft={"10%"} marginY={"10px"}>
@@ -151,7 +167,8 @@ export default function ClaimModal(props) {
                   <span>:</span>
                   &nbsp;
                   <Typography style={TypographyStyle2}>
-                  {memberBasic?.identificationDocType === "NationalId" &&  memberBasic?.identificationDocNumber}
+                    {memberBasic?.identificationDocType === "NationalId" &&
+                      memberBasic?.identificationDocNumber}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" marginTop="10px">
@@ -265,32 +282,51 @@ export default function ClaimModal(props) {
                       <TableHead>
                         <TableRow>
                           <TableCell>Name</TableCell>
+                          <TableCell>National ID</TableCell>
                           <TableCell>SHA Number</TableCell>
                           <TableCell>Member ID</TableCell>
+                          <TableCell>Household No</TableCell>
                           <TableCell>Gender</TableCell>
                           <TableCell>DOB</TableCell>
                           <TableCell>Relation</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {memberData?.dependentData ? (
-                          memberData?.dependentData.map((item) => {
+                        {dependentData ? (
+                          dependentData.map((item) => {
+                            function capitalizeFirstLetter(str) {
+                              if (str.length === 0) return str; // Handle empty strings
+                              return (
+                                str.charAt(0).toUpperCase() +
+                                str.slice(1).toLowerCase()
+                              );
+                            }
                             return (
                               <TableRow key={item.id}>
-                                <TableCell>{item?.dependentName}</TableCell>
                                 <TableCell>
-                                  {item?.dependentShaNumber}
+                                  {capitalizeFirstLetter(item?.name)}
                                 </TableCell>
                                 <TableCell>
-                                  {item?.dependentShaMemberId}
+                                  {item?.identificationDocType ===
+                                    "NationalId" &&
+                                    item?.identificationDocNumber}
                                 </TableCell>
-                                <TableCell>{item?.dependentGender}</TableCell>
+                                <TableCell>{item?.shaMemberNumber}</TableCell>
+                                <TableCell>{item?.shaMemberId}</TableCell>
+                                <TableCell>{item?.employeeId}</TableCell>
+                                <TableCell
+                                  style={{ textTransform: "capitalize" }}
+                                >
+                                  {item?.gender}
+                                </TableCell>
                                 <TableCell>
-                                  {moment(el.dependentDOB).format("DD/MM/YYYY")}
+                                  {item.dateOfBirth
+                                    ? moment(item.dateOfBirth).format(
+                                        "DD/MM/YYYY"
+                                      )
+                                    : "-"}
                                 </TableCell>
-                                <TableCell>
-                                  {item?.dependentRelations}
-                                </TableCell>
+                                <TableCell>{item?.relations}</TableCell>
                               </TableRow>
                             );
                           })

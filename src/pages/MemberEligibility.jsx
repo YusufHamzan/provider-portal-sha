@@ -127,10 +127,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-      // onClick={() => {
-      //   setShowServices(false);
-      //   getClaimsByBenefit(rowData?.benefitId);
-      // }}
+        // onClick={() => {
+        //   setShowServices(false);
+        //   getClaimsByBenefit(rowData?.benefitId);
+        // }}
       >
         {rowData.consumed}
       </span>
@@ -223,7 +223,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -290,7 +290,6 @@ export default function MemberEligibility() {
       pageRequest.value = id;
       pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
     }
-
 
     memberService.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
@@ -407,7 +406,6 @@ export default function MemberEligibility() {
 
   const handleCheckStatus = () => {
     memberService.biometricStatus(biometricResponseId).subscribe((data) => {
-
       if (data.status === "SUCCESS" && data?.result === "no_match") {
         setBioMetricStatus("FAILED");
         return;
@@ -440,8 +438,8 @@ export default function MemberEligibility() {
   const handleContributionInitiate = () => {
     memberService
       .initiateContribution(
-        memberBasic?.memberId,
-        memberBasic?.identificationDocNumber
+        memberData?.memberId,
+        memberData?.identificationDocNumber
       )
       .subscribe((data) => {
         setContributionPaid(true);
@@ -457,21 +455,33 @@ export default function MemberEligibility() {
       active: true,
     };
     if (searchType === "national_id") {
-      pageRequest.value = memberBasic?.identificationDocNumber;
+      pageRequest.value = memberData?.identificationDocNumber;
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
     }
     memberService.getMember(pageRequest).subscribe((res) => {
       if (res?.content[0].shaStatus === "Paid") setContributionStatus("Paid");
-      else if ((res?.content[0].shaStatus === "Unpaid")) {
+      else if (res?.content[0].shaStatus === "Unpaid") {
         setContributionStatus("Unpaid");
+        setSeverity("error");
         setAlertMsg(`Contribution Not Paid Yet.`);
         setOpenSnack(true);
       } else {
+        setSeverity("error");
         setAlertMsg(`Contribution status not found yet.`);
         setOpenSnack(true);
       }
     });
   };
+
+  React.useEffect(() => {
+    if (memberIdentified) {
+      retailuserservice
+        .getDependentDetails(memberData?.identificationDocNumber)
+        .subscribe((res) => {
+          setDependentData(res);
+        });
+    }
+  }, [memberIdentified]);
 
   return (
     <>
@@ -599,7 +609,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -662,6 +672,10 @@ export default function MemberEligibility() {
                 variant="contained"
                 onClick={() => {
                   setMemberData({});
+                  setContributionStatus();
+                  setContributionPaid(false);
+                  setContributionResponseId("");
+                  setMemberIdentified(false);
                   setIsLoading(true);
                   populateMemberFromSearch("name");
                 }}
@@ -696,7 +710,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                    memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -941,7 +955,7 @@ export default function MemberEligibility() {
                       />
                     )}
                   {contributionResponseId &&
-                    (!contributionStatus || contributionStatus === "Unpaid") ? (
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <PButton
                       label="Check status"
                       severity="help"
@@ -1207,32 +1221,51 @@ export default function MemberEligibility() {
                       <TableHead>
                         <TableRow>
                           <TableCell>Name</TableCell>
+                          <TableCell>National ID</TableCell>
                           <TableCell>SHA Number</TableCell>
                           <TableCell>Member ID</TableCell>
+                          <TableCell>Household No</TableCell>
                           <TableCell>Gender</TableCell>
                           <TableCell>DOB</TableCell>
                           <TableCell>Relation</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {memberData?.dependentData ? (
-                          memberData?.dependentData.map((item) => {
+                        {dependentData ? (
+                          dependentData.map((item) => {
+                            function capitalizeFirstLetter(str) {
+                              if (str.length === 0) return str; // Handle empty strings
+                              return (
+                                str.charAt(0).toUpperCase() +
+                                str.slice(1).toLowerCase()
+                              );
+                            }
                             return (
                               <TableRow key={item.id}>
-                                <TableCell>{item?.dependentName}</TableCell>
                                 <TableCell>
-                                  {item?.dependentShaNumber}
+                                  {capitalizeFirstLetter(item?.name)}
                                 </TableCell>
                                 <TableCell>
-                                  {item?.dependentShaMemberId}
+                                  {item?.identificationDocType ===
+                                    "NationalId" &&
+                                    item?.identificationDocNumber}
                                 </TableCell>
-                                <TableCell>{item?.dependentGender}</TableCell>
+                                <TableCell>{item?.shaMemberNumber}</TableCell>
+                                <TableCell>{item?.shaMemberId}</TableCell>
+                                <TableCell>{item?.employeeId}</TableCell>
+                                <TableCell
+                                  style={{ textTransform: "capitalize" }}
+                                >
+                                  {item?.gender}
+                                </TableCell>
                                 <TableCell>
-                                  {moment(el.dependentDOB).format("DD/MM/YYYY")}
+                                  {item.dateOfBirth
+                                    ? moment(item.dateOfBirth).format(
+                                        "DD/MM/YYYY"
+                                      )
+                                    : "-"}
                                 </TableCell>
-                                <TableCell>
-                                  {item?.dependentRelations}
-                                </TableCell>
+                                <TableCell>{item?.relations}</TableCell>
                               </TableRow>
                             );
                           })
@@ -1345,10 +1378,11 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${parentBenefitName != undefined
-                                ? `${parentBenefitName} >`
-                                : ""
-                                } ${item?.benefitName}`}
+                              {` ${
+                                parentBenefitName != undefined
+                                  ? `${parentBenefitName} >`
+                                  : ""
+                              } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===

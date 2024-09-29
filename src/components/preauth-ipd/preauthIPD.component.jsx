@@ -383,10 +383,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
     if (data == null) {
       setServiceList([]);
     } else {
-      console.log(data, i)
-      let pa$ = preAuthService.getPreauthTeriffAmount(benefitId, data.code.replace(/\s+/g, ''));
+      console.log(data, i);
+      let pa$ = preAuthService.getPreauthTeriffAmount(
+        benefitId,
+        data.code.replace(/\s+/g, "")
+      );
       pa$.subscribe((response) => {
-        setTeriffAmount(response.terifs);
+        serviceDetailsList[i].tariff = response.terifs;
+        // setTeriffAmount(response.terifs);
       });
       let bts$ = benefitService.getServicesfromInterventions(
         data.value,
@@ -416,8 +420,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -671,7 +676,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     // :
     // "SHA5764836962337-9"
 
-
     memberservice.getMember(pageRequest).subscribe((res) => {
       if (res.content?.length > 0) {
         // if (searchType === "name") {
@@ -727,10 +731,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             setTimeout(() => {
               memberservice.getMember(pageRequest).subscribe((res) => {
                 if (res.content?.length > 0) {
-                  formik.setFieldValue(
-                    "contactNoOne",
-                    res.content[0].mobileNo
-                  );
+                  formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
                   setMemberBasic({
                     ...memberBasic,
                     ...res?.content[0],
@@ -973,7 +974,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1101,7 +1102,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 label="Estimated Cost"
               />
               <span style={{ fontSize: "12px", fontWeight: "bold" }}>
-                Sha Approved Amount : {teriffAmount}
+                SHA Approved Tariff : {x?.tariff}
               </span>
             </Box>
           </Grid>
@@ -1269,6 +1270,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   onClick={() => {
                     setMemberBasic({});
                     setMemberIdentified(false);
+                    setContributionPaid(false);
+                    setContributionStatus();
                     setIsLoading(true);
                     populateMemberFromSearch("number");
                     setContributionResponseId("");
@@ -1364,7 +1367,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1612,7 +1615,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                    (!contributionStatus || contributionStatus === "Unpaid") ? (
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
