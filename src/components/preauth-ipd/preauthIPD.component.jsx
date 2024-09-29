@@ -747,7 +747,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 }
                 setIsLoading(false);
               });
-            }, 1000 * 6);
+            }, 1000 * 60);
           },
           error: (error) => {
             console.error("Error fetching member details:", error);
