@@ -462,9 +462,11 @@ export default function MemberEligibility() {
       if (res?.content[0].shaStatus === "Paid") setContributionStatus("Paid");
       else if ((res?.content[0].shaStatus === "Unpaid")) {
         setContributionStatus("Unpaid");
+        setSeverity("error");
         setAlertMsg(`Contribution Not Paid Yet.`);
         setOpenSnack(true);
       } else {
+        setSeverity("error");
         setAlertMsg(`Contribution status not found yet.`);
         setOpenSnack(true);
       }
@@ -660,6 +662,10 @@ export default function MemberEligibility() {
                 variant="contained"
                 onClick={() => {
                   setMemberData({});
+                  setContributionStatus();
+                  setContributionPaid(false);
+                  setContributionResponseId("");
+                  setMemberIdentified(false);
                   setIsLoading(true);
                   populateMemberFromSearch("name");
                 }}
