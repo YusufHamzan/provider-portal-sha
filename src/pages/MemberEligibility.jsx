@@ -1229,17 +1229,20 @@ export default function MemberEligibility() {
                       <TableBody>
                         {dependentData ? (
                          dependentData.map((item) => {
-                          console.log(item)
+                          function capitalizeFirstLetter(str) {
+                            if (str.length === 0) return str; // Handle empty strings
+                            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+                        }
                             return (
                               <TableRow key={item.id}>
-                                <TableCell>{item?.name}</TableCell>
+                                <TableCell>{capitalizeFirstLetter(item?.name)}</TableCell>
                                 <TableCell>
                                   {item?.shaMemberNumber}
                                 </TableCell>
                                 <TableCell>
                                   {item?.shaMemberId}
                                 </TableCell>
-                                <TableCell>{item?.gender}</TableCell>
+                                <TableCell style={{textTransform:"capitalize"}}>{item?.gender}</TableCell>
                                 <TableCell>
                                   {item.dateOfBirth ? moment(item.dateOfBirth).format("DD/MM/YYYY") : "-"}
                                 </TableCell>
