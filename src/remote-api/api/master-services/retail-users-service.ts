@@ -17,4 +17,10 @@ export class RetailUserService {
 			})
 			.pipe(map((response) => response.data));
 	}
+	
+	getDependentDetails(nationalId: any): Observable<Page<any>> {
+		return http
+			.get<Page<any>>(`${this.QUERY_CONTEXT}/retail-users/create-sha-member/dependents?nationalId=${nationalId}`)
+			.pipe(map((response) => response.data));
+	}
 }

@@ -473,6 +473,14 @@ export default function MemberEligibility() {
     });
   };
 
+  React.useEffect(()=>{
+    if(memberIdentified){
+      retailuserservice.getDependentDetails(memberData?.identificationDocNumber).subscribe((res)=>{
+        setDependentData(res)
+      })
+    }
+  },[memberIdentified])
+
   return (
     <>
       <Snackbar
@@ -1219,23 +1227,24 @@ export default function MemberEligibility() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {memberData?.dependentData ? (
-                          memberData?.dependentData.map((item) => {
+                        {dependentData ? (
+                         dependentData.map((item) => {
+                          console.log(item)
                             return (
                               <TableRow key={item.id}>
-                                <TableCell>{item?.dependentName}</TableCell>
+                                <TableCell>{item?.name}</TableCell>
                                 <TableCell>
                                   {item?.dependentShaNumber}
                                 </TableCell>
                                 <TableCell>
                                   {item?.dependentShaMemberId}
                                 </TableCell>
-                                <TableCell>{item?.dependentGender}</TableCell>
+                                <TableCell>{item?.gender}</TableCell>
                                 <TableCell>
-                                  {moment(el.dependentDOB).format("DD/MM/YYYY")}
+                                  {item.dateOfBirth ? moment(item.dateOfBirth).format("DD/MM/YYYY") : "-"}
                                 </TableCell>
                                 <TableCell>
-                                  {item?.dependentRelations}
+                                  {item?.relations}
                                 </TableCell>
                               </TableRow>
                             );
