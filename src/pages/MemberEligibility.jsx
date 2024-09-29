@@ -331,24 +331,26 @@ export default function MemberEligibility() {
 
         retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
           next: (res) => {
-            setTimeout(() => {
-              memberService.getMember(pageRequest).subscribe((res) => {
-                if (res.content?.length > 0) {
-                  setMemberData(res.content[0]);
-                  setShowViewDetails(true);
-                  setMemberIdentified(true);
-                } else {
-                  setAlertMsg("This member is not registered!!!");
-                  setOpenSnack(true);
-                }
-                setIsLoading(false);
-              });
-            }, 1000 * 60);
+
           },
           error: (error) => {
             console.error("Error fetching member details:", error);
           },
         });
+
+        setTimeout(() => {
+          memberService.getMember(pageRequest).subscribe((res) => {
+            if (res.content?.length > 0) {
+              setMemberData(res.content[0]);
+              setShowViewDetails(true);
+              setMemberIdentified(true);
+            } else {
+              setAlertMsg("This member is not registered!!!");
+              setOpenSnack(true);
+            }
+            setIsLoading(false);
+          });
+        }, 1000 * 45);
       }
     });
   };
