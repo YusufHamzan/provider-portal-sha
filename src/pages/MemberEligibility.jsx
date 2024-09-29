@@ -1234,10 +1234,10 @@ export default function MemberEligibility() {
                               <TableRow key={item.id}>
                                 <TableCell>{item?.name}</TableCell>
                                 <TableCell>
-                                  {item?.dependentShaNumber}
+                                  {item?.shaMemberNumber}
                                 </TableCell>
                                 <TableCell>
-                                  {item?.dependentShaMemberId}
+                                  {item?.shaMemberId}
                                 </TableCell>
                                 <TableCell>{item?.gender}</TableCell>
                                 <TableCell>
