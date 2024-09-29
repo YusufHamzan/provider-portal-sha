@@ -747,7 +747,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 }
                 setIsLoading(false);
               });
-            }, 1000 * 60);
+            }, 1000 * 6);
           },
           error: (error) => {
             console.error("Error fetching member details:", error);
@@ -1269,6 +1269,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   onClick={() => {
                     setMemberBasic({});
                     setMemberIdentified(false);
+                    setContributionPaid(false);
+                    setContributionStatus();
                     setIsLoading(true);
                     populateMemberFromSearch("number");
                     setContributionResponseId("");
