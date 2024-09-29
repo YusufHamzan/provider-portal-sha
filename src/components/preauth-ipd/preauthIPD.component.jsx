@@ -173,7 +173,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [isLoadingValidate, setIsLoadingValidate] = React.useState(false);
   const [Validated, setValidated] = React.useState(false);
   const [biomodalopen, setBioModalopen] = React.useState(false);
-  const [teriffAmount, setTeriffAmount] = React.useState();
+  const [isPreauthRequired, setIsPreauthRequied] = React.useState(true);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -383,7 +383,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
     if (data == null) {
       setServiceList([]);
     } else {
-      console.log(data, i);
       let pa$ = preAuthService.getPreauthTeriffAmount(
         benefitId,
         data.code.replace(/\s+/g, "")
@@ -391,6 +390,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pa$.subscribe((response) => {
         serviceDetailsList[i].tariff = response.terifs;
         // setTeriffAmount(response.terifs);
+        if (response.preauthYn === "NO") setIsPreauthRequied(false);
+        else if (response.preauthYn === "YES") setIsPreauthRequied(true);
       });
       let bts$ = benefitService.getServicesfromInterventions(
         data.value,
@@ -865,6 +866,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
     } else {
       preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
         localStorage.setItem("preauthid", res.id);
+        if (!isPreauthRequired) {
+          preAuthService.directApprove(payload).subscribe((res) => {
+            console.log("aaaaaaaaaaa", res);
+            props.handleNext();
+          });
+        }
         props.handleNext();
       });
     }
@@ -1098,7 +1105,16 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 name="estimatedCost"
                 variant="standard"
                 value={x?.estimatedCost}
-                onChange={(e) => handleEstimateCostInService(e, i)}
+                onChange={(e) => {
+                  if ((x?.tariff >= e.target.value))
+                    handleEstimateCostInService(e, i);
+                  else {
+                    setAlertMsg(
+                      "Estimated amount can not be more than SHA approved tariff"
+                    );
+                    setOpenSnack(true);
+                  }
+                }}
                 label="Estimated Cost"
               />
               <span style={{ fontSize: "12px", fontWeight: "bold" }}>
