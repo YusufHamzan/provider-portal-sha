@@ -127,10 +127,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-        // onClick={() => {
-        //   setShowServices(false);
-        //   getClaimsByBenefit(rowData?.benefitId);
-        // }}
+      // onClick={() => {
+      //   setShowServices(false);
+      //   getClaimsByBenefit(rowData?.benefitId);
+      // }}
       >
         {rowData.consumed}
       </span>
@@ -223,7 +223,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -470,7 +470,7 @@ export default function MemberEligibility() {
     }
     memberService.getMember(pageRequest).subscribe((res) => {
       if (res?.content[0].shaStatus === "Paid") setContributionStatus("Paid");
-      else if ((res?.content[0].shaStatus === "Unpaid")){
+      else if ((res?.content[0].shaStatus === "Unpaid")) {
         setContributionStatus("Unpaid");
         setAlertMsg(`Contribution Not Paid Yet.`);
         setOpenSnack(true);
@@ -607,7 +607,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -704,7 +704,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -939,8 +939,8 @@ export default function MemberEligibility() {
                     />
                   )}
                   {!contributionPaid &&
-                    memberBasic?.memberId &&
-                    memberBasic?.identificationDocNumber && (
+                    memberData?.memberId &&
+                    memberData?.identificationDocNumber && (
                       <PButton
                         label="Initiate"
                         severity="help"
@@ -949,7 +949,7 @@ export default function MemberEligibility() {
                       />
                     )}
                   {contributionResponseId &&
-                  (!contributionStatus || contributionStatus === "Unpaid") ? (
+                    (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <PButton
                       label="Check status"
                       severity="help"
@@ -1353,11 +1353,10 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${
-                                parentBenefitName != undefined
-                                  ? `${parentBenefitName} >`
-                                  : ""
-                              } ${item?.benefitName}`}
+                              {` ${parentBenefitName != undefined
+                                ? `${parentBenefitName} >`
+                                : ""
+                                } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===
