@@ -278,13 +278,6 @@ export default function MemberEligibility() {
       active: true,
     };
 
-    if (searchType === "name") {
-      pageRequest.name = id;
-    }
-    if (searchType === "membership_no") {
-      pageRequest.value = id;
-      pageRequest.key = "MEMBERSHIP_NO";
-    }
     if (searchType === "national_id") {
       pageRequest.value = id;
       pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
@@ -298,70 +291,67 @@ export default function MemberEligibility() {
       pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
     }
 
-    if (searchType !== "national_id") {
-      setAlertMsg(`Currently National ID search type is allowed only`);
-      setOpenSnack(true);
-    } else {
-      memberService.getMember(pageRequest).subscribe((res) => {
-        if (res.content?.length > 0) {
-          // if (searchType === "name") {
-          //   setMemberName({ res });
-          //   handleopenClientModal();
-          // } else {
-          setMemberData(res.content[0]);
-          setIsLoading(false);
-          // getImage(res?.content[0]?.id);
-          memberService
-            .getMemberBalance(res?.content[0]?.membershipNo)
-            .subscribe((resesponse) => {
-              const temp = resesponse.map((item) => {
-                const benefit = benefitData?.find(
-                  (ele) => ele.id === item.benefit
-                );
-                item.benefitId = benefit?.id;
-                item.benefit = benefit?.name;
-                item.consumed = item.maxLimit - item.balance;
-                return item;
-              });
-              setTableData(temp);
-              setShowBalanceDetails(true);
-            });
-          // }
-        } else {
-          let pgreq = {};
-          if (searchType === "national_id") {
-            pgreq.nationalId = id;
-          } else if (searchType === "passport_number") {
-            pgreq.passport_number = id;
-          } else if (searchType === "birth_certificate_number") {
-            pgreq.birth_certificate_number = id;
-          } else {
-            pgreq = {};
-          }
 
-          retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
-            next: (res) => {
-              setTimeout(() => {
-                memberService.getMember(pageRequest).subscribe((res) => {
-                  if (res.content?.length > 0) {
-                    setMemberData(res.content[0]);
-                    setShowViewDetails(true);
-                    setMemberIdentified(true);
-                  } else {
-                    setAlertMsg("This member is not registered!!!");
-                    setOpenSnack(true);
-                  }
-                  setIsLoading(false);
-                });
-              }, 1000 * 60);
-            },
-            error: (error) => {
-              console.error("Error fetching member details:", error);
-            },
+    memberService.getMember(pageRequest).subscribe((res) => {
+      if (res.content?.length > 0) {
+        // if (searchType === "name") {
+        //   setMemberName({ res });
+        //   handleopenClientModal();
+        // } else {
+        setMemberData(res.content[0]);
+        setIsLoading(false);
+        // getImage(res?.content[0]?.id);
+        setMemberIdentified(true);
+        memberService
+          .getMemberBalance(res?.content[0]?.membershipNo)
+          .subscribe((resesponse) => {
+            const temp = resesponse.map((item) => {
+              const benefit = benefitData?.find(
+                (ele) => ele.id === item.benefit
+              );
+              item.benefitId = benefit?.id;
+              item.benefit = benefit?.name;
+              item.consumed = item.maxLimit - item.balance;
+              return item;
+            });
+            setTableData(temp);
+            setShowBalanceDetails(true);
           });
+        // }
+      } else {
+        let pgreq = {};
+        if (searchType === "national_id") {
+          pgreq.nationalId = id;
+        } else if (searchType === "passport_number") {
+          pgreq.passport_number = id;
+        } else if (searchType === "birth_certificate_number") {
+          pgreq.birth_certificate_number = id;
+        } else {
+          pgreq = {};
         }
-      });
-    }
+
+        retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
+          next: (res) => {
+            setTimeout(() => {
+              memberService.getMember(pageRequest).subscribe((res) => {
+                if (res.content?.length > 0) {
+                  setMemberData(res.content[0]);
+                  setShowViewDetails(true);
+                  setMemberIdentified(true);
+                } else {
+                  setAlertMsg("This member is not registered!!!");
+                  setOpenSnack(true);
+                }
+                setIsLoading(false);
+              });
+            }, 1000 * 60);
+          },
+          error: (error) => {
+            console.error("Error fetching member details:", error);
+          },
+        });
+      }
+    });
   };
 
   const onVerifyClick = () => {

@@ -416,9 +416,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -672,95 +671,91 @@ export default function ClaimsPreAuthIPDComponent(props) {
     // :
     // "SHA5764836962337-9"
 
-    if (searchType !== "national_id") {
-      setAlertMsg(`Currently National ID search type is allowed only`);
-      setOpenSnack(true);
-    } else {
-      memberservice.getMember(pageRequest).subscribe((res) => {
-        if (res.content?.length > 0) {
-          // if (searchType === "name") {
-          //   setMemberName({ res });
-          //   handleopenClientModal();
-          // } else {
-          //   formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-          //   setMemberBasic({
-          //     ...memberBasic,
-          //     ...res?.content[0]
-          //   });
-          //   setShowViewDetails(true);
-          //   setMemberIdentified(true);
-          //   getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-          // }
 
-          //logic for data avaiblable
-          setIsLoading(false);
-          formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-          setMemberBasic({
-            ...memberBasic,
-            ...res?.content[0],
-          });
-          setShowViewDetails(true);
-          setMemberIdentified(true);
-          getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+    memberservice.getMember(pageRequest).subscribe((res) => {
+      if (res.content?.length > 0) {
+        // if (searchType === "name") {
+        //   setMemberName({ res });
+        //   handleopenClientModal();
+        // } else {
+        //   formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+        //   setMemberBasic({
+        //     ...memberBasic,
+        //     ...res?.content[0]
+        //   });
+        //   setShowViewDetails(true);
+        //   setMemberIdentified(true);
+        //   getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+        // }
+
+        //logic for data avaiblable
+        setIsLoading(false);
+        formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+        setMemberBasic({
+          ...memberBasic,
+          ...res?.content[0],
+        });
+        setShowViewDetails(true);
+        setMemberIdentified(true);
+        getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+      } else {
+        // formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+        // setMemberBasic({
+        //   ...memberBasic,
+        //   ...res?.content[0],
+        // });
+        // setShowViewDetails(true);
+        // setMemberIdentified(true);
+        // getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+        // setAlertMsg("This member is not registered");
+        // setOpenSnack(true);
+
+        //logic for if not available
+        let pgreq = {};
+        if (searchType === "national_id") {
+          pgreq.nationalId = id;
+        } else if (searchType === "passport_number") {
+          pgreq.passport_number = id;
+        } else if (searchType === "birth_certificate_number") {
+          pgreq.birth_certificate_number = id;
         } else {
-          // formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-          // setMemberBasic({
-          //   ...memberBasic,
-          //   ...res?.content[0],
-          // });
-          // setShowViewDetails(true);
-          // setMemberIdentified(true);
-          // getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-          // setAlertMsg("This member is not registered");
-          // setOpenSnack(true);
-
-          //logic for if not available
-          let pgreq = {};
-          if (searchType === "national_id") {
-            pgreq.nationalId = id;
-          } else if (searchType === "passport_number") {
-            pgreq.passport_number = id;
-          } else if (searchType === "birth_certificate_number") {
-            pgreq.birth_certificate_number = id;
-          } else {
-            pgreq = {};
-          }
-
-          retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
-            next: (res) => {
-              setTimeout(() => {
-                memberservice.getMember(pageRequest).subscribe((res) => {
-                  if (res.content?.length > 0) {
-                    formik.setFieldValue(
-                      "contactNoOne",
-                      res.content[0].mobileNo
-                    );
-                    setMemberBasic({
-                      ...memberBasic,
-                      ...res?.content[0],
-                    });
-                    setShowViewDetails(true);
-                    setMemberIdentified(true);
-                    getBenefit(
-                      res.content[0].memberId,
-                      res.content[0].policyNumber
-                    );
-                  } else {
-                    setAlertMsg("This member is not registered!!!");
-                    setOpenSnack(true);
-                  }
-                  setIsLoading(false);
-                });
-              }, 1000 * 60);
-            },
-            error: (error) => {
-              console.error("Error fetching member details:", error);
-            },
-          });
+          pgreq = {};
         }
-        // setIsLoading(false);
-      });
-    }
+
+        retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
+          next: (res) => {
+            setTimeout(() => {
+              memberservice.getMember(pageRequest).subscribe((res) => {
+                if (res.content?.length > 0) {
+                  formik.setFieldValue(
+                    "contactNoOne",
+                    res.content[0].mobileNo
+                  );
+                  setMemberBasic({
+                    ...memberBasic,
+                    ...res?.content[0],
+                  });
+                  setShowViewDetails(true);
+                  setMemberIdentified(true);
+                  getBenefit(
+                    res.content[0].memberId,
+                    res.content[0].policyNumber
+                  );
+                } else {
+                  setAlertMsg("This member is not registered!!!");
+                  setOpenSnack(true);
+                }
+                setIsLoading(false);
+              });
+            }, 1000 * 60);
+          },
+          error: (error) => {
+            console.error("Error fetching member details:", error);
+          },
+        });
+      }
+      // setIsLoading(false);
+    });
   };
 
   useEffect(() => {
@@ -978,7 +973,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1369,7 +1364,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1617,7 +1612,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                  (!contributionStatus || contributionStatus === "Unpaid") ? (
+                    (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
