@@ -428,7 +428,7 @@ export default function ClaimsBasicComponent(props) {
             invoiceAmount: el.estimatedCost,
             currency: "KSH",
             exchangeRate: 1,
-            invoiceAmountKES: 0,
+            invoiceAmountKSH: 0,
             transactionNo: "",
             payee: "Provider",
             invoiceItems: [
@@ -782,19 +782,19 @@ export default function ClaimsBasicComponent(props) {
       return;
     }
 
-    if (formik.values.contactNoOne.toString().length !== 10) {
-      alert("Contact One must be of 10 digits");
-      setOpenSnack(true);
-      return;
-    }
-    if (
-      formik.values.contactNoTwo !== "" &&
-      formik.values.contactNoTwo.toString().length !== 10
-    ) {
-      alert("Contact Two must be of 10 digits");
-      setOpenSnack(true);
-      return;
-    }
+    // if (formik.values.contactNoOne.toString().length !== 10) {
+    //   alert("Contact One must be of 10 digits");
+    //   setOpenSnack(true);
+    //   return;
+    // }
+    // if (
+    //   formik.values.contactNoTwo !== "" &&
+    //   formik.values.contactNoTwo.toString().length !== 10
+    // ) {
+    //   alert("Contact Two must be of 10 digits");
+    //   setOpenSnack(true);
+    //   return;
+    // }
 
     benefitsWithCost.forEach((ele) => {
       if (ele.benefitId !== "OTHER") {
@@ -1619,7 +1619,7 @@ export default function ClaimsBasicComponent(props) {
                               value={x.invoiceAmountKSH}
                               disabled
                               variant="standard"
-                              onChange={(e) => handleInputChangeService(e, i)}
+                              // onChange={(e) => handleInputChangeService(e, i)}
                               label="Invoice Amount(KSH)"
                             />
                           </Grid>
