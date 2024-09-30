@@ -85,14 +85,23 @@ const OTPComponent = ({ id, membershipNo, handleClose, setBioMetricStatus, setVe
     memberservice.verifiedOTP(id).subscribe({
       next: (res) => {
         setverifyLoading(false);
-        setOtpVerified({
-          status: res.status === 'VALID_OTP' ? "success" : "failed",
-          msg: res.message,
-        });
+        if (res.status === 'VALID_OTP') {
+          setOtpVerified({
+            status: "success",
+            msg: res.message,
+          });
+          handleClose();
+          setBioMetricStatus && typeof setBioMetricStatus === 'function' && setBioMetricStatus('SUCCESS')
+          setVerifiedbyOTP && typeof setVerifiedbyOTP === 'function' && setVerifiedbyOTP(true)
+        }
 
-        handleClose();
-        setBioMetricStatus && typeof setBioMetricStatus === 'function' && setBioMetricStatus('SUCCESS')
-        setVerifiedbyOTP && typeof setVerifiedbyOTP === 'function' && setVerifiedbyOTP(true)
+        if (res.status === 'VALID_OTP') {
+          setOtpVerified({
+            status: "failed",
+            msg: res.message,
+          });
+        }
+
 
       },
       error: (err) => {
