@@ -428,7 +428,7 @@ export default function ClaimsBasicComponent(props) {
             invoiceAmount: el.estimatedCost,
             currency: "KSH",
             exchangeRate: 1,
-            invoiceAmountKSH: 0,
+            invoiceAmountKSH: el.estimatedCost * 1,
             transactionNo: "",
             payee: "Provider",
             invoiceItems: [

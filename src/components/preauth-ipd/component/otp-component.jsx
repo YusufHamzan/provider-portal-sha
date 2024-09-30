@@ -148,7 +148,7 @@ const OTPComponent = ({ id, membershipNo, handleClose, setBioMetricStatus, setVe
           >
             Generate OTP
           </LoadingButton>
-          <p style={{ lineHeight: 0.5 }}>You will receive an OTP in your registered email.</p>
+          <p style={{ lineHeight: 0.5 }}>You will receive an OTP in your registered email and number.</p>
         </>
       ) : (
         <>
