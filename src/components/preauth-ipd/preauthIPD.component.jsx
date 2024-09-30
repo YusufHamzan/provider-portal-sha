@@ -1586,7 +1586,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     {/* BUTTONS SECTION */}
 
 
-                    {bioMetricStatus === "" && !biometricInitiated && (
+                    {bioMetricStatus === "" && (
                       <Grid item xs={6} container direction="column" alignItems='flex-start'>
                         <Button label="Initiate Biometric" severity="help" text onClick={handleInitiate} />
                         <Button label="Initiate With OTP" severity="help" text onClick={handleInitiateOTP} />
