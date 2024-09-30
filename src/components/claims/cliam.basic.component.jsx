@@ -272,11 +272,11 @@ export default function ClaimsBasicComponent(props) {
       invoiceDate: 0,
       invoiceDateVal: new Date(),
       invoiceAmount: 0,
-      currency: "",
-      exchangeRate: 0,
+      currency: "KSH",
+      exchangeRate: 1,
       invoiceAmountKSH: 0,
       transactionNo: "",
-      payee: "",
+      payee: "Provider",
       invoiceItems: [
         {
           serviceType: "",
@@ -353,9 +353,9 @@ export default function ClaimsBasicComponent(props) {
       size: 1000,
       memberId: id,
       policyNumber: policyNo,
-      claimType: 'IPD',
+      claimType: "IPD",
     });
-    bts$.subscribe(result => {
+    bts$.subscribe((result) => {
       setBenefits(result);
     });
   };
@@ -412,29 +412,29 @@ export default function ClaimsBasicComponent(props) {
     const processedProviderIds = new Set();
     res.benefitsWithCost &&
       res.benefitsWithCost
-        .filter(item => {
+        .filter((item) => {
           if (processedProviderIds.has(item.providerId)) {
             return false; // Skip this item if providerId has already been processed
           }
           processedProviderIds.add(item.providerId); // Mark providerId as processed
           return true;
         })
-        .forEach(el => {
+        .forEach((el) => {
           let obj = {
             ...el,
-            invoiceNo: '',
+            invoiceNo: "",
             invoiceDate: 0,
             invoiceDateVal: new Date(),
             invoiceAmount: el.estimatedCost,
-            currency: '',
-            exchangeRate: 0,
+            currency: "KSH",
+            exchangeRate: 1,
             invoiceAmountKES: 0,
-            transactionNo: '',
-            payee: '',
+            transactionNo: "",
+            payee: "Provider",
             invoiceItems: [
               {
-                serviceType: '',
-                expenseHead: '',
+                serviceType: "",
+                expenseHead: "",
                 rateKes: 0,
                 unit: 0,
                 totalKes: 0,
@@ -519,7 +519,7 @@ export default function ClaimsBasicComponent(props) {
     navigate("/claims");
   };
 
-  const handleAddInvoiceItems = (i,x) => {
+  const handleAddInvoiceItems = (i, x) => {
     setSelectedInvoiceItems(invoiceDetailsList[i].invoiceItems);
     setSelectedInvoiceItemIndex(i);
     setInvoiceData(x);
@@ -1033,7 +1033,15 @@ export default function ClaimsBasicComponent(props) {
                 }}
               >
                 <form onSubmit={formik.handleSubmit}>
-                  <Grid container spacing={3} style={{ marginBottom: "50px" }}>
+                  <Grid
+                    container
+                    spacing={3}
+                    style={{
+                      marginBottom: "50px",
+                      marginTop: "0",
+                      marginLeft: "0",
+                    }}
+                  >
                     <TextField
                       id="standard-basic"
                       variant="standard"
@@ -1644,9 +1652,9 @@ export default function ClaimsBasicComponent(props) {
                               >
                                 <MenuItem value="Provider">Provider</MenuItem>
                                 {/* <MenuItem value="Member">Member</MenuItem> */}
-                                <MenuItem value="Intermediaries">
+                                {/* <MenuItem value="Intermediaries">
                                   Intermediaries
-                                </MenuItem>
+                                </MenuItem> */}
                                 {/* <MenuItem value="Corporate">Corporate</MenuItem> */}
                               </Select>
                             </FormControl>
@@ -2583,7 +2591,7 @@ export default function ClaimsBasicComponent(props) {
                             variant="contained"
                             color="primary"
                             style={{ marginLeft: "5px", marginTop: "10px" }}
-                            onClick={() => handleAddInvoiceItems(i,x)}
+                            onClick={() => handleAddInvoiceItems(i, x)}
                           >
                             Add Invoice items
                           </Button>

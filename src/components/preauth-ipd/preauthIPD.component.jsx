@@ -1290,6 +1290,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   variant="contained"
                   onClick={() => {
                     setMemberBasic({});
+                    setbiometricResponseId();
+                    setBioMetricStatus(false)
                     setMemberIdentified(false);
                     setContributionPaid(false);
                     setContributionStatus();
