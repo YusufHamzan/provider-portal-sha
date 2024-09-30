@@ -378,7 +378,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   React.useEffect(() => {
     getServiceTypes();
   }, []);
-  
+
   const getServices = (data, i) => {
     if (data == null) {
       setServiceList([]);
@@ -395,6 +395,15 @@ export default function ClaimsPreAuthIPDComponent(props) {
         let temp = [...isPreauthRequired];
         temp[i] = response.preauthYn;
         setIsPreauthRequied(temp);
+
+        const gender = response.gender.toLowerCase();
+        const memberGender = memberBasic.gender.toLowerCase();
+
+        if (!["all", "both"].includes(gender) && gender !== memberGender) {
+          setAlertMsg(`Not Allowed!`);
+          setOpenSnack(true);
+          return;
+        }
       });
       let bts$ = benefitService.getServicesfromInterventions(
         data.value,
@@ -845,41 +854,71 @@ export default function ClaimsPreAuthIPDComponent(props) {
       preAuthType: "IPD",
     };
 
-    if (id) {
-      preAuthService.editPreAuth(payload, id, 1).subscribe((res) => {
-        if (
-          formik.values.preAuthStatus === "PRE_AUTH_REQUESTED" ||
-          formik.values.preAuthStatus === "PRE_AUTH_APPROVED" ||
-          formik.values.preAuthStatus === "ADD_DOC_APPROVED" ||
-          formik.values.preAuthStatus === "ENHANCEMENT_APPROVED"
-        ) {
-          let payload1 = {
-            claimStatus: formik.values.preAuthStatus,
-            actionForClaim: "ENHANCE",
-          };
-          preAuthService
-            .changeStatus(id, "PREAUTH_CLAIM", payload1)
-            .subscribe((res) => {
+    let checkDuplicateArray = [];
+    const requests = serviceDetailListModify2.map((el, i) => {
+      let pageRequest = {
+        benefitId: el.benefitId,
+        interventionCode: el.interventionCode,
+        providerId: el.providerId,
+        membershipNo: memberBasic.membershipNo,
+        expectedDoa: new Date(selectedDOA).getTime(),
+      };
+
+      return preAuthService
+        .checkDuplicatePreauth(pageRequest)
+        .toPromise()
+        .then((res) => {
+          if (res.isDuplicate) {
+            checkDuplicateArray.push(1);
+          } else {
+            checkDuplicateArray.push(0);
+          }
+        });
+    });
+
+    Promise.all(requests).then(() => {
+      if (!checkDuplicateArray.includes(1)) {
+        if (id) {
+          preAuthService.editPreAuth(payload, id, 1).subscribe((res) => {
+            if (
+              formik.values.preAuthStatus === "PRE_AUTH_REQUESTED" ||
+              formik.values.preAuthStatus === "PRE_AUTH_APPROVED" ||
+              formik.values.preAuthStatus === "ADD_DOC_APPROVED" ||
+              formik.values.preAuthStatus === "ENHANCEMENT_APPROVED"
+            ) {
+              let payload1 = {
+                claimStatus: formik.values.preAuthStatus,
+                actionForClaim: "ENHANCE",
+              };
+              preAuthService
+                .changeStatus(id, "PREAUTH_CLAIM", payload1)
+                .subscribe((res) => {
+                  props.handleNext();
+                });
+            } else {
+              props.handleNext();
+            }
+          });
+        } else {
+          if (!isPreauthRequired.includes("YES")) {
+            preAuthService.directApprove(payload).subscribe((res) => {
+              localStorage.setItem("directApprovedPreauth", "Yes");
+              localStorage.setItem("preauthid", res.id);
               props.handleNext();
             });
-        } else {
-          props.handleNext();
+          } else {
+            preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
+              localStorage.setItem("preauthid", res.id);
+              props.handleNext();
+            });
+          }
         }
-      });
-    } else {
-      if (!isPreauthRequired.includes("YES")) {
-        preAuthService.directApprove(payload).subscribe((res) => {
-          localStorage.setItem("directApprovedPreauth", "Yes");
-          localStorage.setItem("preauthid", res.id);
-          props.handleNext();
-        });
       } else {
-        preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
-          localStorage.setItem("preauthid", res.id);
-          props.handleNext();
-        });
+        setAlertMsg(`Not Allowed!`);
+        setOpenSnack(true);
+        return;
       }
-    }
+    });
   };
 
   const handleDODDate = (date) => {
@@ -1291,7 +1330,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   onClick={() => {
                     setMemberBasic({});
                     setbiometricResponseId();
-                    setBioMetricStatus(false)
+                    setBioMetricStatus(false);
                     setMemberIdentified(false);
                     setContributionPaid(false);
                     setContributionStatus();
