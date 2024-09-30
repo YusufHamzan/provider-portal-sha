@@ -11,6 +11,8 @@ import { PreAuthService } from "../../remote-api/api/claim-services/preauth-serv
 import { MemberService } from "../../remote-api/api/member-services";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { map } from "rxjs/operators";
+import { Dialog as PDialog } from 'primereact/dialog';
+import { Divider as PDivider } from 'primereact/divider';
 import {
   Alert,
   Autocomplete,
@@ -61,6 +63,7 @@ import {
 import moment from "moment";
 import MultipleStopIcon from "@mui/icons-material/MultipleStop";
 import { RetailUserService } from "../../remote-api/api/master-services/retail-users-service";
+import OTPComponent from "./component/otp-component";
 const useStyles = makeStyles((theme) => ({
   input1: {
     width: "50%",
@@ -421,9 +424,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -981,7 +983,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1199,7 +1201,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
       setbiometricResponseId(data.id);
     });
   };
-
+  const handleInitiateOTP = () => {
+    if (!memberBasic.id && !memberBasic.membershipNo) {
+      alert('Search Member Details First')
+      return
+    }
+    setOpenOTPModal(true)
+  }
   const handleContributionInitiate = () => {
     memberservice
       .initiateContribution(
@@ -1218,6 +1226,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setbiometricResponseId("");
     setBioMetricStatus("");
   }, [searchType]);
+
+  const [openOTPModal, setOpenOTPModal] = useState(false)
+  const [verifiedbyOTP, setVerifiedbyOTP] = useState(false)
+
+  const handleClose = () => {
+    setOpenOTPModal(false);
+  }
 
   return (
     <>
@@ -1383,7 +1398,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1450,6 +1465,26 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 </Grid>
               } */}
           </Grid>
+          {
+            < PDialog
+              header="Member OTP Validation"
+              visible={openOTPModal}
+              position='up'
+              style={{ width: '50vw' }}
+              onHide={() => { if (!openOTPModal) return; setOpenOTPModal(false); }}
+              draggable={true}
+              resizable={true}
+            >
+
+              <OTPComponent
+                id={memberBasic.id}
+                membershipNo={memberBasic.membershipNo}
+                handleClose={handleClose}
+                setBioMetricStatus={setBioMetricStatus}
+                setVerifiedbyOTP={setVerifiedbyOTP}
+              />
+            </PDialog>
+          }
           <Grid container spacing={3} style={{ marginBottom: "20px" }}>
             <Grid item xs={12} container spacing={2}>
               <Grid item xs={12} sm={4}>
@@ -1459,7 +1494,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
-                    height: "60px",
+                    height: "80px",
                   }}
                 >
                   <Typography variant="subtitle1">
@@ -1490,92 +1525,62 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 <Box
                   sx={{
                     position: "relative",
-                    p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
-                    height: "60px",
+                    height: "80px",
                   }}
                 >
-                  <Grid container alignItems="center">
-                    <Typography
-                      variant="subtitle1"
-                      style={{ marginRight: "12px" }}
-                    >
-                      Member Biometric
-                    </Typography>
-                    {!bioMetricStatus ? (
-                      <ErrorIcon
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "red",
-                        }}
-                      />
-                    ) : null}
-                    {!bioMetricStatus ? (
-                      biometricInitiated && biometricResponseId ? (
-                        <Button
-                          label="Check status"
-                          severity="help"
-                          text
-                          onClick={handleCheckStatus}
-                        />
-                      ) : (
-                        <Button
-                          label="Initiate"
-                          severity="help"
-                          text
-                          onClick={handleInitiate}
-                        />
-                      )
-                    ) : bioMetricStatus === "IN_PROGRESS" || "FAILED" ? (
-                      <Button
-                        label="Check status"
-                        severity="help"
-                        text
-                        onClick={handleCheckStatus}
-                      />
-                    ) : null}
+                  <Grid container alignItems="center" style={{ padding: "8px" }}>
+                    <Grid item xs={6}>
+                      <Typography variant="subtitle1" style={{ marginRight: "12px" }}>
+                        Member Validation
+                      </Typography>
+                    </Grid>
 
-                    {bioMetricStatus === "IN_PROGRESS" ? (
-                      <PunchClock
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "orange",
-                        }}
-                      />
-                    ) : bioMetricStatus === "SUCCESS" ? (
-                      <CheckCircle
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "green",
-                        }}
-                      />
-                    ) : bioMetricStatus === "FAILED" ? (
-                      <CancelOutlined
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "red",
-                        }}
-                      />
-                    ) : !bioMetricStatus && biometricInitiated ? (
-                      <MultipleStopIcon
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "red",
-                        }}
-                      />
-                    ) : null}
+                    {/* BUTTONS SECTION */}
+
+
+                    {bioMetricStatus === "" && !biometricInitiated && (
+                      <Grid item xs={6} container direction="column" alignItems='flex-start'>
+                        <Button label="Initiate Biometric" severity="help" text onClick={handleInitiate} />
+                        <Button label="Initiate With OTP" severity="help" text onClick={handleInitiateOTP} />
+                      </Grid>
+                    )}
+
+                    {bioMetricStatus === "" && biometricInitiated && biometricResponseId && (
+                      <Button label="Check status" severity="help" text onClick={handleCheckStatus} />
+                    )}
+
+                    {bioMetricStatus === "IN_PROGRESS" || bioMetricStatus === "FAILED" && (
+                      <Button label="Check status" severity="help" text onClick={handleCheckStatus} />
+                    )}
+
+
+
+                    {/* TOP ICONS SECTION */}
+
+                    {!biometricInitiated && bioMetricStatus === "" && (
+                      <ErrorIcon sx={{ position: "absolute", top: 8, right: 8, color: "red" }} />
+                    )}
+
+                    {biometricInitiated && bioMetricStatus === "" && (
+                      <MultipleStopIcon sx={{ position: "absolute", top: 8, right: 8, color: "red" }} />
+                    )}
+
+                    {bioMetricStatus === "IN_PROGRESS" && (
+                      <PunchClock sx={{ position: "absolute", top: 8, right: 8, color: "orange" }} />
+                    )}
+
+                    {bioMetricStatus === "SUCCESS" && (
+                      <CheckCircle sx={{ position: "absolute", top: 8, right: 8, color: "green" }} />
+                    )}
+
+                    {bioMetricStatus === "FAILED" && (
+                      <CancelOutlined sx={{ position: "absolute", top: 8, right: 8, color: "red" }} />
+                    )}
+
                   </Grid>
+
                 </Box>
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -1585,7 +1590,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     p: 2,
                     border: "1px solid #ccc",
                     borderRadius: 2,
-                    height: "60px",
+                    height: "80px",
                     display: "flex",
                   }}
                 >
@@ -1631,7 +1636,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                  (!contributionStatus || contributionStatus === "Unpaid") ? (
+                    (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
@@ -2360,7 +2365,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           </Grid>
           {/* </form> */}
         </Box>
-      </Paper>
+      </Paper >
     </>
   );
 }

@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 import OtpInput from "react-otp-input";
 import { Check, CircleNotificationsOutlined } from "@mui/icons-material";
 import { MemberService } from "../../../remote-api/api/member-services";
+import { Divider } from "primereact/divider";
 
 const memberservice = new MemberService();
-const OTPComponent = ({ id, membershipNo, handleClose }) => {
+const OTPComponent = ({ id, membershipNo, handleClose, setBioMetricStatus, setVerifiedbyOTP }) => {
   const [otp, setOtp] = useState("");
   const [otpGenerated, setOtpGenerated] = useState(false);
   const [otpVerified, setOtpVerified] = useState({
@@ -16,6 +17,7 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
   const [verifyLoading, setverifyLoading] = useState(false);
   const [generateLoading, setgenerateLoading] = useState(false);
   const [countdown, setCountdown] = useState(30);
+  const [verifyInitiated, setVerifyInitiated] = useState(false)
 
   useEffect(() => {
     let timer;
@@ -49,27 +51,23 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
     setverifyLoading(true);
 
     const payload = { otp: otp };
-    if (!payload.otp) {
-      alert("Generate OTP first!");
+
+    if (payload.otp.length < 6) {
+      alert("Please fill all the box in OTP!");
+      setverifyLoading(false);
       return;
     }
     if (!id) {
       alert("Fetch member details!");
+      setverifyLoading(false);
       return;
     }
 
+
     memberservice.verifyOTP(payload, id).subscribe({
       next: (res) => {
+        setVerifyInitiated(true)
         setverifyLoading(false);
-        setOtpVerified({
-          status: !!res.otpValidationStatus ? "success" : "failed",
-          msg: res.message,
-        });
-        if (res.otpValidationStatus) {
-          setTimeout(() => {
-            handleClose();
-          }, 3000);
-        }
       },
       error: (err) => {
         setverifyLoading(false);
@@ -77,10 +75,35 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
           status: "failed",
           msg: "Something went wrong.",
         });
-        alert("Something went wrong!");
       },
     });
   };
+
+
+  const getStatusHandler = () => {
+    setverifyLoading(true);
+    memberservice.verifiedOTP(id).subscribe({
+      next: (res) => {
+        setverifyLoading(false);
+        setOtpVerified({
+          status: res.status === 'VALID_OTP' ? "success" : "failed",
+          msg: res.message,
+        });
+
+        handleClose();
+        setBioMetricStatus && typeof setBioMetricStatus === 'function' && setBioMetricStatus('SUCCESS')
+        setVerifiedbyOTP && typeof setVerifiedbyOTP === 'function' && setVerifiedbyOTP(true)
+
+      },
+      error: (err) => {
+        setverifyLoading(false);
+        setOtpVerified({
+          status: "failed",
+          msg: "Something went wrong.",
+        });
+      },
+    });
+  }
 
   const regenerateOTPHandler = () => {
     setCountdown(30);
@@ -106,15 +129,18 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
       }}
     >
       {!otpGenerated ? (
-        <LoadingButton
-          loading={generateLoading}
-          variant="contained"
-          onClick={generateOTPHandler}
-          disableElevation
-          sx={{ textTransform: "none" }}
-        >
-          Generate OTP
-        </LoadingButton>
+        <>
+          <LoadingButton
+            loading={generateLoading}
+            variant="contained"
+            onClick={generateOTPHandler}
+            disableElevation
+            sx={{ textTransform: "none" }}
+          >
+            Generate OTP
+          </LoadingButton>
+          <p style={{ lineHeight: 0.5 }}>You will receive an OTP in your registered email.</p>
+        </>
       ) : (
         <>
           <FormHelperText>
@@ -141,16 +167,28 @@ const OTPComponent = ({ id, membershipNo, handleClose }) => {
               {countdown > 0 ? `Re-generate in ${countdown}s` : "Re-generate"}
             </span>
           </FormHelperText>
-          <LoadingButton
-            loading={verifyLoading}
-            color="success"
-            onClick={OTPVerifyHandler}
-            disableElevation
-            variant="contained"
-            sx={{ textTransform: "none" }}
-          >
-            Verify!
-          </LoadingButton>
+          {!verifyInitiated ?
+            <LoadingButton
+              loading={verifyLoading}
+              color="success"
+              onClick={OTPVerifyHandler}
+              disableElevation
+              variant="contained"
+              sx={{ textTransform: "none" }}
+            >
+              Initiate Verification
+            </LoadingButton> :
+            <LoadingButton
+              loading={verifyLoading}
+              color="success"
+              onClick={getStatusHandler}
+              disableElevation
+              variant="contained"
+              sx={{ textTransform: "none" }}
+            >
+              Check Status
+            </LoadingButton>
+          }
         </>
       )}
 
