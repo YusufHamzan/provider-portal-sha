@@ -1585,15 +1585,17 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     {/* BUTTONS SECTION */}
 
+                    {console.log('bioMetricStatus ', bioMetricStatus)}
 
-                    {bioMetricStatus === "" && (
+
+                    {!bioMetricStatus && (
                       <Grid item xs={6} container direction="column" alignItems='flex-start'>
                         <Button label="Initiate Biometric" severity="help" text onClick={handleInitiate} />
                         <Button label="Initiate With OTP" severity="help" text onClick={handleInitiateOTP} />
                       </Grid>
                     )}
 
-                    {bioMetricStatus === "" && biometricInitiated && biometricResponseId && (
+                    {!bioMetricStatus && biometricInitiated && biometricResponseId && (
                       <Button label="Check status" severity="help" text onClick={handleCheckStatus} />
                     )}
 
