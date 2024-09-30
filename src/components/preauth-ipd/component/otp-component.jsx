@@ -95,7 +95,7 @@ const OTPComponent = ({ id, membershipNo, handleClose, setBioMetricStatus, setVe
           setVerifiedbyOTP && typeof setVerifiedbyOTP === 'function' && setVerifiedbyOTP(true)
         }
 
-        if (res.status === 'VALID_OTP') {
+        if (res.status === 'INVALID_OTP') {
           setOtpVerified({
             status: "failed",
             msg: res.message,
