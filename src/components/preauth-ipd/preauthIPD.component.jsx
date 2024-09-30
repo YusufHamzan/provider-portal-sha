@@ -173,7 +173,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [isLoadingValidate, setIsLoadingValidate] = React.useState(false);
   const [Validated, setValidated] = React.useState(false);
   const [biomodalopen, setBioModalopen] = React.useState(false);
-  const [isPreauthRequired, setIsPreauthRequied] = React.useState(true);
+  const [isPreauthRequired, setIsPreauthRequied] = React.useState([]);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -378,7 +378,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   React.useEffect(() => {
     getServiceTypes();
   }, []);
-
+  
   const getServices = (data, i) => {
     if (data == null) {
       setServiceList([]);
@@ -388,10 +388,13 @@ export default function ClaimsPreAuthIPDComponent(props) {
         data.code.replace(/\s+/g, "")
       );
       pa$.subscribe((response) => {
+        const list = [...serviceDetailsList];
         serviceDetailsList[i].tariff = response.terifs;
-        // setTeriffAmount(response.terifs);
-        if (response.preauthYn === "NO") setIsPreauthRequied(false);
-        else if (response.preauthYn === "YES") setIsPreauthRequied(true);
+        setServiceDetailsList(list);
+
+        let temp = [...isPreauthRequired];
+        temp[i] = response.preauthYn;
+        setIsPreauthRequied(temp);
       });
       let bts$ = benefitService.getServicesfromInterventions(
         data.value,
@@ -864,16 +867,18 @@ export default function ClaimsPreAuthIPDComponent(props) {
         }
       });
     } else {
-      preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
-        localStorage.setItem("preauthid", res.id);
-        if (!isPreauthRequired) {
-          preAuthService.directApprove(payload).subscribe((res) => {
-            console.log("aaaaaaaaaaa", res);
-            props.handleNext();
-          });
-        }
-        props.handleNext();
-      });
+      if (!isPreauthRequired.includes("YES")) {
+        preAuthService.directApprove(payload).subscribe((res) => {
+          localStorage.setItem("directApprovedPreauth", "Yes");
+          localStorage.setItem("preauthid", res.id);
+          props.handleNext();
+        });
+      } else {
+        preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
+          localStorage.setItem("preauthid", res.id);
+          props.handleNext();
+        });
+      }
     }
   };
 
@@ -1106,7 +1111,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 variant="standard"
                 value={x?.estimatedCost}
                 onChange={(e) => {
-                  if ((x?.tariff >= e.target.value))
+                  if (x?.tariff >= e.target.value)
                     handleEstimateCostInService(e, i);
                   else {
                     setAlertMsg(

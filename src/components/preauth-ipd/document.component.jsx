@@ -241,7 +241,7 @@ export default function ClaimsDocumentComponent(props) {
       }
     });
   };
-
+  
   return (
     <Paper elevation="none">
       {preAuthDetails.preAuthStatus === "ADD_DOC_REQUESTED" && (
@@ -418,21 +418,23 @@ export default function ClaimsDocumentComponent(props) {
       {/* {query2.get('mode') !== 'viewOnly' && ( */}
       <Box p={3} my={2}>
         <Grid item xs={12} style={{ display: "flex", alignItems: "end" }}>
-          <Button
-            className={`mr10 ${classes.buttonPrimary}`}
-            variant="contained"
-            color="primary"
-            onClick={onRequestForReview}
-            disabled={
-              !preAuthDetails.preAuthStatus ||
-              (preAuthDetails.preAuthStatus === "DRAFT" &&
-                preAuthDetails?.subStatus != "DOCUMENT_UPLOADED")
-            }
-          >
-            {preAuthDetails.preAuthStatus === "APPROVED"
-              ? "Request Enhancement"
-              : "Request"}
-          </Button>
+          {localStorage.getItem("directApprovedPreauth") != "Yes" && (
+            <Button
+              className={`mr10 ${classes.buttonPrimary}`}
+              variant="contained"
+              color="primary"
+              onClick={onRequestForReview}
+              disabled={
+                !preAuthDetails.preAuthStatus ||
+                (preAuthDetails.preAuthStatus === "DRAFT" &&
+                  preAuthDetails?.subStatus != "DOCUMENT_UPLOADED")
+              }
+            >
+              {preAuthDetails.preAuthStatus === "APPROVED"
+                ? "Request Enhancement"
+                : "Request"}
+            </Button>
+          )}
         </Grid>
       </Box>
       {/* )} */}
