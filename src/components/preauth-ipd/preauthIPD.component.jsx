@@ -176,7 +176,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [isLoadingValidate, setIsLoadingValidate] = React.useState(false);
   const [Validated, setValidated] = React.useState(false);
   const [biomodalopen, setBioModalopen] = React.useState(false);
-  const [isPreauthRequired, setIsPreauthRequied] = React.useState(true);
+  const [isPreauthRequired, setIsPreauthRequied] = React.useState([]);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -391,10 +391,22 @@ export default function ClaimsPreAuthIPDComponent(props) {
         data.code.replace(/\s+/g, "")
       );
       pa$.subscribe((response) => {
+        const list = [...serviceDetailsList];
         serviceDetailsList[i].tariff = response.terifs;
-        // setTeriffAmount(response.terifs);
-        if (response.preauthYn === "NO") setIsPreauthRequied(false);
-        else if (response.preauthYn === "YES") setIsPreauthRequied(true);
+        setServiceDetailsList(list);
+
+        let temp = [...isPreauthRequired];
+        temp[i] = response.preauthYn;
+        setIsPreauthRequied(temp);
+
+        const gender = response.gender.toLowerCase();
+        const memberGender = memberBasic.gender.toLowerCase();
+
+        if (!["all", "both"].includes(gender) && gender !== memberGender) {
+          setAlertMsg(`Not Allowed!`);
+          setOpenSnack(true);
+          return;
+        }
       });
       let bts$ = benefitService.getServicesfromInterventions(
         data.value,
@@ -844,39 +856,71 @@ export default function ClaimsPreAuthIPDComponent(props) {
       preAuthType: "IPD",
     };
 
-    if (id) {
-      preAuthService.editPreAuth(payload, id, 1).subscribe((res) => {
-        if (
-          formik.values.preAuthStatus === "PRE_AUTH_REQUESTED" ||
-          formik.values.preAuthStatus === "PRE_AUTH_APPROVED" ||
-          formik.values.preAuthStatus === "ADD_DOC_APPROVED" ||
-          formik.values.preAuthStatus === "ENHANCEMENT_APPROVED"
-        ) {
-          let payload1 = {
-            claimStatus: formik.values.preAuthStatus,
-            actionForClaim: "ENHANCE",
-          };
-          preAuthService
-            .changeStatus(id, "PREAUTH_CLAIM", payload1)
-            .subscribe((res) => {
+    let checkDuplicateArray = [];
+    const requests = serviceDetailListModify2.map((el, i) => {
+      let pageRequest = {
+        benefitId: el.benefitId,
+        interventionCode: el.interventionCode,
+        providerId: el.providerId,
+        membershipNo: memberBasic.membershipNo,
+        expectedDoa: new Date(selectedDOA).getTime(),
+      };
+
+      return preAuthService
+        .checkDuplicatePreauth(pageRequest)
+        .toPromise()
+        .then((res) => {
+          if (res.isDuplicate) {
+            checkDuplicateArray.push(1);
+          } else {
+            checkDuplicateArray.push(0);
+          }
+        });
+    });
+
+    Promise.all(requests).then(() => {
+      if (!checkDuplicateArray.includes(1)) {
+        if (id) {
+          preAuthService.editPreAuth(payload, id, 1).subscribe((res) => {
+            if (
+              formik.values.preAuthStatus === "PRE_AUTH_REQUESTED" ||
+              formik.values.preAuthStatus === "PRE_AUTH_APPROVED" ||
+              formik.values.preAuthStatus === "ADD_DOC_APPROVED" ||
+              formik.values.preAuthStatus === "ENHANCEMENT_APPROVED"
+            ) {
+              let payload1 = {
+                claimStatus: formik.values.preAuthStatus,
+                actionForClaim: "ENHANCE",
+              };
+              preAuthService
+                .changeStatus(id, "PREAUTH_CLAIM", payload1)
+                .subscribe((res) => {
+                  props.handleNext();
+                });
+            } else {
+              props.handleNext();
+            }
+          });
+        } else {
+          if (!isPreauthRequired.includes("YES")) {
+            preAuthService.directApprove(payload).subscribe((res) => {
+              localStorage.setItem("directApprovedPreauth", "Yes");
+              localStorage.setItem("preauthid", res.id);
               props.handleNext();
             });
-        } else {
-          props.handleNext();
+          } else {
+            preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
+              localStorage.setItem("preauthid", res.id);
+              props.handleNext();
+            });
+          }
         }
-      });
-    } else {
-      preAuthService.savePreAuth(payload, providerId).subscribe((res) => {
-        localStorage.setItem("preauthid", res.id);
-        if (!isPreauthRequired) {
-          preAuthService.directApprove(payload).subscribe((res) => {
-            console.log("aaaaaaaaaaa", res);
-            props.handleNext();
-          });
-        }
-        props.handleNext();
-      });
-    }
+      } else {
+        setAlertMsg(`Not Allowed!`);
+        setOpenSnack(true);
+        return;
+      }
+    });
   };
 
   const handleDODDate = (date) => {
@@ -1108,7 +1152,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 variant="standard"
                 value={x?.estimatedCost}
                 onChange={(e) => {
-                  if ((x?.tariff >= e.target.value))
+                  if (x?.tariff >= e.target.value)
                     handleEstimateCostInService(e, i);
                   else {
                     setAlertMsg(
@@ -1300,6 +1344,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   variant="contained"
                   onClick={() => {
                     setMemberBasic({});
+                    setbiometricResponseId();
+                    setBioMetricStatus(false);
                     setMemberIdentified(false);
                     setContributionPaid(false);
                     setContributionStatus();

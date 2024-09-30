@@ -122,7 +122,7 @@ const PreAuthIPDListComponent = () => {
   const [fromDate, setFromDate] = React.useState(null);
   const [toDate, setToDate] = React.useState(null);
   const [reloadTable, setReloadTable] = React.useState(false);
-
+  localStorage.removeItem("directApprovedPreauth");
   const onSearch = () => {
     setSearchModal(false);
     setReloadTable(true);

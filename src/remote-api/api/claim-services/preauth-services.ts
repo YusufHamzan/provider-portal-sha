@@ -248,4 +248,13 @@ export class PreAuthService {
       )
       .pipe(map((response) => response.data));
   }
+
+  checkDuplicatePreauth(pagerqsts: any): Observable<any> {
+    return http
+      .get<Page<any>>(
+        `${this.QUERY_CONTEXT}/preauths/sha-duplicate-preauth-validation`,
+        { params: pagerqsts }
+      )
+      .pipe(map((response) => response.data));
+  }
 }
