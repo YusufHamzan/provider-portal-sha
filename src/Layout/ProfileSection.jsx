@@ -131,6 +131,7 @@ export default function ProfileSection({ logout }) {
         <MenuItem
           onClick={() => {
             handleClose()
+            keycloak.logout()
             localStorage.clear();
             logout();
           }}
