@@ -270,7 +270,7 @@ export default function Dashboard() {
   return (
     <Container maxWidth="xl">
       <Typography variant="h6" fontWeight={"bold"} sx={{ mb: 2 }}>
-        Hi, Welcome back 👋
+        Hi, Welcome 👋
       </Typography>
       <Box
         sx={{
