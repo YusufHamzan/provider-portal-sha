@@ -11,8 +11,8 @@ import { PreAuthService } from "../../remote-api/api/claim-services/preauth-serv
 import { MemberService } from "../../remote-api/api/member-services";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { map } from "rxjs/operators";
-import { Dialog as PDialog } from 'primereact/dialog';
-import { Divider as PDivider } from 'primereact/divider';
+import { Dialog as PDialog } from "primereact/dialog";
+import { Divider as PDivider } from "primereact/divider";
 import {
   Alert,
   Autocomplete,
@@ -64,6 +64,9 @@ import moment from "moment";
 import MultipleStopIcon from "@mui/icons-material/MultipleStop";
 import { RetailUserService } from "../../remote-api/api/master-services/retail-users-service";
 import OTPComponent from "./component/otp-component";
+import { MemberOnboardServices } from "../../remote-api/api/member-onboard-services/member-onboard-services";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+
 const useStyles = makeStyles((theme) => ({
   input1: {
     width: "50%",
@@ -145,7 +148,7 @@ const serviceDiagnosis = new ServiceTypeService();
 const preAuthService = new PreAuthService();
 const memberservice = new MemberService();
 const retailuserservice = new RetailUserService();
-
+const memberonboardservice = new MemberOnboardServices();
 let ps$ = providerService.getProviders();
 
 export default function ClaimsPreAuthIPDComponent(props) {
@@ -436,8 +439,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -658,16 +662,22 @@ export default function ClaimsPreAuthIPDComponent(props) {
       });
   };
 
+  const [creatingMember, setCreatingMember] = useState(false);
+  const [memberCreated, setMemberCreated] = useState(false);
+  const [memberFound, setMemberFound] = useState(false);
+  const [attempted, setAttempted] = useState(0);
+  const MAX_ATTEMPT = 5;
+  const INTERVALTMO = 10;
+
   const getMemberDetails = (id) => {
     let pageRequest = {
-      page: 0,
-      size: 10,
-      summary: true,
-      active: true,
+      // page: 0,
+      // size: 10,
+      // summary: true,
+      // active: true,
     };
     if (searchType === "national_id") {
-      pageRequest.value = id;
-      pageRequest.key = "IDENTIFICATION_DOC_NUMBER";
+      pageRequest.nid = id;
     }
     if (searchType === "passport_number") {
       pageRequest.value = id;
@@ -678,99 +688,104 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
     }
 
-    //     national-id=22214041   display = National ID
-
-    // passport=33445565   display = Passport
-
-    // birth-certificate-number=31415161 display = Birth Certificate Number
-
-    // shaMemberId
-    // :
-    // "CR5764836962337-9"
-    // shaMemberNumber
-    // :
-    // "SHA5764836962337-9"
-
-    memberservice.getMember(pageRequest).subscribe((res) => {
-      if (res.content?.length > 0) {
-        // if (searchType === "name") {
-        //   setMemberName({ res });
-        //   handleopenClientModal();
-        // } else {
-        //   formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-        //   setMemberBasic({
-        //     ...memberBasic,
-        //     ...res?.content[0]
-        //   });
-        //   setShowViewDetails(true);
-        //   setMemberIdentified(true);
-        //   getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-        // }
-
-        //logic for data avaiblable
-        setIsLoading(false);
-        formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-        setMemberBasic({
-          ...memberBasic,
-          ...res?.content[0],
-        });
-        setShowViewDetails(true);
-        setMemberIdentified(true);
-        getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-      } else {
-        // formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-        // setMemberBasic({
-        //   ...memberBasic,
-        //   ...res?.content[0],
-        // });
-        // setShowViewDetails(true);
-        // setMemberIdentified(true);
-        // getBenefit(res.content[0].memberId, res.content[0].policyNumber);
-        // setAlertMsg("This member is not registered");
-        // setOpenSnack(true);
-
-        //logic for if not available
-        let pgreq = {};
-        if (searchType === "national_id") {
-          pgreq.nationalId = id;
-        } else if (searchType === "passport_number") {
-          pgreq.passport_number = id;
-        } else if (searchType === "birth_certificate_number") {
-          pgreq.birth_certificate_number = id;
+    memberonboardservice.getMemberByNatinalId(pageRequest).subscribe({
+      next: (res) => {
+        if (res.content.length > 0) {
+          //logic for data avaiblable
+          setIsLoading(false);
+          formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+          setMemberBasic({
+            ...memberBasic,
+            ...res?.content[0],
+          });
+          setShowViewDetails(true);
+          setMemberIdentified(true);
+          getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         } else {
-          pgreq = {};
-        }
-
-        retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
-          next: (res) => {
-            setTimeout(() => {
-              memberservice.getMember(pageRequest).subscribe((res) => {
-                if (res.content?.length > 0) {
-                  formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-                  setMemberBasic({
-                    ...memberBasic,
-                    ...res?.content[0],
+          //logic for if not available
+          let payload = {};
+          if (searchType === "national_id") {
+            payload.nationalId = id;
+          } else if (searchType === "passport_number") {
+            payload.passport_number = id;
+          } else if (searchType === "birth_certificate_number") {
+            payload.birth_certificate_number = id;
+          } else {
+            payload = {};
+          }
+          setAlertMsg(
+            `Member not found we are creating a new Member with Nationa ID ${id}`
+          );
+          setOpenSnack(true);
+          setCreatingMember(true);
+          memberonboardservice.createMemberByNatinalId(payload).subscribe({
+            next: (res) => {
+              setCreatingMember(false);
+              setMemberCreated(true);
+              const interval = setInterval(() => {
+                memberonboardservice
+                  .getMemberByNatinalId(pageRequest)
+                  .subscribe({
+                    next: (res) => {
+                      if (res.content?.length > 0) {
+                        setMemberFound(true);
+                        clearInterval(interval);
+                        setAttempted((prv) => prv + 1);
+                        formik.setFieldValue(
+                          "contactNoOne",
+                          res.content[0].mobileNo
+                        );
+                        setMemberBasic({
+                          ...memberBasic,
+                          ...res?.content[0],
+                        });
+                        setShowViewDetails(true);
+                        setMemberIdentified(true);
+                        getBenefit(
+                          res.content[0].memberId,
+                          res.content[0].policyNumber
+                        );
+                        setIsLoading(false);
+                      } else {
+                        if (attempted === MAX_ATTEMPT) {
+                          setAlertMsg(
+                            `We are failed to retrive member data. Please try again.`
+                          );
+                          setOpenSnack(true);
+                          clearInterval(interval);
+                        }
+                      }
+                    },
+                    error: (error) => {
+                      console.error(
+                        "Error Fetching memeber details at second step.",
+                        error
+                      );
+                      setAlertMsg(
+                        `Failed to fetch member details at second step.`
+                      );
+                      setOpenSnack(true);
+                      setIsLoading(false);
+                      clearInterval(interval);
+                    },
                   });
-                  setShowViewDetails(true);
-                  setMemberIdentified(true);
-                  getBenefit(
-                    res.content[0].memberId,
-                    res.content[0].policyNumber
-                  );
-                } else {
-                  setAlertMsg("This member is not registered!!!");
-                  setOpenSnack(true);
-                }
-                setIsLoading(false);
-              });
-            }, 1000 * 60);
-          },
-          error: (error) => {
-            console.error("Error fetching member details:", error);
-          },
-        });
-      }
-      // setIsLoading(false);
+              }, 1000 * INTERVALTMO);
+            },
+            error: (error) => {
+              setCreatingMember(false);
+              setAlertMsg(`New member creation failed.`);
+              setOpenSnack(true);
+              console.error("Error Creating member :", error);
+            },
+          });
+        }
+      },
+      error: (error) => {
+        console.error("Error Fetching memeber details at second step.", error);
+        setAlertMsg(`Failed to fetch member details at first step.`);
+        setOpenSnack(true);
+        setIsLoading(false);
+      },
     });
   };
 
@@ -1027,7 +1042,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1247,11 +1262,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
   };
   const handleInitiateOTP = () => {
     if (!memberBasic.id && !memberBasic.membershipNo) {
-      alert('Search Member Details First')
-      return
+      alert("Search Member Details First");
+      return;
     }
-    setOpenOTPModal(true)
-  }
+    setOpenOTPModal(true);
+  };
   const handleContributionInitiate = () => {
     memberservice
       .initiateContribution(
@@ -1269,14 +1284,16 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setBiometricInitiated(false);
     setbiometricResponseId("");
     setBioMetricStatus("");
+    setMemberCreated(false);
+    setMemberFound(false);
   }, [searchType]);
 
-  const [openOTPModal, setOpenOTPModal] = useState(false)
-  const [verifiedbyOTP, setVerifiedbyOTP] = useState(false)
+  const [openOTPModal, setOpenOTPModal] = useState(false);
+  const [verifiedbyOTP, setVerifiedbyOTP] = useState(false);
 
   const handleClose = () => {
     setOpenOTPModal(false);
-  }
+  };
 
   return (
     <>
@@ -1352,6 +1369,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     setIsLoading(true);
                     populateMemberFromSearch("number");
                     setContributionResponseId("");
+                    setMemberCreated(false);
+                    setMemberFound(false);
                   }}
                   color="#313c96"
                   type="button"
@@ -1444,7 +1463,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1511,17 +1530,47 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 </Grid>
               } */}
           </Grid>
+          <Grid
+            container
+            sx={{ p: 4, backgroundColor: '#00477702'}}
+            justifyContent="center"
+            alignItems="center"
+          >
+            {memberCreated && !memberFound && (
+              <>
+                <CountdownCircleTimer
+                  isPlaying
+                  duration={INTERVALTMO}
+                  colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+                  colorsTime={[10, 7, 3, 0]}
+                  onComplete={() => {
+                    return { shouldRepeat: !memberFound };
+                  }}
+                  size={50}
+                  strokeWidth={2}
+                >
+                  {({ remainingTime }) => remainingTime}
+                </CountdownCircleTimer>
+                <Typography sx={{ ml: 2 }}>
+                  We are setting up and attempting to retrieve the newly created
+                  member. Please wait...
+                </Typography>
+              </>
+            )}
+          </Grid>
           {
-            < PDialog
+            <PDialog
               header="Member OTP Validation"
               visible={openOTPModal}
-              position='up'
-              style={{ width: '50vw' }}
-              onHide={() => { if (!openOTPModal) return; setOpenOTPModal(false); }}
+              position="up"
+              style={{ width: "50vw" }}
+              onHide={() => {
+                if (!openOTPModal) return;
+                setOpenOTPModal(false);
+              }}
               draggable={true}
               resizable={true}
             >
-
               <OTPComponent
                 id={memberBasic.id}
                 membershipNo={memberBasic.membershipNo}
@@ -1576,59 +1625,125 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     height: "80px",
                   }}
                 >
-                  <Grid container alignItems="center" style={{ padding: "8px" }}>
+                  <Grid
+                    container
+                    alignItems="center"
+                    style={{ padding: "8px" }}
+                  >
                     <Grid item xs={6}>
-                      <Typography variant="subtitle1" style={{ marginRight: "12px" }}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ marginRight: "12px" }}
+                      >
                         Member Validation
                       </Typography>
                     </Grid>
 
                     {/* BUTTONS SECTION */}
 
-                    {console.log('bioMetricStatus ', bioMetricStatus)}
-
+                    {console.log("bioMetricStatus ", bioMetricStatus)}
 
                     {!bioMetricStatus && (
-                      <Grid item xs={6} container direction="column" alignItems='flex-start'>
-                        <Button label="Initiate Biometric" severity="help" text onClick={handleInitiate} />
-                        <Button label="Initiate With OTP" severity="help" text onClick={handleInitiateOTP} />
+                      <Grid
+                        item
+                        xs={6}
+                        container
+                        direction="column"
+                        alignItems="flex-start"
+                      >
+                        <Button
+                          label="Initiate Biometric"
+                          severity="help"
+                          text
+                          onClick={handleInitiate}
+                        />
+                        <Button
+                          label="Initiate With OTP"
+                          severity="help"
+                          text
+                          onClick={handleInitiateOTP}
+                        />
                       </Grid>
                     )}
 
-                    {!bioMetricStatus && biometricInitiated && biometricResponseId && (
-                      <Button label="Check status" severity="help" text onClick={handleCheckStatus} />
-                    )}
+                    {!bioMetricStatus &&
+                      biometricInitiated &&
+                      biometricResponseId && (
+                        <Button
+                          label="Check status"
+                          severity="help"
+                          text
+                          onClick={handleCheckStatus}
+                        />
+                      )}
 
-                    {bioMetricStatus === "IN_PROGRESS" || bioMetricStatus === "FAILED" && (
-                      <Button label="Check status" severity="help" text onClick={handleCheckStatus} />
-                    )}
-
-
+                    {bioMetricStatus === "IN_PROGRESS" ||
+                      (bioMetricStatus === "FAILED" && (
+                        <Button
+                          label="Check status"
+                          severity="help"
+                          text
+                          onClick={handleCheckStatus}
+                        />
+                      ))}
 
                     {/* TOP ICONS SECTION */}
 
                     {!biometricInitiated && bioMetricStatus === "" && (
-                      <ErrorIcon sx={{ position: "absolute", top: 8, right: 8, color: "red" }} />
+                      <ErrorIcon
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      />
                     )}
 
                     {biometricInitiated && bioMetricStatus === "" && (
-                      <MultipleStopIcon sx={{ position: "absolute", top: 8, right: 8, color: "red" }} />
+                      <MultipleStopIcon
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      />
                     )}
 
                     {bioMetricStatus === "IN_PROGRESS" && (
-                      <PunchClock sx={{ position: "absolute", top: 8, right: 8, color: "orange" }} />
+                      <PunchClock
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "orange",
+                        }}
+                      />
                     )}
 
                     {bioMetricStatus === "SUCCESS" && (
-                      <CheckCircle sx={{ position: "absolute", top: 8, right: 8, color: "green" }} />
+                      <CheckCircle
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "green",
+                        }}
+                      />
                     )}
 
                     {bioMetricStatus === "FAILED" && (
-                      <CancelOutlined sx={{ position: "absolute", top: 8, right: 8, color: "red" }} />
+                      <CancelOutlined
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          color: "red",
+                        }}
+                      />
                     )}
-
                   </Grid>
-
                 </Box>
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -1684,7 +1799,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                    (!contributionStatus || contributionStatus === "Unpaid") ? (
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
@@ -2413,7 +2528,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           </Grid>
           {/* </form> */}
         </Box>
-      </Paper >
+      </Paper>
     </>
   );
 }
