@@ -695,6 +695,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
       next: (res) => {
         if (res.content?.length > 0) {
           setIsLoading(false);
+          setMemberFound(true);
           formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
           setMemberBasic({
             ...memberBasic,
