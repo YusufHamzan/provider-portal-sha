@@ -804,12 +804,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
             setCreatingMember(false);
             setMemberCreated(true);
             const interval = setInterval(() => {
+              setAttempted((prv) => prv + 1);
               memberonboardservice.getMemberByNatinalId(pageRequest).subscribe({
                 next: (res) => {
                   if (res.content?.length > 0) {
                     setMemberFound(true);
                     clearInterval(interval);
-                    setAttempted((prv) => prv + 1);
                     formik.setFieldValue(
                       "contactNoOne",
                       res.content[0].mobileNo
