@@ -413,7 +413,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
           setOpenSnack(true);
           return;
         } else {
-          setDisableButton(false)
+          setDisableButton(false);
         }
       });
       let bts$ = benefitService.getServicesfromInterventions(
@@ -1105,7 +1105,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
             });
           }
         }
-        setDisableButton(false)
+        setDisableButton(false);
       } else {
         setDisableButton(true);
         setAlertMsg(`Not Allowed!`);
@@ -1285,6 +1285,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 onChange={(e, val) => {
                   getServices(val, i);
                   handleInterventionValidation(val, i);
+                  const list = [...serviceDetailsList];
+                  serviceDetailsList[i].tariff = null;
+                  setServiceDetailsList(list);
                 }}
                 id="checkboxes-tags-demo"
                 options={intervention}
