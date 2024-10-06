@@ -391,7 +391,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     } else {
       let pa$ = preAuthService.getPreauthTeriffAmount(
         benefitId,
-        data.code.replace(/\s+/g, "")
+        data.code.replace(/\s+/g, ""),
+        localStorage.getItem("levelID"),
       );
       pa$.subscribe((response) => {
         const list = [...serviceDetailsList];

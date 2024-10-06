@@ -240,11 +240,12 @@ export class PreAuthService {
 
   getPreauthTeriffAmount(
     BenefitId: any,
-    interventionId: number
+    interventionId: number,
+    providerLevel:number,
   ): Observable<any> {
     return http
       .get<Page<any>>(
-        `${this.QUERY_CONTEXT}/preauths/sha-subbenefit-interventionCode/${BenefitId}/${interventionId}`
+        `${this.QUERY_CONTEXT}/preauths/sha-subbenefit-interventionCode/${BenefitId}/${interventionId}/${providerLevel}`
       )
       .pipe(map((response) => response.data));
   }
