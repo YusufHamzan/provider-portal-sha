@@ -826,8 +826,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
         } else {
           setAlertMsg(`Unknown status recieved from server.`);
           setOpenSnack(true);
-<<<<<<< HEAD
-=======
           setCreatingMember(true);
           memberonboardservice.createMemberByNatinalId(payload).subscribe({
             next: (res) => {
@@ -842,7 +840,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       if (res.content?.length > 0) {
                         setMemberFound(true);
                         clearInterval(interval);
-                        
+
                         formik.setFieldValue(
                           "contactNoOne",
                           res.content[0].mobileNo
@@ -890,7 +888,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
               console.error("Error Creating member :", error);
             },
           });
->>>>>>> 0d9876ffc81f0c0150dd623fd1f34247c423d04d
         }
       },
       error: (error) => {
