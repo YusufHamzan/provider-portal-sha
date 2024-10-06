@@ -391,7 +391,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     } else {
       let pa$ = preAuthService.getPreauthTeriffAmount(
         benefitId,
-        data.code.replace(/\s+/g, "")
+        data.code.replace(/\s+/g, ""),
+        localStorage.getItem("levelID")
       );
       pa$.subscribe((response) => {
         const list = [...serviceDetailsList];
@@ -439,8 +440,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -689,8 +691,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
     }
 
-
-
     memberservice.getMember(pageRequest).subscribe({
       next: (res) => {
         if (res.content?.length > 0) {
@@ -707,14 +707,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
         }
       },
       error: (error) => {
-        console.error(error)
+        console.error(error);
         setAlertMsg(`Member details failed to fetch.`);
         setOpenSnack(true);
-      }
-    })
-  }
-
-
+      },
+    });
+  };
 
   const getMemberDetails = (id) => {
     let pageRequest = {
@@ -737,7 +735,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
     memberonboardservice.getMemberByNatinalId(pageRequest).subscribe({
       next: (res) => {
-
         //logic for data avaiblable
 
         // } else {
@@ -818,10 +815,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
         //     },
         //   });
 
-        if (res.status === 'COMPLETED') {
-          getCreatedMemberDetails(id)
-        } else if (res.status === 'INPROGRESS') {
-          setAlertMsg(`Member creation is still under process. Please try again after few seconds.`);
+        if (res.status === "COMPLETED") {
+          getCreatedMemberDetails(id);
+        } else if (res.status === "INPROGRESS") {
+          setAlertMsg(
+            `Member creation is still under process. Please try again after few seconds.`
+          );
           setOpenSnack(true);
         } else {
           setAlertMsg(`Unknown status recieved from server.`);
@@ -892,7 +891,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
       },
       error: (error) => {
         if (error.status === 404) {
-          console.error("Error Fetching memeber details at second step.", error);
+          console.error(
+            "Error Fetching memeber details at second step.",
+            error
+          );
           setAlertMsg(`Failed to fetch member details at first step.`);
           setOpenSnack(true);
           let payload = {};
@@ -916,24 +918,28 @@ export default function ClaimsPreAuthIPDComponent(props) {
               setMemberCreated(true);
               const interval = setInterval(() => {
                 setAttempted((prv) => prv + 1);
-                memberonboardservice.getMemberByNatinalId(pageRequest).subscribe({
-                  next: (res) => {
-                    if (res.status === 'COMPLETED') {
-                      getCreatedMemberDetails(id)
+                memberonboardservice
+                  .getMemberByNatinalId(pageRequest)
+                  .subscribe({
+                    next: (res) => {
+                      if (res.status === "COMPLETED") {
+                        getCreatedMemberDetails(id);
+                        clearInterval(interval);
+                      }
+                    },
+                    error: (error) => {
+                      console.error(
+                        "Error Fetching memeber details at second step.",
+                        error
+                      );
+                      setAlertMsg(
+                        `Failed to fetch member details at second step.`
+                      );
+                      setOpenSnack(true);
+                      setIsLoading(false);
                       clearInterval(interval);
-                    }
-                  },
-                  error: (error) => {
-                    console.error(
-                      "Error Fetching memeber details at second step.",
-                      error
-                    );
-                    setAlertMsg(`Failed to fetch member details at second step.`);
-                    setOpenSnack(true);
-                    setIsLoading(false);
-                    clearInterval(interval);
-                  },
-                });
+                    },
+                  });
               }, 1000 * INTERVALTMO);
             },
             error: (error) => {
@@ -945,7 +951,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
           });
           setIsLoading(false);
         } else {
-          setAlertMsg(`Failed to fetch member details at first step. Server down`);
+          setAlertMsg(
+            `Failed to fetch member details at first step. Server down`
+          );
           setOpenSnack(true);
         }
       },
@@ -1205,7 +1213,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1626,7 +1634,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1962,7 +1970,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                    (!contributionStatus || contributionStatus === "Unpaid") ? (
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
@@ -2571,6 +2579,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             handleBenefitChangeInService(val, i);
                             setBenefitId(val.benefitStructureId);
                             handleChangeIntervention("", i);
+                            const list = [...serviceDetailsList];
+                            serviceDetailsList[i].tariff = null;
+                            setServiceDetailsList(list);
                           }}
                           id="checkboxes-tags-demo"
                           filterOptions={autocompleteFilterChange}
