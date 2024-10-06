@@ -44,7 +44,7 @@ const stringAvatar = (name) => {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: <Typography sx={{ fontSize: '16px' }}>{`${name?.split(' ')[0][0]}${name?.split(' ')[1][0]}`}</Typography>,
+    children: <Typography sx={{ fontSize: '16px' }}>{`${name?.split(' ')[0][0]}${name?.split(' ')[1]?.[0] || ''}`}</Typography>,
   };
 }
 

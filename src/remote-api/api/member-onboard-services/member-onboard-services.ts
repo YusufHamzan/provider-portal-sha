@@ -45,7 +45,7 @@ export class MemberOnboardServices {
   	pageRequest: any,
   ): Observable<Page<any>> {
   	return http
-  		.get<Page<any>>(`${this.CONTEXT}/`, {
+  		.get<Page<any>>(`${this.CONTEXT}`, {
   			params: pageRequest,
   		})
   		.pipe(map((response: { data: any }) => response.data));
@@ -55,7 +55,7 @@ export class MemberOnboardServices {
   	payload: {nationalId: string | number},
   ): Observable<Page<any>> {
   	return http
-  		.post<Page<any>>(`${this.CONTEXT}/`, payload)
+  		.post<Page<any>>(`${this.CONTEXT}`, payload)
   		.pipe(map((response: { data: any }) => response.data));
   }
 }
