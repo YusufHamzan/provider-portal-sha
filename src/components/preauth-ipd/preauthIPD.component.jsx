@@ -170,6 +170,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [selectedBenefit, setSelectedBenefit] = React.useState([]);
   const [claimModal, setClaimModal] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState("");
+  const [disableButton, setDisableButton] = React.useState(false);
   const [openSnack, setOpenSnack] = React.useState(false);
   const [searchType, setSearchType] = React.useState("national_id");
   const [openClientModal, setOpenClientModal] = React.useState(false);
@@ -407,9 +408,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
         const memberGender = memberBasic.gender.toLowerCase();
 
         if (!["all", "both"].includes(gender) && gender !== memberGender) {
+          setDisableButton(true);
           setAlertMsg(`Not Allowed!`);
           setOpenSnack(true);
           return;
+        } else {
+          setDisableButton(false)
         }
       });
       let bts$ = benefitService.getServicesfromInterventions(
@@ -1101,7 +1105,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
             });
           }
         }
+        setDisableButton(false)
       } else {
+        setDisableButton(true);
         setAlertMsg(`Not Allowed!`);
         setOpenSnack(true);
         return;
@@ -2687,6 +2693,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
               onClick={(e) => {
                 handleSubmit(e);
               }}
+              disabled={disableButton}
               style={{ marginLeft: "10px" }}
               className={classes.buttonPrimary}
             >
