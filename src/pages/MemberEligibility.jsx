@@ -307,14 +307,25 @@ export default function MemberEligibility() {
         if (res.content?.length > 0) {
           setIsLoading(false);
           setMemberFound(true);
-          formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
-          setMemberBasic({
-            ...memberBasic,
-            ...res?.content[0],
-          });
-          setShowViewDetails(true);
+          setMemberData(res.content[0]);
+          setIsLoading(false);
           setMemberIdentified(true);
-          getBenefit(res.content[0].memberId, res.content[0].policyNumber);
+          memberService
+            .getMemberBalance(res?.content[0]?.membershipNo)
+            .subscribe((resesponse) => {
+              const temp = resesponse.map((item) => {
+                const benefit = benefitData?.find(
+                  (ele) => ele.id === item.benefit
+                );
+                item.benefitId = benefit?.id;
+                item.benefit = benefit?.name;
+                item.consumed = item.maxLimit - item.balance;
+                return item;
+              });
+              setTableData(temp);
+              setShowBalanceDetails(true);
+            });
+
         }
       },
       error: (error) => {
@@ -323,6 +334,8 @@ export default function MemberEligibility() {
         setOpenSnack(true);
       },
     });
+
+
   };
 
   const getMemberDetails = (id) => {
