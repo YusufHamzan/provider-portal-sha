@@ -10,6 +10,8 @@
 //   );
 // };
 // export default MemberEligibility;
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+
 
 import {
   Accordion,
@@ -62,9 +64,11 @@ import BioModal from "../components/preauth-ipd/component/bio-modal";
 import { useState } from "react";
 import { Button as PButton } from "primereact/button";
 import { RetailUserService } from "../remote-api/api/master-services/retail-users-service";
+import { MemberOnboardServices } from "../remote-api/api/member-onboard-services/member-onboard-services";
 const memberService = new MemberService();
 const benefitService = new BenefitService();
 const providerService = new ProvidersService();
+const memberonboardservice = new MemberOnboardServices();
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -127,10 +131,10 @@ const columnsDefinations = [
           textDecoration: "underline",
           color: "blue",
         }}
-        // onClick={() => {
-        //   setShowServices(false);
-        //   getClaimsByBenefit(rowData?.benefitId);
-        // }}
+      // onClick={() => {
+      //   setShowServices(false);
+      //   getClaimsByBenefit(rowData?.benefitId);
+      // }}
       >
         {rowData.consumed}
       </span>
@@ -223,7 +227,7 @@ export default function MemberEligibility() {
     setOpenClientModal(false);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleSelect = (data) => {
     setMemberData(data);
@@ -270,7 +274,14 @@ export default function MemberEligibility() {
     });
   };
 
-  const getMemberDetails = (id) => {
+  const [creatingMember, setCreatingMember] = useState(false);
+  const [memberCreated, setMemberCreated] = useState(false);
+  const [memberFound, setMemberFound] = useState(false);
+  const [attempted, setAttempted] = useState(0);
+  const MAX_ATTEMPT = 5;
+  const INTERVALTMO = 10;
+
+  const getCreatedMemberDetails = (id) => {
     let pageRequest = {
       page: 0,
       size: 10,
@@ -291,67 +302,272 @@ export default function MemberEligibility() {
       pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
     }
 
-    memberService.getMember(pageRequest).subscribe((res) => {
-      if (res.content?.length > 0) {
-        // if (searchType === "name") {
-        //   setMemberName({ res });
-        //   handleopenClientModal();
-        // } else {
-        setMemberData(res.content[0]);
-        setIsLoading(false);
-        // getImage(res?.content[0]?.id);
-        setMemberIdentified(true);
-        memberService
-          .getMemberBalance(res?.content[0]?.membershipNo)
-          .subscribe((resesponse) => {
-            const temp = resesponse.map((item) => {
-              const benefit = benefitData?.find(
-                (ele) => ele.id === item.benefit
-              );
-              item.benefitId = benefit?.id;
-              item.benefit = benefit?.name;
-              item.consumed = item.maxLimit - item.balance;
-              return item;
-            });
-            setTableData(temp);
-            setShowBalanceDetails(true);
+    memberService.getMember(pageRequest).subscribe({
+      next: (res) => {
+        if (res.content?.length > 0) {
+          setIsLoading(false);
+          setMemberFound(true);
+          formik.setFieldValue("contactNoOne", res.content[0].mobileNo);
+          setMemberBasic({
+            ...memberBasic,
+            ...res?.content[0],
           });
-        // }
-      } else {
-        let pgreq = {};
-        if (searchType === "national_id") {
-          pgreq.nationalId = id;
-        } else if (searchType === "passport_number") {
-          pgreq.passport_number = id;
-        } else if (searchType === "birth_certificate_number") {
-          pgreq.birth_certificate_number = id;
-        } else {
-          pgreq = {};
+          setShowViewDetails(true);
+          setMemberIdentified(true);
+          getBenefit(res.content[0].memberId, res.content[0].policyNumber);
         }
+      },
+      error: (error) => {
+        console.error(error);
+        setAlertMsg(`Member details failed to fetch.`);
+        setOpenSnack(true);
+      },
+    });
+  };
 
-        retailuserservice.fetchAndSaveMemberDetails(pgreq).subscribe({
-          next: (res) => {
+  const getMemberDetails = (id) => {
+    let pageRequest = {
+      // page: 0,
+      // size: 10,
+      // summary: true,
+      // active: true,
+    };
+    if (searchType === "national_id") {
+      pageRequest.nid = id;
+    }
+    if (searchType === "passport_number") {
+      pageRequest.value = id;
+      pageRequest.key = "PASSPORT_NUMBER";
+    }
+    if (searchType === "birth_certificate_number") {
+      pageRequest.value = id;
+      pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
+    }
 
-          },
-          error: (error) => {
-            console.error("Error fetching member details:", error);
-          },
-        });
+    memberonboardservice.getMemberByNatinalId(pageRequest).subscribe({
+      next: (res) => {
+        //logic for data avaiblable
 
-        setTimeout(() => {
-          memberService.getMember(pageRequest).subscribe((res) => {
-            if (res.content?.length > 0) {
-              setMemberData(res.content[0]);
-              setShowViewDetails(true);
-              setMemberIdentified(true);
-            } else {
-              setAlertMsg("This member is not registered!!!");
+        // } else {
+        //   //logic for if not available
+        //   let payload = {};
+        //   if (searchType === "national_id") {
+        //     payload.nationalId = id;
+        //   } else if (searchType === "passport_number") {
+        //     payload.passport_number = id;
+        //   } else if (searchType === "birth_certificate_number") {
+        //     payload.birth_certificate_number = id;
+        //   } else {
+        //     payload = {};
+        //   }
+        //   setAlertMsg(
+        //     `Member not found we are creating a new Member with Nationa ID ${id}`
+        //   );
+        //   setOpenSnack(true);
+        //   setCreatingMember(true);
+        //   memberonboardservice.createMemberByNatinalId(payload).subscribe({
+        //     next: (res) => {
+        //       setCreatingMember(false);
+        //       setMemberCreated(true);
+        //       const interval = setInterval(() => {
+        //         memberonboardservice
+        //           .getMemberByNatinalId(pageRequest)
+        //           .subscribe({
+        //             next: (res) => {
+        //               if (res.content?.length > 0) {
+        //                 setMemberFound(true);
+        //                 clearInterval(interval);
+        //                 setAttempted((prv) => prv + 1);
+        //                 formik.setFieldValue(
+        //                   "contactNoOne",
+        //                   res.content[0].mobileNo
+        //                 );
+        //                 setMemberBasic({
+        //                   ...memberBasic,
+        //                   ...res?.content[0],
+        //                 });
+        //                 setShowViewDetails(true);
+        //                 setMemberIdentified(true);
+        //                 getBenefit(
+        //                   res.content[0].memberId,
+        //                   res.content[0].policyNumber
+        //                 );
+        //                 setIsLoading(false);
+        //               } else {
+        //                 if (attempted === MAX_ATTEMPT) {
+        //                   setAlertMsg(
+        //                     `We are failed to retrive member data. Please try again.`
+        //                   );
+        //                   setOpenSnack(true);
+        //                   clearInterval(interval);
+        //                 }
+        //               }
+        //             },
+        //             error: (error) => {
+        //               console.error(
+        //                 "Error Fetching memeber details at second step.",
+        //                 error
+        //               );
+        //               setAlertMsg(
+        //                 `Failed to fetch member details at second step.`
+        //               );
+        //               setOpenSnack(true);
+        //               setIsLoading(false);
+        //               clearInterval(interval);
+        //             },
+        //           });
+        //       }, 1000 * INTERVALTMO);
+        //     },
+        //     error: (error) => {
+        //       setCreatingMember(false);
+        //       setAlertMsg(`New member creation failed.`);
+        //       setOpenSnack(true);
+        //       console.error("Error Creating member :", error);
+        //     },
+        //   });
+
+        if (res.status === "COMPLETED") {
+          getCreatedMemberDetails(id);
+        } else if (res.status === "INPROGRESS") {
+          setAlertMsg(
+            `Member creation is still under process. Please try again after few seconds.`
+          );
+          setOpenSnack(true);
+        } else {
+          setAlertMsg(`Unknown status recieved from server.`);
+          setOpenSnack(true);
+          // setCreatingMember(true);
+          // memberonboardservice.createMemberByNatinalId(payload).subscribe({
+          //   next: (res) => {
+          //     setCreatingMember(false);
+          //     setMemberCreated(true);
+          //     const interval = setInterval(() => {
+          //       setAttempted((prv) => prv + 1);
+          //       memberonboardservice
+          //         .getMemberByNatinalId(pageRequest)
+          //         .subscribe({
+          //           next: (res) => {
+          //             if (res.content?.length > 0) {
+          //               setMemberFound(true);
+          //               clearInterval(interval);
+
+          //               formik.setFieldValue(
+          //                 "contactNoOne",
+          //                 res.content[0].mobileNo
+          //               );
+          //               setMemberBasic({
+          //                 ...memberBasic,
+          //                 ...res?.content[0],
+          //               });
+          //               setShowViewDetails(true);
+          //               setMemberIdentified(true);
+          //               getBenefit(
+          //                 res.content[0].memberId,
+          //                 res.content[0].policyNumber
+          //               );
+          //               setIsLoading(false);
+          //             } else {
+          //               if (attempted === MAX_ATTEMPT) {
+          //                 setAlertMsg(
+          //                   `We are failed to retrive member data. Please try again.`
+          //                 );
+          //                 setOpenSnack(true);
+          //                 clearInterval(interval);
+          //               }
+          //             }
+          //           },
+          //           error: (error) => {
+          //             console.error(
+          //               "Error Fetching memeber details at second step.",
+          //               error
+          //             );
+          //             setAlertMsg(
+          //               `Failed to fetch member details at second step.`
+          //             );
+          //             setOpenSnack(true);
+          //             setIsLoading(false);
+          //             clearInterval(interval);
+          //           },
+          //         });
+          //     }, 1000 * INTERVALTMO);
+          //   },
+          //   error: (error) => {
+          //     setCreatingMember(false);
+          //     setAlertMsg(`New member creation failed.`);
+          //     setOpenSnack(true);
+          //     console.error("Error Creating member :", error);
+          //   },
+          // });
+        }
+      },
+      error: (error) => {
+        if (error.status === 404) {
+          console.error(
+            "Error Fetching memeber details at second step.",
+            error
+          );
+          setAlertMsg(`Failed to fetch member details at first step.`);
+          setOpenSnack(true);
+          let payload = {};
+          if (searchType === "national_id") {
+            payload.nationalId = id;
+          } else if (searchType === "passport_number") {
+            payload.passport_number = id;
+          } else if (searchType === "birth_certificate_number") {
+            payload.birth_certificate_number = id;
+          } else {
+            payload = {};
+          }
+          setAlertMsg(
+            `Member not found we are creating a new Member with Nationa ID ${id}`
+          );
+          setOpenSnack(true);
+          setCreatingMember(true);
+          memberonboardservice.createMemberByNatinalId(payload).subscribe({
+            next: (res) => {
+              setCreatingMember(false);
+              setMemberCreated(true);
+              const interval = setInterval(() => {
+                setAttempted((prv) => prv + 1);
+                memberonboardservice
+                  .getMemberByNatinalId(pageRequest)
+                  .subscribe({
+                    next: (res) => {
+                      if (res.status === "COMPLETED") {
+                        getCreatedMemberDetails(id);
+                        clearInterval(interval);
+                      }
+                    },
+                    error: (error) => {
+                      console.error(
+                        "Error Fetching memeber details at second step.",
+                        error
+                      );
+                      setAlertMsg(
+                        `Failed to fetch member details at second step.`
+                      );
+                      setOpenSnack(true);
+                      setIsLoading(false);
+                      clearInterval(interval);
+                    },
+                  });
+              }, 1000 * INTERVALTMO);
+            },
+            error: (error) => {
+              setCreatingMember(false);
+              setAlertMsg(`New member creation failed.`);
               setOpenSnack(true);
-            }
-            setIsLoading(false);
+              console.error("Error Creating member :", error);
+            },
           });
-        }, 1000 * 45);
-      }
+          setIsLoading(false);
+        } else {
+          setAlertMsg(
+            `Failed to fetch member details at first step. Server down`
+          );
+          setOpenSnack(true);
+        }
+      },
     });
   };
 
@@ -609,7 +825,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -710,7 +926,7 @@ export default function MemberEligibility() {
 
                   <DialogContent>
                     {memberName?.res?.content &&
-                    memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                       <TableContainer>
                         <Table>
                           <TableHead>
@@ -780,6 +996,35 @@ export default function MemberEligibility() {
           membershipNo={memberData?.membershipNo}
         />
       } */}
+
+      <Grid
+        container
+        sx={{ p: 4, backgroundColor: "#00477702" }}
+        justifyContent="center"
+        alignItems="center"
+      >
+        {memberCreated && !memberFound && (
+          <>
+            <CountdownCircleTimer
+              isPlaying
+              duration={INTERVALTMO}
+              colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+              colorsTime={[10, 7, 3, 0]}
+              onComplete={() => {
+                return { shouldRepeat: !memberFound };
+              }}
+              size={50}
+              strokeWidth={2}
+            >
+              {({ remainingTime }) => remainingTime}
+            </CountdownCircleTimer>
+            <Typography sx={{ ml: 2 }}>
+              We are setting up and attempting to retrieve the newly created
+              member. Please wait...
+            </Typography>
+          </>
+        )}
+      </Grid>
 
       {memberData && (
         <Paper elevation={3} style={{ padding: 15, marginTop: "15px" }}>
@@ -955,7 +1200,7 @@ export default function MemberEligibility() {
                       />
                     )}
                   {contributionResponseId &&
-                  (!contributionStatus || contributionStatus === "Unpaid") ? (
+                    (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <PButton
                       label="Check status"
                       severity="help"
@@ -1261,8 +1506,8 @@ export default function MemberEligibility() {
                                 <TableCell>
                                   {item.dateOfBirth
                                     ? moment(item.dateOfBirth).format(
-                                        "DD/MM/YYYY"
-                                      )
+                                      "DD/MM/YYYY"
+                                    )
                                     : "-"}
                                 </TableCell>
                                 <TableCell>{item?.relations}</TableCell>
@@ -1378,11 +1623,10 @@ export default function MemberEligibility() {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {` ${
-                                parentBenefitName != undefined
-                                  ? `${parentBenefitName} >`
-                                  : ""
-                              } ${item?.benefitName}`}
+                              {` ${parentBenefitName != undefined
+                                ? `${parentBenefitName} >`
+                                : ""
+                                } ${item?.benefitName}`}
                               {/* {(item?.benefitName === "IN-PATIENT" &&
                               "IN-PATIENT") ||
                               (item?.benefitStructureId ===

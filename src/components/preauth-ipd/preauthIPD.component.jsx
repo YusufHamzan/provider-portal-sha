@@ -444,9 +444,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${
-          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-        } ${ele.name}`,
+        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+          } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -829,68 +828,68 @@ export default function ClaimsPreAuthIPDComponent(props) {
         } else {
           setAlertMsg(`Unknown status recieved from server.`);
           setOpenSnack(true);
-          setCreatingMember(true);
-          memberonboardservice.createMemberByNatinalId(payload).subscribe({
-            next: (res) => {
-              setCreatingMember(false);
-              setMemberCreated(true);
-              const interval = setInterval(() => {
-                setAttempted((prv) => prv + 1);
-                memberonboardservice
-                  .getMemberByNatinalId(pageRequest)
-                  .subscribe({
-                    next: (res) => {
-                      if (res.content?.length > 0) {
-                        setMemberFound(true);
-                        clearInterval(interval);
+          // setCreatingMember(true);
+          // memberonboardservice.createMemberByNatinalId(payload).subscribe({
+          //   next: (res) => {
+          //     setCreatingMember(false);
+          //     setMemberCreated(true);
+          //     const interval = setInterval(() => {
+          //       setAttempted((prv) => prv + 1);
+          //       memberonboardservice
+          //         .getMemberByNatinalId(pageRequest)
+          //         .subscribe({
+          //           next: (res) => {
+          //             if (res.content?.length > 0) {
+          //               setMemberFound(true);
+          //               clearInterval(interval);
 
-                        formik.setFieldValue(
-                          "contactNoOne",
-                          res.content[0].mobileNo
-                        );
-                        setMemberBasic({
-                          ...memberBasic,
-                          ...res?.content[0],
-                        });
-                        setShowViewDetails(true);
-                        setMemberIdentified(true);
-                        getBenefit(
-                          res.content[0].memberId,
-                          res.content[0].policyNumber
-                        );
-                        setIsLoading(false);
-                      } else {
-                        if (attempted === MAX_ATTEMPT) {
-                          setAlertMsg(
-                            `We are failed to retrive member data. Please try again.`
-                          );
-                          setOpenSnack(true);
-                          clearInterval(interval);
-                        }
-                      }
-                    },
-                    error: (error) => {
-                      console.error(
-                        "Error Fetching memeber details at second step.",
-                        error
-                      );
-                      setAlertMsg(
-                        `Failed to fetch member details at second step.`
-                      );
-                      setOpenSnack(true);
-                      setIsLoading(false);
-                      clearInterval(interval);
-                    },
-                  });
-              }, 1000 * INTERVALTMO);
-            },
-            error: (error) => {
-              setCreatingMember(false);
-              setAlertMsg(`New member creation failed.`);
-              setOpenSnack(true);
-              console.error("Error Creating member :", error);
-            },
-          });
+          //               formik.setFieldValue(
+          //                 "contactNoOne",
+          //                 res.content[0].mobileNo
+          //               );
+          //               setMemberBasic({
+          //                 ...memberBasic,
+          //                 ...res?.content[0],
+          //               });
+          //               setShowViewDetails(true);
+          //               setMemberIdentified(true);
+          //               getBenefit(
+          //                 res.content[0].memberId,
+          //                 res.content[0].policyNumber
+          //               );
+          //               setIsLoading(false);
+          //             } else {
+          //               if (attempted === MAX_ATTEMPT) {
+          //                 setAlertMsg(
+          //                   `We are failed to retrive member data. Please try again.`
+          //                 );
+          //                 setOpenSnack(true);
+          //                 clearInterval(interval);
+          //               }
+          //             }
+          //           },
+          //           error: (error) => {
+          //             console.error(
+          //               "Error Fetching memeber details at second step.",
+          //               error
+          //             );
+          //             setAlertMsg(
+          //               `Failed to fetch member details at second step.`
+          //             );
+          //             setOpenSnack(true);
+          //             setIsLoading(false);
+          //             clearInterval(interval);
+          //           },
+          //         });
+          //     }, 1000 * INTERVALTMO);
+          //   },
+          //   error: (error) => {
+          //     setCreatingMember(false);
+          //     setAlertMsg(`New member creation failed.`);
+          //     setOpenSnack(true);
+          //     console.error("Error Creating member :", error);
+          //   },
+          // });
         }
       },
       error: (error) => {
@@ -1219,7 +1218,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => {};
+  const matchResult = (result) => { };
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1643,7 +1642,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                      memberName?.res?.content?.length > 0 ? (
+                        memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1979,7 +1978,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                  (!contributionStatus || contributionStatus === "Unpaid") ? (
+                    (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
