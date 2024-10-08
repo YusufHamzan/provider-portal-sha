@@ -1369,32 +1369,32 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 variant="standard"
                 value={x?.estimatedCost}
                 onChange={(e) => {
-                  if (x?.providerPaymentMechanisim === "Per diem") {
-                    if (
-                      (x?.tariff *
-                        (new Date(selectedDOD) - new Date(selectedDOA))) /
-                        (1000 * 60 * 60 * 24) >=
-                      e.target.value
-                    ) {
-                      console.log(x?.tariff, "aaaaaaaaa");
+                  // if (x?.providerPaymentMechanisim === "Per diem") {
+                  //   if (
+                  //     (x?.tariff *
+                  //       (new Date(selectedDOD) - new Date(selectedDOA))) /
+                  //       (1000 * 60 * 60 * 24) >=
+                  //     e.target.value
+                  //   ) {
+                  //     console.log(x?.tariff, "aaaaaaaaa");
+                  //     handleEstimateCostInService(e, i);
+                  //   } else {
+                  //     setAlertMsg(
+                  //       "Estimated amount can not be more than SHA approved tariff"
+                  //     );
+                  //     setOpenSnack(true);
+                  //   }
+                  // } else {
+                  //   if (x?.tariff >= e.target.value) {
+                  //     console.log(x?.tariff, "aaaaaaaaa");
                       handleEstimateCostInService(e, i);
-                    } else {
-                      setAlertMsg(
-                        "Estimated amount can not be more than SHA approved tariff"
-                      );
-                      setOpenSnack(true);
-                    }
-                  } else {
-                    if (x?.tariff >= e.target.value) {
-                      console.log(x?.tariff, "aaaaaaaaa");
-                      handleEstimateCostInService(e, i);
-                    } else {
-                      setAlertMsg(
-                        "Estimated amount can not be more than SHA approved tariff"
-                      );
-                      setOpenSnack(true);
-                    }
-                  }
+                  //   } else {
+                  //     setAlertMsg(
+                  //       "Estimated amount can not be more than SHA approved tariff"
+                  //     );
+                  //     setOpenSnack(true);
+                  //   }
+                  // }
                 }}
                 label="Estimated Cost"
               />
