@@ -446,8 +446,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -1240,7 +1241,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1368,13 +1369,31 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 variant="standard"
                 value={x?.estimatedCost}
                 onChange={(e) => {
-                  if (x?.tariff >= e.target.value)
-                    handleEstimateCostInService(e, i);
-                  else {
-                    setAlertMsg(
-                      "Estimated amount can not be more than SHA approved tariff"
-                    );
-                    setOpenSnack(true);
+                  if (x?.providerPaymentMechanisim === "Per diem") {
+                    if (
+                      (x?.tariff *
+                        (new Date(selectedDOD) - new Date(selectedDOA))) /
+                        (1000 * 60 * 60 * 24) >=
+                      e.target.value
+                    ) {
+                      console.log(x?.tariff, "aaaaaaaaa");
+                      handleEstimateCostInService(e, i);
+                    } else {
+                      setAlertMsg(
+                        "Estimated amount can not be more than SHA approved tariff"
+                      );
+                      setOpenSnack(true);
+                    }
+                  } else {
+                    if (x?.tariff >= e.target.value) {
+                      console.log(x?.tariff, "aaaaaaaaa");
+                      handleEstimateCostInService(e, i);
+                    } else {
+                      setAlertMsg(
+                        "Estimated amount can not be more than SHA approved tariff"
+                      );
+                      setOpenSnack(true);
+                    }
                   }
                 }}
                 label="Estimated Cost"
@@ -1385,8 +1404,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   ? (x?.tariff *
                       (new Date(selectedDOD) - new Date(selectedDOA))) /
                     (1000 * 60 * 60 * 24)
-                  : x?.tariff} 
-                  {/* {x?.providerPaymentMechanisim === "Per diem" && <span>({x?.tariff} * )</span>} */}
+                  : x?.tariff}
+                {/* {x?.providerPaymentMechanisim === "Per diem" && <span>({x?.tariff} * )</span>} */}
               </span>
             </Box>
           </Grid>
@@ -1671,7 +1690,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -2005,7 +2024,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                    (!contributionStatus || contributionStatus === "Unpaid") ? (
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
