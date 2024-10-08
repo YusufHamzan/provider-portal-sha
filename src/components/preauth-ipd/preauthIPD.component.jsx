@@ -398,6 +398,8 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pa$.subscribe((response) => {
         const list = [...serviceDetailsList];
         serviceDetailsList[i].tariff = response.terifs;
+        serviceDetailsList[i].providerPaymentMechanisim =
+          response.providerPaymentMechanisim;
         setServiceDetailsList(list);
 
         let temp = [...isPreauthRequired];
@@ -711,7 +713,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
         }
       },
       error: (error) => {
-        console.error(error);
         setAlertMsg(`Member details failed to fetch.`);
         setOpenSnack(true);
       },
@@ -797,10 +798,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
         //               }
         //             },
         //             error: (error) => {
-        //               console.error(
-        //                 "Error Fetching memeber details at second step.",
-        //                 error
-        //               );
         //               setAlertMsg(
         //                 `Failed to fetch member details at second step.`
         //               );
@@ -815,7 +812,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
         //       setCreatingMember(false);
         //       setAlertMsg(`New member creation failed.`);
         //       setOpenSnack(true);
-        //       console.error("Error Creating member :", error);
         //     },
         //   });
 
@@ -870,10 +866,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       }
                     },
                     error: (error) => {
-                      console.error(
-                        "Error Fetching memeber details at second step.",
-                        error
-                      );
                       setAlertMsg(
                         `Failed to fetch member details at second step.`
                       );
@@ -888,17 +880,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
               setCreatingMember(false);
               setAlertMsg(`New member creation failed.`);
               setOpenSnack(true);
-              console.error("Error Creating member :", error);
             },
           });
         }
       },
       error: (error) => {
         if (error.status === 404) {
-          console.error(
-            "Error Fetching memeber details at second step.",
-            error
-          );
           setAlertMsg(`Failed to fetch member details at first step.`);
           setOpenSnack(true);
           let payload = {};
@@ -932,10 +919,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       }
                     },
                     error: (error) => {
-                      console.error(
-                        "Error Fetching memeber details at second step.",
-                        error
-                      );
                       setAlertMsg(
                         `Failed to fetch member details at second step.`
                       );
@@ -950,7 +933,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
               setCreatingMember(false);
               setAlertMsg(`New member creation failed.`);
               setOpenSnack(true);
-              console.error("Error Creating member :", error);
             },
           });
           setIsLoading(false);
@@ -1012,6 +994,27 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    let isZero = [];
+    serviceDetailsList.forEach((el) => {
+      // Update tariff based on providerPaymentMechanisim
+      el.tariff =
+        el.providerPaymentMechanisim === "Per diem"
+          ? (el.tariff * (new Date(selectedDOD) - new Date(selectedDOA))) /
+            (1000 * 60 * 60 * 24)
+          : el.tariff;
+
+      // Check if the updated tariff is 0
+      if (el.tariff === 0) {
+        isZero.push(0);
+      }
+    });
+    if (isZero.length > 0) {
+      setAlertMsg("Tariff amount is 0");
+      setOpenSnack(true);
+      return;
+    }
+
     const serviceDetailListModify = [...serviceDetailsList];
     serviceDetailListModify[0].interventionCode =
       serviceDetailListModify[0]?.interventionCode?.value;
@@ -1359,15 +1362,22 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 label="Estimated Cost"
               />
               <span style={{ fontSize: "12px", fontWeight: "bold" }}>
-                SHA Approved Tariff : {x?.tariff}
+                SHA Approved Tariff :{" "}
+                {x?.providerPaymentMechanisim === "Per diem"
+                  ? (x?.tariff *
+                      (new Date(selectedDOD) - new Date(selectedDOA))) /
+                    (1000 * 60 * 60 * 24)
+                  : x?.tariff} 
+                  {/* {x?.providerPaymentMechanisim === "Per diem" && <span>({x?.tariff} * )</span>} */}
               </span>
             </Box>
           </Grid>
         </>
       );
     },
-    [intervention, serviceList, serviceDetailsList]
+    [intervention, serviceList, serviceDetailsList, selectedDOA, selectedDOD]
   );
+
   const [memberIdentified, setMemberIdentified] = useState(false);
   const [contributionPaid, setContributionPaid] = useState(false);
   const [biometricInitiated, setBiometricInitiated] = useState(false);
@@ -1820,8 +1830,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
                     </Grid>
 
                     {/* BUTTONS SECTION */}
-
-                    {console.log("bioMetricStatus ", bioMetricStatus)}
 
                     {!bioMetricStatus && (
                       <Grid
