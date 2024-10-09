@@ -1130,7 +1130,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
         setDisableButton(false);
       } else {
         setDisableButton(true);
-        setAlertMsg(`Not Allowed!`);
+        setAlertMsg(`Preauth Duplication!!!`);
         setOpenSnack(true);
         return;
       }
