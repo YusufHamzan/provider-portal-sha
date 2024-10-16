@@ -279,7 +279,7 @@ const PreAuthIPDListComponent = () => {
         return (
           <li>
             {ben.benefitName} | {ben.iname} | {ben.diagnosisName} :
-            SHA Approved Tariff : <b>{ben?.shaApprovedCost}</b> | Estimated Amount <b>{ben.estimatedCost}</b>
+            SHA Approved Tariff : <b>{ben?.tariff}</b> | Estimated Amount <b>{ben.estimatedCost}</b>
           </li>
         );
       }

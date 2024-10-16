@@ -170,6 +170,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
   const [selectedBenefit, setSelectedBenefit] = React.useState([]);
   const [claimModal, setClaimModal] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState("");
+  const [disableButton, setDisableButton] = React.useState(false);
   const [openSnack, setOpenSnack] = React.useState(false);
   const [searchType, setSearchType] = React.useState("national_id");
   const [openClientModal, setOpenClientModal] = React.useState(false);
@@ -391,11 +392,14 @@ export default function ClaimsPreAuthIPDComponent(props) {
     } else {
       let pa$ = preAuthService.getPreauthTeriffAmount(
         benefitId,
-        data.code.replace(/\s+/g, "")
+        data.code.replace(/\s+/g, ""),
+        localStorage.getItem("levelID")
       );
       pa$.subscribe((response) => {
         const list = [...serviceDetailsList];
         serviceDetailsList[i].tariff = response.terifs;
+        serviceDetailsList[i].providerPaymentMechanisim =
+          response.providerPaymentMechanisim;
         setServiceDetailsList(list);
 
         let temp = [...isPreauthRequired];
@@ -406,9 +410,12 @@ export default function ClaimsPreAuthIPDComponent(props) {
         const memberGender = memberBasic.gender.toLowerCase();
 
         if (!["all", "both"].includes(gender) && gender !== memberGender) {
+          setDisableButton(true);
           setAlertMsg(`Not Allowed!`);
           setOpenSnack(true);
           return;
+        } else {
+          setDisableButton(false);
         }
       });
       let bts$ = benefitService.getServicesfromInterventions(
@@ -439,8 +446,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
     let X = benefits?.forEach((ele) => {
       const parentBenefitName = benefitLookup[ele.parentBenefitStructureId];
       let obj = {
-        label: `${parentBenefitName != undefined ? `${parentBenefitName} >` : ""
-          } ${ele.name}`,
+        label: `${
+          parentBenefitName != undefined ? `${parentBenefitName} >` : ""
+        } ${ele.name}`,
         name: ele.name,
         value: ele.id,
         benefitStructureId: ele.benefitStructureId,
@@ -689,8 +697,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
       pageRequest.key = "BIRTH_CERTIFICATE_NUMBER";
     }
 
-
-
     memberservice.getMember(pageRequest).subscribe({
       next: (res) => {
         if (res.content?.length > 0) {
@@ -707,14 +713,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
         }
       },
       error: (error) => {
-        console.error(error)
         setAlertMsg(`Member details failed to fetch.`);
         setOpenSnack(true);
-      }
-    })
-  }
-
-
+      },
+    });
+  };
 
   const getMemberDetails = (id) => {
     let pageRequest = {
@@ -737,7 +740,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
     memberonboardservice.getMemberByNatinalId(pageRequest).subscribe({
       next: (res) => {
-
         //logic for data avaiblable
 
         // } else {
@@ -818,13 +820,101 @@ export default function ClaimsPreAuthIPDComponent(props) {
         //     },
         //   });
 
-        if (res.status === 'COMPLETED') {
-          getCreatedMemberDetails(id)
-        } else if (res.status === 'INPROGRESS') {
-          setAlertMsg(`Member creation is still under process. Please try again after few seconds.`);
+        if (res.status === "COMPLETED") {
+          getCreatedMemberDetails(id);
+        } else if (res.status === "INPROGRESS") {
+          setAlertMsg(
+            `Member creation is still under process. Please try again after few seconds.`
+          );
           setOpenSnack(true);
         } else {
           setAlertMsg(`Unknown status recieved from server.`);
+          setOpenSnack(true);
+          // setCreatingMember(true);
+          // memberonboardservice.createMemberByNatinalId(payload).subscribe({
+          //   next: (res) => {
+          //     setCreatingMember(false);
+          //     setMemberCreated(true);
+          //     const interval = setInterval(() => {
+          //       setAttempted((prv) => prv + 1);
+          //       memberonboardservice
+          //         .getMemberByNatinalId(pageRequest)
+          //         .subscribe({
+          //           next: (res) => {
+          //             if (res.content?.length > 0) {
+          //               setMemberFound(true);
+          //               clearInterval(interval);
+
+          //               formik.setFieldValue(
+          //                 "contactNoOne",
+          //                 res.content[0].mobileNo
+          //               );
+          //               setMemberBasic({
+          //                 ...memberBasic,
+          //                 ...res?.content[0],
+          //               });
+          //               setShowViewDetails(true);
+          //               setMemberIdentified(true);
+          //               getBenefit(
+          //                 res.content[0].memberId,
+          //                 res.content[0].policyNumber
+          //               );
+          //               setIsLoading(false);
+          //             } else {
+          //               if (attempted === MAX_ATTEMPT) {
+          //                 setAlertMsg(
+          //                   `We are failed to retrive member data. Please try again.`
+          //                 );
+          //                 setOpenSnack(true);
+          //                 clearInterval(interval);
+          //               }
+          //             }
+          //           },
+          //           error: (error) => {
+          //             console.error(
+          //               "Error Fetching memeber details at second step.",
+          //               error
+          //             );
+          //             setAlertMsg(
+          //               `Failed to fetch member details at second step.`
+          //             );
+          //             setOpenSnack(true);
+          //             setIsLoading(false);
+          //             clearInterval(interval);
+          //           },
+          //         });
+          //     }, 1000 * INTERVALTMO);
+          //   },
+          //   error: (error) => {
+          //     setCreatingMember(false);
+          //     setAlertMsg(`New member creation failed.`);
+          //     setOpenSnack(true);
+          //     console.error("Error Creating member :", error);
+          //   },
+          // });
+        }
+      },
+      error: (error) => {
+        if (error.status === 404) {
+          console.error(
+            "Error Fetching memeber details at second step.",
+            error
+          );
+          setAlertMsg(`Failed to fetch member details at first step.`);
+          setOpenSnack(true);
+          let payload = {};
+          if (searchType === "national_id") {
+            payload.nationalId = id;
+          } else if (searchType === "passport_number") {
+            payload.passport_number = id;
+          } else if (searchType === "birth_certificate_number") {
+            payload.birth_certificate_number = id;
+          } else {
+            payload = {};
+          }
+          setAlertMsg(
+            `Member not found we are creating a new Member with Nationa ID ${id}`
+          );
           setOpenSnack(true);
           setCreatingMember(true);
           memberonboardservice.createMemberByNatinalId(payload).subscribe({
@@ -837,33 +927,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                   .getMemberByNatinalId(pageRequest)
                   .subscribe({
                     next: (res) => {
-                      if (res.content?.length > 0) {
-                        setMemberFound(true);
+                      if (res.status === "COMPLETED") {
+                        getCreatedMemberDetails(id);
                         clearInterval(interval);
-
-                        formik.setFieldValue(
-                          "contactNoOne",
-                          res.content[0].mobileNo
-                        );
-                        setMemberBasic({
-                          ...memberBasic,
-                          ...res?.content[0],
-                        });
-                        setShowViewDetails(true);
-                        setMemberIdentified(true);
-                        getBenefit(
-                          res.content[0].memberId,
-                          res.content[0].policyNumber
-                        );
-                        setIsLoading(false);
-                      } else {
-                        if (attempted === MAX_ATTEMPT) {
-                          setAlertMsg(
-                            `We are failed to retrive member data. Please try again.`
-                          );
-                          setOpenSnack(true);
-                          clearInterval(interval);
-                        }
                       }
                     },
                     error: (error) => {
@@ -888,64 +954,11 @@ export default function ClaimsPreAuthIPDComponent(props) {
               console.error("Error Creating member :", error);
             },
           });
-        }
-      },
-      error: (error) => {
-        if (error.status === 404) {
-          console.error("Error Fetching memeber details at second step.", error);
-          setAlertMsg(`Failed to fetch member details at first step.`);
-          setOpenSnack(true);
-          let payload = {};
-          if (searchType === "national_id") {
-            payload.nationalId = id;
-          } else if (searchType === "passport_number") {
-            payload.passport_number = id;
-          } else if (searchType === "birth_certificate_number") {
-            payload.birth_certificate_number = id;
-          } else {
-            payload = {};
-          }
-          setAlertMsg(
-            `Member not found we are creating a new Member with Nationa ID ${id}`
-          );
-          setOpenSnack(true);
-          setCreatingMember(true);
-          memberonboardservice.createMemberByNatinalId(payload).subscribe({
-            next: (res) => {
-              setCreatingMember(false);
-              setMemberCreated(true);
-              const interval = setInterval(() => {
-                setAttempted((prv) => prv + 1);
-                memberonboardservice.getMemberByNatinalId(pageRequest).subscribe({
-                  next: (res) => {
-                    if (res.status === 'COMPLETED') {
-                      getCreatedMemberDetails(id)
-                      clearInterval(interval);
-                    }
-                  },
-                  error: (error) => {
-                    console.error(
-                      "Error Fetching memeber details at second step.",
-                      error
-                    );
-                    setAlertMsg(`Failed to fetch member details at second step.`);
-                    setOpenSnack(true);
-                    setIsLoading(false);
-                    clearInterval(interval);
-                  },
-                });
-              }, 1000 * INTERVALTMO);
-            },
-            error: (error) => {
-              setCreatingMember(false);
-              setAlertMsg(`New member creation failed.`);
-              setOpenSnack(true);
-              console.error("Error Creating member :", error);
-            },
-          });
           setIsLoading(false);
         } else {
-          setAlertMsg(`Failed to fetch member details at first step. Server down`);
+          setAlertMsg(
+            `Failed to fetch member details at first step. Server down`
+          );
           setOpenSnack(true);
         }
       },
@@ -1000,6 +1013,27 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    let isZero = [];
+    serviceDetailsList.forEach((el) => {
+      // Update tariff based on providerPaymentMechanisim
+      el.tariff =
+        el.providerPaymentMechanisim === "Per diem"
+          ? (el.tariff * (new Date(selectedDOD) - new Date(selectedDOA))) /
+            (1000 * 60 * 60 * 24)
+          : el.tariff;
+
+      // Check if the updated tariff is 0
+      if (el.tariff === 0) {
+        isZero.push(0);
+      }
+    });
+    if (isZero.length > 0) {
+      setAlertMsg("Tariff amount is 0");
+      setOpenSnack(true);
+      return;
+    }
+
     const serviceDetailListModify = [...serviceDetailsList];
     serviceDetailListModify[0].interventionCode =
       serviceDetailListModify[0]?.interventionCode?.value;
@@ -1093,8 +1127,10 @@ export default function ClaimsPreAuthIPDComponent(props) {
             });
           }
         }
+        setDisableButton(false);
       } else {
-        setAlertMsg(`Not Allowed!`);
+        setDisableButton(true);
+        setAlertMsg(`Preauth Duplication!!!`);
         setOpenSnack(true);
         return;
       }
@@ -1205,7 +1241,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
     setServiceDetailsList(list);
   };
 
-  const matchResult = (result) => { };
+  const matchResult = (result) => {};
 
   const handleInterventionValidation = (val, i) => {
     const serviceDetailsListValid = serviceDetailsList
@@ -1271,6 +1307,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 onChange={(e, val) => {
                   getServices(val, i);
                   handleInterventionValidation(val, i);
+                  const list = [...serviceDetailsList];
+                  serviceDetailsList[i].tariff = null;
+                  setServiceDetailsList(list);
                 }}
                 id="checkboxes-tags-demo"
                 options={intervention}
@@ -1330,27 +1369,52 @@ export default function ClaimsPreAuthIPDComponent(props) {
                 variant="standard"
                 value={x?.estimatedCost}
                 onChange={(e) => {
-                  if (x?.tariff >= e.target.value)
-                    handleEstimateCostInService(e, i);
-                  else {
-                    setAlertMsg(
-                      "Estimated amount can not be more than SHA approved tariff"
-                    );
-                    setOpenSnack(true);
-                  }
+                  // if (x?.providerPaymentMechanisim === "Per diem") {
+                  //   if (
+                  //     (x?.tariff *
+                  //       (new Date(selectedDOD) - new Date(selectedDOA))) /
+                  //       (1000 * 60 * 60 * 24) >=
+                  //     e.target.value
+                  //   ) {
+                  //     console.log(x?.tariff, "aaaaaaaaa");
+                  //     handleEstimateCostInService(e, i);
+                  //   } else {
+                  //     setAlertMsg(
+                  //       "Estimated amount can not be more than SHA approved tariff"
+                  //     );
+                  //     setOpenSnack(true);
+                  //   }
+                  // } else {
+                  //   if (x?.tariff >= e.target.value) {
+                  //     console.log(x?.tariff, "aaaaaaaaa");
+                      handleEstimateCostInService(e, i);
+                  //   } else {
+                  //     setAlertMsg(
+                  //       "Estimated amount can not be more than SHA approved tariff"
+                  //     );
+                  //     setOpenSnack(true);
+                  //   }
+                  // }
                 }}
                 label="Estimated Cost"
               />
               <span style={{ fontSize: "12px", fontWeight: "bold" }}>
-                SHA Approved Tariff : {x?.tariff}
+                SHA Approved Tariff :{" "}
+                {x?.providerPaymentMechanisim === "Per diem"
+                  ? (x?.tariff *
+                      (new Date(selectedDOD) - new Date(selectedDOA))) /
+                    (1000 * 60 * 60 * 24)
+                  : x?.tariff}
+                {/* {x?.providerPaymentMechanisim === "Per diem" && <span>({x?.tariff} * )</span>} */}
               </span>
             </Box>
           </Grid>
         </>
       );
     },
-    [intervention, serviceList, serviceDetailsList]
+    [intervention, serviceList, serviceDetailsList, selectedDOA, selectedDOD]
   );
+
   const [memberIdentified, setMemberIdentified] = useState(false);
   const [contributionPaid, setContributionPaid] = useState(false);
   const [biometricInitiated, setBiometricInitiated] = useState(false);
@@ -1626,7 +1690,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     <DialogContent>
                       {memberName?.res?.content &&
-                        memberName?.res?.content?.length > 0 ? (
+                      memberName?.res?.content?.length > 0 ? (
                         <TableContainer>
                           <Table>
                             <TableHead>
@@ -1804,8 +1868,6 @@ export default function ClaimsPreAuthIPDComponent(props) {
 
                     {/* BUTTONS SECTION */}
 
-                    {console.log("bioMetricStatus ", bioMetricStatus)}
-
                     {!bioMetricStatus && (
                       <Grid
                         item
@@ -1962,7 +2024,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
                       />
                     )}
                   {contributionResponseId &&
-                    (!contributionStatus || contributionStatus === "Unpaid") ? (
+                  (!contributionStatus || contributionStatus === "Unpaid") ? (
                     <Button
                       label="Check status"
                       severity="help"
@@ -2571,6 +2633,9 @@ export default function ClaimsPreAuthIPDComponent(props) {
                             handleBenefitChangeInService(val, i);
                             setBenefitId(val.benefitStructureId);
                             handleChangeIntervention("", i);
+                            const list = [...serviceDetailsList];
+                            serviceDetailsList[i].tariff = null;
+                            setServiceDetailsList(list);
                           }}
                           id="checkboxes-tags-demo"
                           filterOptions={autocompleteFilterChange}
@@ -2676,6 +2741,7 @@ export default function ClaimsPreAuthIPDComponent(props) {
               onClick={(e) => {
                 handleSubmit(e);
               }}
+              disabled={disableButton}
               style={{ marginLeft: "10px" }}
               className={classes.buttonPrimary}
             >
